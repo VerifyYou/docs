@@ -1,0 +1,8 @@
+node_modules/
+.pnpm-store/
+.mintlify/
+.env
+.env.*
+dist/
+build/
+.DS_Store
