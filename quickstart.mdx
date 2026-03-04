@@ -1,17 +1,16 @@
 ---
 title: "Quick start"
-description: "Stand up a desktop-to-mobile flow and bring users back to your app"
+description: "Perform a humanness check on your users with the Connect API"
 ---
 
 ## Before you start
 
 - You have a service account.
 - You have an API key for that service account.
-- You know where users should return after verification completes.
 
-## Step 1: Register a business connect user
+## Step 1: Register a user and request a humanness check
 
-Create a connection and invite for a user. You should store your own `reference_user_id` and pass a `redirect_url` so the user returns to your app when they finish.
+Register a user, specify the data you want back, and get an invite URL to send them through verification.
 
 ```bash
 curl -X POST "$CONNECT_API_BASE/v1/business_connect_user/register" \
@@ -19,24 +18,111 @@ curl -X POST "$CONNECT_API_BASE/v1/business_connect_user/register" \
   -H "API-KEY: $CONNECT_API_KEY" \
   -d '{
     "reference_user_id": "user_123",
-    "redirect_url": "https://yourapp.com/verify/return"
+    "redirect_url": "https://yourapp.com/verify/return",
+    "data_request": {
+      "type": "GET_HUMANNESS_SCORE_AND_UNIQUE_HUMAN_ID"
+    }
   }'
 ```
 
-Use the response to render a QR code and invite code on desktop.
-Pass the invite code to mobile users who cannot scan the QR.
+**Success response:**
 
-## Step 2: Hand off desktop users to mobile
+```json
+{
+  "status": "success",
+  "invite_url": "https://verifyyou.com/invite/...",
+  "user_id": "bcu_123",
+  "connection_verified": false
+}
+```
 
-Route desktop users to the web app’s `/desktop` screen.
-The page auto-generates a QR code that opens the mobile flow with the right parameters.
+**Failure response:**
 
-Use a `redirect` query param so users return to your original route after verification.
+```json
+{
+  "status": "failure",
+  "failure_code": "INVALID_REQUEST",
+  "failure_reason": "Missing required field: reference_user_id"
+}
+```
 
-## Step 3: Bring users back
+Present the `invite_url` to the user. On desktop, it will be faster to render as a QR code, but otherwise it will open a tab to show the QR code. On mobile, link to it directly.
 
-The desktop handoff page polls for status and redirects to the `redirect_url` you provided during registration.
-If you did not provide a `redirect_url`, the user can return to their previous tab manually.
+## Step 2: Wait for the user to verify
+
+The user completes the humanness check on their mobile device. You can either:
+
+- **Poll** the `/get_status` endpoint (see [Check connection status](#check-connection-status) below).
+- **Listen** for a `USER_VERIFICATION_COMPLETED` webhook. (Recommended)
+
+If you provided a `redirect_url` during registration, the user will be sent back to your app/website automatically when verification finishes.
+
+## Step 3: Retrieve the results
+
+Once the user has verified, call `/get_status` to get the `simple_data_request_response` containing the humanness score and other verification data. See [Check connection status](#check-connection-status) below.
+
+## Enforcing uniqueness with `uniqueness_region_id`
+
+By default, unique human ID uniqueness is enforced at the service account level — each real person can only verify once across your entire account.
+
+If you don't have a persistent `reference_user_id` for the user (e.g. anonymous surveys), you can pass an ephemeral session or token ID as the `reference_user_id` and use `uniqueness_region_id` to scope uniqueness to a specific context instead. For example, passing a survey ID as the `uniqueness_region_id` ensures each person can only complete that particular survey once, without requiring you to track users across surveys.
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/business_connect_user/register" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY" \
+  -d '{
+    "reference_user_id": "session_abc123",
+    "redirect_url": "https://yourapp.com/survey/done",
+    "uniqueness_region_id": "survey_456",
+    "data_request": {
+      "type": "GET_HUMANNESS_SCORE_AND_UNIQUE_HUMAN_ID"
+    }
+  }'
+```
+
+## Data request types
+
+The `data_request.type` field on `/register` determines what data you receive back about the user.
+
+| Type | Description |
+|------|-------------|
+| `GET_HUMANNESS_SCORE` | Returns a humanness score with confidence percentage |
+| `GET_HUMANNESS_SCORE_AND_UNIQUE_HUMAN_ID` | Returns a humanness score plus a unique human identifier |
+| `IS_PHONE_NUMBER_VERIFIED` | Returns whether the user's phone number is verified |
+| `IS_MOBILE_DEVICE_VERIFIED` | Returns whether the user's mobile device is verified (device legitimacy and app integrity) |
+| `IS_LOCAL_BIOMETRIC_CHECK_VERIFIED` | Returns whether the user has completed a local biometric check |
+
+## Check connection status
+
+Poll for a user's connection status and retrieve verification results.
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/business_connect_user/get_status" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY" \
+  -d '{
+    "reference_user_id": "user_123"
+  }'
+```
+
+**Success response:**
+
+```json
+{
+  "status": "success",
+  "has_connection": true,
+  "simple_data_request_response": {
+    "humanness_score": 97,
+    "is_human_confidence_percent": 95,
+    "fulfillment_time_s": 12
+  }
+}
+```
+
+The `simple_data_request_response` is a plaintext JSON object containing the verification results for the data request type you specified during registration.
+
+If the user does not exist, the response returns a `DOES_NOT_EXIST` failure code.
 
 ## Webhooks
 
@@ -47,13 +133,12 @@ Use webhooks to track connection status changes in your backend.
 - `USER_VERIFICATION_COMPLETED`
 - `USER_VERIFICATION_REVOKED`
 - `USER_VERIFICATION_DETERMINED_UNFULFILLABLE`
-- `USER_DELETED`
 
 ### Payload
 
 ```json
 {
-  "transaction_id": "whc_123",
+  "transaction_id": "ewh:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "user_id": "bcu_123",
   "reference_user_id": "user_123",
   "type": "USER_VERIFICATION_COMPLETED",
@@ -224,7 +309,61 @@ curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/create_or_edit" \
   }'
 ```
 
+### List configured webhooks
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/get" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY"
+```
+
+Returns an array of configured webhooks, each with `webhook_type` and `destination_url`.
+
+### Delete a webhook
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/delete" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY" \
+  -d '{
+    "webhook_type": "USER_VERIFICATION_COMPLETED"
+  }'
+```
+
+### List recent webhook calls
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/call/get" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY"
+```
+
+Returns up to 50 recent webhook calls with `transaction_id`, `webhook_type`, `status` (`PENDING`, `COMPLETED`, or `FAILED`), `attempts`, and timestamps.
+
+### Rerun a webhook call
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/call/rerun" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY" \
+  -d '{
+    "transaction_id": "ewh:a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+  }'
+```
+
+The rerun creates a new webhook call with its own new `transaction_id`.
+
+### List recent webhook events
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/event/get" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY"
+```
+
+Returns up to 50 recent webhook call events including HTTP status, response body, and network failure information.
+
 ## Next steps
 
-- Add webhook subscriptions so your backend can react to connection state changes.
-- Document your internal return URLs and post-verification UX.
+- Subscribe to webhook events so your backend reacts to verification results automatically.
+- Explore the different [data request types](#data-request-types) to request the verification signals you need.

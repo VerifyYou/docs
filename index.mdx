@@ -1,35 +1,28 @@
 ---
 title: "Overview"
-description: "Build a desktop-to-mobile verification flow with the Connect API"
+description: "Verify that your users are real humans using the Connect API"
 ---
 
-## What you build
+## What you can do
 
-- Create business connections for users tied to your service account.
-- Hand off desktop users to a mobile web flow with QR and short codes.
-- Send users back to your app when verification finishes.
-- Receive webhook events about connection status changes.
+- Register users and request humanness checks via the Connect API.
+- Retrieve humanness scores, unique human IDs, and other verification signals.
+- Receive webhook events when verification completes, is revoked, or cannot be fulfilled.
 
-## How the web app handoff works
+## How it works
 
-The web app detects desktop traffic and routes it through a desktop handoff screen.
-That screen generates a mobile URL and a QR code so users can continue on their phone.
-
-1. A user opens an invite URL on desktop or mobile.
-1. If the device is not mobile, the app redirects them to `/desktop` and preserves the original route in a `redirect` query param.
-1. The `/desktop` screen renders a QR code so the user can continue on mobile.
-1. The user completes the verification in their mobile browser, and the desktop session is updated automatically.
-1. The desktop screen polls for status and redirects back to the `redirect_url` you provided in the invite when the user finishes.
-1. If there is no `redirect_url`, the user can return to their previous tab.
-
-Users can also open `vyjoin.com` on their phone and enter the invite code if they cannot scan the QR.
+1. You register a user and specify what data you need (e.g. humanness score, unique human ID, phone verification).
+1. The API returns an `invite_url` that you present to the user.
+1. The user completes the verification flow on their mobile device.
+1. You poll for status or listen for a webhook to know when verification is done.
+1. You retrieve and decrypt the verification response to get the results.
 
 ## Quick start at a glance
 
 1. Create a service account and API key.
-1. Register a business connect user and generate an invite.
-1. Send desktop users to the web app’s `/desktop` handoff screen.
-1. Handle the return redirect in your app.
-1. Subscribe to webhooks to track connection state changes.
+1. Register a user with a data request type.
+1. Present the invite URL to the user.
+1. Check connection status or listen for webhooks.
+1. Decrypt the response to read verification results.
 
 Continue to `quickstart` for the step-by-step flow.
