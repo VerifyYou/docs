@@ -1,0 +1,245 @@
+---
+title: "Webhooks"
+description: "Receive real-time notifications when verification status changes"
+---
+
+<Note>
+Webhook configurations are tied to your API key. If you switch from sandbox keys to production keys, you must re-configure your webhooks under the new key.
+</Note>
+
+## Events
+
+- `USER_VERIFICATION_COMPLETED` — the user has successfully completed verification.
+- `USER_VERIFICATION_REVOKED` — a previously completed verification has been revoked.
+- `USER_VERIFICATION_DETERMINED_UNFULFILLABLE` — the verification cannot be fulfilled.
+
+## Payload
+
+```json
+{
+  "transaction_id": "ewh:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "user_id": "bcu_123",
+  "reference_user_id": "user_123",
+  "type": "USER_VERIFICATION_COMPLETED",
+  "payload": {},
+  "created_at": "2026-02-26T20:17:13.123Z"
+}
+```
+
+## Signature verification
+
+Each webhook includes an `X-Hub-Signature-256` header in the format `sha256=<hex>`.
+Compute the HMAC over the raw JSON body using your webhook shared secret.
+
+<CodeGroup dropdown>
+
+```javascript Node.js (Express)
+import crypto from "crypto";
+import express from "express";
+
+const app = express();
+
+app.post(
+  "/webhooks/verifyyou",
+  express.raw({ type: "application/json" }),
+  (req, res) => {
+    const signature = req.header("X-Hub-Signature-256") || "";
+    const expected = "sha256=" +
+      crypto.createHmac("sha256", process.env.VERIFYYOU_WEBHOOK_SECRET)
+        .update(req.body)
+        .digest("hex");
+
+    if (
+      !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
+    ) {
+      return res.status(401).send("invalid signature");
+    }
+
+    const payload = JSON.parse(req.body.toString("utf8"));
+    res.sendStatus(200);
+  }
+);
+```
+
+```typescript TypeScript (Express)
+import crypto from "crypto";
+import express, { Request, Response } from "express";
+
+const app = express();
+
+app.post(
+  "/webhooks/verifyyou",
+  express.raw({ type: "application/json" }),
+  (req: Request, res: Response) => {
+    const signature = req.header("X-Hub-Signature-256") ?? "";
+    const expected = "sha256=" +
+      crypto.createHmac("sha256", process.env.VERIFYYOU_WEBHOOK_SECRET ?? "")
+        .update(req.body as Buffer)
+        .digest("hex");
+
+    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+      return res.status(401).send("invalid signature");
+    }
+
+    const payload = JSON.parse((req.body as Buffer).toString("utf8"));
+    res.sendStatus(200);
+  }
+);
+```
+
+```python Python (Flask)
+import hmac
+import hashlib
+from flask import Flask, request, abort
+
+app = Flask(__name__)
+
+@app.post("/webhooks/verifyyou")
+def verifyyou_webhook():
+    signature = request.headers.get("X-Hub-Signature-256", "")
+    expected = "sha256=" + hmac.new(
+        key=bytes(os.environ["VERIFYYOU_WEBHOOK_SECRET"], "utf-8"),
+        msg=request.get_data(),
+        digestmod=hashlib.sha256,
+    ).hexdigest()
+
+    if not hmac.compare_digest(signature, expected):
+        abort(401)
+
+    payload = request.get_json()
+    return "", 200
+```
+
+```php PHP
+<?php
+$raw = file_get_contents("php://input");
+$signature = $_SERVER["HTTP_X_HUB_SIGNATURE_256"] ?? "";
+$secret = getenv("VERIFYYOU_WEBHOOK_SECRET");
+$expected = "sha256=" . hash_hmac("sha256", $raw, $secret);
+
+if (!hash_equals($signature, $expected)) {
+  http_response_code(401);
+  exit("invalid signature");
+}
+
+$payload = json_decode($raw, true);
+http_response_code(200);
+```
+
+```ruby Ruby (Rails)
+require "openssl"
+
+raw = request.raw_post
+signature = request.headers["X-Hub-Signature-256"].to_s
+secret = ENV.fetch("VERIFYYOU_WEBHOOK_SECRET")
+expected = "sha256=" + OpenSSL::HMAC.hexdigest("SHA256", secret, raw)
+
+unless ActiveSupport::SecurityUtils.secure_compare(signature, expected)
+  head :unauthorized and return
+end
+
+payload = JSON.parse(raw)
+head :ok
+```
+
+```go Go
+package main
+
+import (
+  "crypto/hmac"
+  "crypto/sha256"
+  "encoding/hex"
+  "io"
+  "net/http"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+  raw, _ := io.ReadAll(r.Body)
+  signature := r.Header.Get("X-Hub-Signature-256")
+  mac := hmac.New(sha256.New, []byte(os.Getenv("VERIFYYOU_WEBHOOK_SECRET")))
+  mac.Write(raw)
+  expected := "sha256=" + hex.EncodeToString(mac.Sum(nil))
+
+  if !hmac.Equal([]byte(signature), []byte(expected)) {
+    w.WriteHeader(http.StatusUnauthorized)
+    return
+  }
+
+  w.WriteHeader(http.StatusOK)
+}
+```
+
+</CodeGroup>
+
+## Retries
+
+Failed deliveries are retried with exponential backoff, up to 16 total attempts.
+The backoff caps at 6 hours.
+
+## Admin endpoints
+
+### Create or edit a webhook
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/create_or_edit" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY" \
+  -d '{
+    "webhook_type": "USER_VERIFICATION_COMPLETED",
+    "destination_url": "https://yourapp.com/webhooks/verifyyou"
+  }'
+```
+
+### List configured webhooks
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/get" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY"
+```
+
+Returns an array of configured webhooks, each with `webhook_type` and `destination_url`.
+
+### Delete a webhook
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/delete" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY" \
+  -d '{
+    "webhook_type": "USER_VERIFICATION_COMPLETED"
+  }'
+```
+
+### List recent webhook calls
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/call/get" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY"
+```
+
+Returns up to 50 recent webhook calls with `transaction_id`, `webhook_type`, `status` (`PENDING`, `COMPLETED`, or `FAILED`), `attempts`, and timestamps.
+
+### Rerun a webhook call
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/call/rerun" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY" \
+  -d '{
+    "transaction_id": "ewh:a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+  }'
+```
+
+The rerun creates a new webhook call with its own new `transaction_id`.
+
+### List recent webhook events
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/event/get" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY"
+```
+
+Returns up to 50 recent webhook call events including HTTP status, response body, and network failure information.

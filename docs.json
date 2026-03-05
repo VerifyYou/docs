@@ -24,7 +24,8 @@
             "group": "Start here",
             "pages": [
               "index",
-              "quickstart"
+              "quickstart",
+              "webhooks"
             ]
           },
           {
