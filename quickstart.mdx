@@ -1,6 +1,6 @@
 ---
 title: "Quick start"
-description: "Perform a humanness check on your users with the Connect API"
+description: "Perform a humanness check on your users with the VerifyYou API"
 ---
 
 ## Before you start
@@ -87,11 +87,8 @@ The `data_request.type` field on `/register` determines what data you receive ba
 
 | Type | Description |
 |------|-------------|
-| `GET_HUMANNESS_SCORE` | Returns a humanness score with confidence percentage |
 | `GET_HUMANNESS_SCORE_AND_UNIQUE_HUMAN_ID` | Returns a humanness score plus a unique human identifier |
-| `IS_PHONE_NUMBER_VERIFIED` | Returns whether the user's phone number is verified |
-| `IS_MOBILE_DEVICE_VERIFIED` | Returns whether the user's mobile device is verified (device legitimacy and app integrity) |
-| `IS_LOCAL_BIOMETRIC_CHECK_VERIFIED` | Returns whether the user has completed a local biometric check |
+| `IS_PHONE_NUMBER_VERIFIED` | Returns whether the user's phone number is verified - always true, placeholder request for testing |
 
 ## Check connection status
 
