@@ -10,8 +10,17 @@ Webhook configurations are tied to your API key. If you switch from sandbox keys
 ## Events
 
 - `USER_VERIFICATION_COMPLETED` — the user has successfully completed verification.
-- `USER_VERIFICATION_REVOKED` — a previously completed verification has been revoked.
+- `USER_VERIFICATION_REVOKED` — a user voluntarily revoked their connection to the company.
+- `USER_VERIFICATION_DENIED` — the company denied a user's verification request (e.g., after reviewer rejection).
 - `USER_VERIFICATION_DETERMINED_UNFULFILLABLE` — the verification cannot be fulfilled.
+
+<Note>
+**`USER_VERIFICATION_REVOKED` vs `USER_VERIFICATION_DENIED`** — These events represent two different disconnection flows:
+- **Revoked**: The *user* initiates the disconnection by voluntarily revoking their verification.
+- **Denied**: The *company* initiates the rejection by denying the user's verification request.
+
+Subscribe to both if you need to track all verification terminations.
+</Note>
 
 ## Payload
 
@@ -181,9 +190,9 @@ The backoff caps at 6 hours.
 ### Create or edit a webhook
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/create_or_edit" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/webhook/admin/config/create_or_edit" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY" \
+  -H "API-KEY: $VERIFYYOU_API_KEY" \
   -d '{
     "webhook_type": "USER_VERIFICATION_COMPLETED",
     "destination_url": "https://yourapp.com/webhooks/verifyyou"
@@ -193,9 +202,9 @@ curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/create_or_edit" \
 ### List configured webhooks
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/get" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/webhook/admin/config/get" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY"
+  -H "API-KEY: $VERIFYYOU_API_KEY"
 ```
 
 Returns an array of configured webhooks, each with `webhook_type` and `destination_url`.
@@ -203,9 +212,9 @@ Returns an array of configured webhooks, each with `webhook_type` and `destinati
 ### Delete a webhook
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/delete" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/webhook/admin/config/delete" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY" \
+  -H "API-KEY: $VERIFYYOU_API_KEY" \
   -d '{
     "webhook_type": "USER_VERIFICATION_COMPLETED"
   }'
@@ -214,9 +223,9 @@ curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/delete" \
 ### List recent webhook calls
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/call/get" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/webhook/admin/call/get" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY"
+  -H "API-KEY: $VERIFYYOU_API_KEY"
 ```
 
 Returns up to 50 recent webhook calls with `transaction_id`, `webhook_type`, `status` (`PENDING`, `COMPLETED`, or `FAILED`), `attempts`, and timestamps.
@@ -224,9 +233,9 @@ Returns up to 50 recent webhook calls with `transaction_id`, `webhook_type`, `st
 ### Rerun a webhook call
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/call/rerun" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/webhook/admin/call/rerun" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY" \
+  -H "API-KEY: $VERIFYYOU_API_KEY" \
   -d '{
     "transaction_id": "ewh:a1b2c3d4-e5f6-7890-abcd-ef1234567890"
   }'
@@ -237,9 +246,9 @@ The rerun creates a new webhook call with its own new `transaction_id`.
 ### List recent webhook events
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/event/get" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/webhook/admin/event/get" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY"
+  -H "API-KEY: $VERIFYYOU_API_KEY"
 ```
 
 Returns up to 50 recent webhook call events including HTTP status, response body, and network failure information.

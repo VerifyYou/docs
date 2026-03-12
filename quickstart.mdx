@@ -13,9 +13,9 @@ description: "Perform a humanness check on your users with the VerifyYou API"
 Register a user, specify the data you want back, and get an invite URL to send them through verification.
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/business_connect_user/register" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/business_connect_user/register" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY" \
+  -H "API-KEY: $VERIFYYOU_API_KEY" \
   -d '{
     "reference_user_id": "user_123",
     "redirect_url": "https://yourapp.com/verify/return",
@@ -68,9 +68,9 @@ By default, unique human ID uniqueness is enforced at the service account level 
 If you don't have a persistent `reference_user_id` for the user (e.g. anonymous surveys), you can pass an ephemeral session or token ID as the `reference_user_id` and use `uniqueness_region_id` to scope uniqueness to a specific context instead. For example, passing a survey ID as the `uniqueness_region_id` ensures each person can only complete that particular survey once, without requiring you to track users across surveys.
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/business_connect_user/register" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/business_connect_user/register" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY" \
+  -H "API-KEY: $VERIFYYOU_API_KEY" \
   -d '{
     "reference_user_id": "session_abc123",
     "redirect_url": "https://yourapp.com/survey/done",
@@ -95,9 +95,9 @@ The `data_request.type` field on `/register` determines what data you receive ba
 Poll for a user's connection status and retrieve verification results.
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/business_connect_user/get_status" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/business_connect_user/get_status" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY" \
+  -H "API-KEY: $VERIFYYOU_API_KEY" \
   -d '{
     "reference_user_id": "user_123"
   }'
@@ -125,9 +125,9 @@ If the user does not exist, the response returns a `DOES_NOT_EXIST` failure code
 Subscribe to `USER_VERIFICATION_COMPLETED` to get notified when a user finishes verification.
 
 ```bash
-curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/create_or_edit" \
+curl -X POST "$VERIFYYOU_API_BASE/v1/webhook/admin/config/create_or_edit" \
   -H "Content-Type: application/json" \
-  -H "API-KEY: $CONNECT_API_KEY" \
+  -H "API-KEY: $VERIFYYOU_API_KEY" \
   -d '{
     "webhook_type": "USER_VERIFICATION_COMPLETED",
     "destination_url": "https://yourapp.com/webhooks/verifyyou"
