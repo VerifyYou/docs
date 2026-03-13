@@ -7,6 +7,11 @@ description: "Perform a humanness check on your users with the VerifyYou API"
 
 - You have a service account.
 - You have an API key for that service account.
+- Set your base URL:
+
+```bash
+export VERIFYYOU_API_BASE=https://api.connect.verifyyou.com
+```
 
 ## Step 1: Register a user and request a humanness check
 
@@ -19,9 +24,11 @@ curl -X POST "$VERIFYYOU_API_BASE/v1/business_connect_user/register" \
   -d '{
     "reference_user_id": "user_123",
     "redirect_url": "https://yourapp.com/verify/return",
-    "data_request": {
-      "type": "GET_HUMANNESS_SCORE_AND_UNIQUE_HUMAN_ID"
-    }
+    "data_request": [
+      {
+        "type": "GET_HUMANNESS_SCORE_AND_UNIQUE_HUMAN_ID"
+      }
+    ]
   }'
 ```
 
@@ -75,15 +82,17 @@ curl -X POST "$VERIFYYOU_API_BASE/v1/business_connect_user/register" \
     "reference_user_id": "session_abc123",
     "redirect_url": "https://yourapp.com/survey/done",
     "uniqueness_region_id": "survey_456",
-    "data_request": {
-      "type": "GET_HUMANNESS_SCORE_AND_UNIQUE_HUMAN_ID"
-    }
+    "data_request": [
+      {
+        "type": "GET_HUMANNESS_SCORE_AND_UNIQUE_HUMAN_ID"
+      }
+    ]
   }'
 ```
 
 ## Data request types
 
-The `data_request.type` field on `/register` determines what data you receive back about the user.
+Each object in the `data_request` array on `/register` determines what data you receive back about the user.
 
 | Type | Description |
 |------|-------------|
@@ -109,14 +118,18 @@ curl -X POST "$VERIFYYOU_API_BASE/v1/business_connect_user/get_status" \
 {
   "status": "success",
   "has_connection": true,
-  "simple_data_request_response": {
-    "humanness_score": 97,
-    "fulfillment_time_s": 12
-  }
+  "simple_data_request_response": [
+    {
+      "result": {
+        "humanness_score": 21
+      },
+      "type": "GET_HUMANNESS_SCORE_AND_UNIQUE_HUMAN_ID"
+    }
+  ]
 }
 ```
 
-The `simple_data_request_response` is a plaintext JSON object containing the verification results for the data request type you specified during registration.
+The `simple_data_request_response` is an array of result objects, one per data request type you specified during registration. Each object contains a `type` and a `result` with the corresponding verification data.
 
 If the user does not exist, the response returns a `DOES_NOT_EXIST` failure code.
 
