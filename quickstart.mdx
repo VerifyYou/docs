@@ -149,6 +149,26 @@ curl -X POST "$VERIFYYOU_API_BASE/v1/webhook/admin/config/create_or_edit" \
 
 See [Webhooks](/webhooks) for event types, payload format, signature verification, admin endpoints, and more.
 
+## Handling maintenance downtime
+
+During scheduled maintenance, all API endpoints will return a `503 Service Unavailable` HTTP status with the following response:
+
+```json
+{
+  "status": "failure",
+  "failure_code": "SERVICE_TEMPORARILY_UNAVAILABLE",
+  "failure_reason": "Service is temporarily unavailable for maintenance. Please try again later."
+}
+```
+
+Consider implementing a "fail open" approach to handle maintenance periods gracefully:
+
+- **Fail open**: Allow user registration to proceed without VerifyYou verification when the service is unavailable
+- **Fail closed**: Block user registration until VerifyYou is available again
+- **Graceful fallback**: Display a user-friendly message explaining the temporary delay
+
+This approach ensures your application remains operational during VerifyYou maintenance windows.
+
 ## Next steps
 
 - Read the full [Webhooks](/webhooks) guide to handle all event types and verify signatures.
