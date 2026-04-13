@@ -1,0 +1,360 @@
+openapi: 3.1.0
+info:
+  title: VerifyYou V2 API
+  version: 2.0.0
+  description: |
+    Two API calls to verify a user is a real, unique human.
+
+    1. Create a verification — get back a URL to send your user to.
+    2. Check the status — confirm the result with the token from the redirect.
+
+servers:
+  - url: https://api.connect.verifyyou.com
+    description: Production
+  - url: http://localhost:8083
+    description: Local
+
+security:
+  - apiKey: []
+
+paths:
+  /v2/verification/create:
+    post:
+      operationId: createVerification
+      summary: Create a verification
+      description: |
+        Registers a user and returns a `verification_url`. Redirect or link your
+        user to this URL so they can complete the liveness check. After
+        completion, the user is redirected back to `redirect` with `vy_token`
+        and `vy_status` query parameters appended.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVerificationRequest"
+      responses:
+        "200":
+          description: Verification created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateVerificationResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /v2/verification/status:
+    post:
+      operationId: getVerificationStatus
+      summary: Check verification status
+      description: |
+        Look up whether a verification has been completed. Supply either the
+        short-lived `token` from the redirect callback, or the `external_id`
+        you used when creating the verification.
+
+        Tokens expire after 15 minutes. After expiry, use `external_id` instead.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerificationStatusRequest"
+      responses:
+        "200":
+          description: Status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerificationStatusResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          description: Token has expired. Use `external_id` instead.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                status: failure
+                failure_code: EXPIRED
+                failure_reason: "Verification token has expired. Use external_id instead."
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /v2/sandbox/phone-number:
+    post:
+      operationId: sandboxGeneratePhoneNumber
+      summary: Generate a test phone number
+      security:
+        - apiKey: []
+        - {}
+      description: |
+        Generate a random test phone number and its corresponding verification
+        code. Works without authentication (unauthenticated access is heavily
+        rate limited). Also accepts demo/sandbox API keys.
+
+        Test phone numbers use reserved ranges that never send real SMS:
+        - **US**: `+1{area_code}555-01xx` (NANP fictional block)
+        - **Global**: `+99901xxxxxxx` (ITU E.164 test range)
+
+        The verification code is always the last 6 digits of the phone number.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneratePhoneNumberRequest"
+      responses:
+        "200":
+          description: Test phone number generated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneratePhoneNumberResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /v2/sandbox/verification-code:
+    post:
+      operationId: sandboxGetVerificationCode
+      summary: Get verification code for a test phone number
+      security:
+        - apiKey: []
+        - {}
+      description: |
+        Returns the verification code for a given test phone number. Only
+        accepts numbers in the reserved test ranges. Works without
+        authentication (unauthenticated access is heavily rate limited).
+        Also accepts demo/sandbox API keys.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetVerificationCodeRequest"
+      responses:
+        "200":
+          description: Verification code returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetVerificationCodeResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: API-KEY
+      description: Your VerifyYou API key.
+
+  schemas:
+    CreateVerificationRequest:
+      type: object
+      properties:
+        external_id:
+          type: string
+          description: Your application's user identifier. If omitted, a UUID is generated automatically.
+          example: "user_123"
+        redirect:
+          type: string
+          format: uri
+          description: |
+            URL the user is redirected to after completing verification.
+            `vy_token` and `vy_status` query parameters are appended.
+          example: "https://yourapp.com/done"
+        region:
+          type: string
+          description: |
+            Limits each verified person to one account per region, preventing
+            duplicate accounts and fraud within the same context. Use this when
+            you need one real human per context — e.g. one account per
+            competition, one response per form, or one player per server. Users
+            already verified can connect to new regions instantly without
+            redoing the liveness check. If omitted, each person is limited to
+            one account across your entire integration.
+          example: "event_2026_austin"
+
+    CreateVerificationResponse:
+      type: object
+      properties:
+        verification_url:
+          type: string
+          format: uri
+          description: URL to send the user to for verification.
+          example: "https://verifyyou.com/i/A3KF9X"
+        external_id:
+          type: string
+          description: The `external_id` used for this verification. Matches what you sent, or the auto-generated ID if omitted.
+          example: "user_123"
+
+    VerificationStatusRequest:
+      type: object
+      description: Provide either `token` or `external_id` (at least one is required).
+      properties:
+        token:
+          type: string
+          description: Short-lived token from the `vy_token` redirect query parameter. Expires after 15 minutes.
+          example: "vt:a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        external_id:
+          type: string
+          description: The `external_id` used when creating the verification. Use this for lookups after the token expires.
+          example: "user_123"
+
+    VerificationStatusResponse:
+      type: object
+      properties:
+        verification_complete:
+          type: boolean
+          description: "`true` if the user passed the liveness check."
+        external_id:
+          type: string
+          description: The `external_id` associated with this verification.
+          example: "user_123"
+
+    GeneratePhoneNumberRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [us, global]
+          description: Type of test phone number to generate.
+          default: global
+          example: "us"
+        area_code:
+          type: string
+          description: "3-digit US area code (only used when type is `us`)."
+          default: "210"
+          example: "210"
+
+    GeneratePhoneNumberResponse:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          description: The generated test phone number in E.164 format.
+          example: "+12105550142"
+        verification_code:
+          type: string
+          description: The verification code for this test number (last 6 digits).
+          example: "550142"
+
+    GetVerificationCodeRequest:
+      type: object
+      required:
+        - phone_number
+      properties:
+        phone_number:
+          type: string
+          description: A test phone number in E.164 format.
+          example: "+12105550142"
+
+    GetVerificationCodeResponse:
+      type: object
+      properties:
+        verification_code:
+          type: string
+          description: The verification code for this test number (last 6 digits).
+          example: "550142"
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [failure]
+        failure_code:
+          type: string
+          description: Machine-readable error code.
+        failure_reason:
+          type: string
+          description: Human-readable error message.
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            status: failure
+            failure_code: INVALID_API_ACCESS
+            failure_reason: "token or external_id required"
+
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            status: failure
+            failure_code: INVALID_API_KEY
+            failure_reason: "API key is missing or invalid"
+
+    Forbidden:
+      description: Demo/sandbox API key required.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            status: failure
+            failure_code: DEMO_ACCOUNT_REQUIRED
+            failure_reason: "Sandbox endpoints are only available for demo accounts"
+
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            status: failure
+            failure_code: DOES_NOT_EXIST
+            failure_reason: "Token not found"
+
+    InternalError:
+      description: Unexpected server error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            status: failure
+            failure_code: INTERNAL_ERROR
+            failure_reason: "An unexpected error occurred"
+
+    ServiceUnavailable:
+      description: Service is temporarily unavailable for maintenance.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            status: failure
+            failure_code: SERVICE_TEMPORARILY_UNAVAILABLE
+            failure_reason: "Service is temporarily unavailable for maintenance. Please try again later."

@@ -1,0 +1,230 @@
+---
+title: "Quick start (v1)"
+description: "Stand up a desktop-to-mobile flow and bring users back to your app"
+---
+
+## Before you start
+
+- You have a service account.
+- You have an API key for that service account.
+- You know where users should return after verification completes.
+
+## Step 1: Register a business connect user
+
+Create a connection and invite for a user. You should store your own `reference_user_id` and pass a `redirect_url` so the user returns to your app when they finish.
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/business_connect_user/register" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY" \
+  -d '{
+    "reference_user_id": "user_123",
+    "redirect_url": "https://yourapp.com/verify/return"
+  }'
+```
+
+Use the response to render a QR code and invite code on desktop.
+Pass the invite code to mobile users who cannot scan the QR.
+
+## Step 2: Hand off desktop users to mobile
+
+Route desktop users to the web app’s `/desktop` screen.
+The page auto-generates a QR code that opens the mobile flow with the right parameters.
+
+Use a `redirect` query param so users return to your original route after verification.
+
+## Step 3: Bring users back
+
+The desktop handoff page polls for status and redirects to the `redirect_url` you provided during registration.
+If you did not provide a `redirect_url`, the user can return to their previous tab manually.
+
+## Webhooks
+
+Use webhooks to track connection status changes in your backend.
+
+### Events
+
+- `USER_VERIFICATION_COMPLETED`
+- `USER_VERIFICATION_REVOKED`
+- `USER_VERIFICATION_DETERMINED_UNFULFILLABLE`
+- `USER_DELETED`
+
+### Payload
+
+```json
+{
+  "transaction_id": "whc_123",
+  "user_id": "bcu_123",
+  "reference_user_id": "user_123",
+  "type": "USER_VERIFICATION_COMPLETED",
+  "payload": {},
+  "created_at": "2026-02-26T20:17:13.123Z"
+}
+```
+
+### Signature
+
+Each webhook includes an `X-Hub-Signature-256` header in the format `sha256=<hex>`.
+Compute the HMAC over the raw JSON body using your webhook shared secret.
+
+<CodeGroup dropdown>
+
+```javascript Node.js (Express)
+import crypto from "crypto";
+import express from "express";
+
+const app = express();
+
+app.post(
+  "/webhooks/verifyyou",
+  express.raw({ type: "application/json" }),
+  (req, res) => {
+    const signature = req.header("X-Hub-Signature-256") || "";
+    const expected = "sha256=" +
+      crypto.createHmac("sha256", process.env.VERIFYYOU_WEBHOOK_SECRET)
+        .update(req.body)
+        .digest("hex");
+
+    if (
+      !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
+    ) {
+      return res.status(401).send("invalid signature");
+    }
+
+    const payload = JSON.parse(req.body.toString("utf8"));
+    res.sendStatus(200);
+  }
+);
+```
+
+```typescript TypeScript (Express)
+import crypto from "crypto";
+import express, { Request, Response } from "express";
+
+const app = express();
+
+app.post(
+  "/webhooks/verifyyou",
+  express.raw({ type: "application/json" }),
+  (req: Request, res: Response) => {
+    const signature = req.header("X-Hub-Signature-256") ?? "";
+    const expected = "sha256=" +
+      crypto.createHmac("sha256", process.env.VERIFYYOU_WEBHOOK_SECRET ?? "")
+        .update(req.body as Buffer)
+        .digest("hex");
+
+    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+      return res.status(401).send("invalid signature");
+    }
+
+    const payload = JSON.parse((req.body as Buffer).toString("utf8"));
+    res.sendStatus(200);
+  }
+);
+```
+
+```python Python (Flask)
+import hmac
+import hashlib
+from flask import Flask, request, abort
+
+app = Flask(__name__)
+
+@app.post("/webhooks/verifyyou")
+def verifyyou_webhook():
+    signature = request.headers.get("X-Hub-Signature-256", "")
+    expected = "sha256=" + hmac.new(
+        key=bytes(os.environ["VERIFYYOU_WEBHOOK_SECRET"], "utf-8"),
+        msg=request.get_data(),
+        digestmod=hashlib.sha256,
+    ).hexdigest()
+
+    if not hmac.compare_digest(signature, expected):
+        abort(401)
+
+    payload = request.get_json()
+    return "", 200
+```
+
+```php PHP
+<?php
+$raw = file_get_contents("php://input");
+$signature = $_SERVER["HTTP_X_HUB_SIGNATURE_256"] ?? "";
+$secret = getenv("VERIFYYOU_WEBHOOK_SECRET");
+$expected = "sha256=" . hash_hmac("sha256", $raw, $secret);
+
+if (!hash_equals($signature, $expected)) {
+  http_response_code(401);
+  exit("invalid signature");
+}
+
+$payload = json_decode($raw, true);
+http_response_code(200);
+```
+
+```ruby Ruby (Rails)
+require "openssl"
+
+raw = request.raw_post
+signature = request.headers["X-Hub-Signature-256"].to_s
+secret = ENV.fetch("VERIFYYOU_WEBHOOK_SECRET")
+expected = "sha256=" + OpenSSL::HMAC.hexdigest("SHA256", secret, raw)
+
+unless ActiveSupport::SecurityUtils.secure_compare(signature, expected)
+  head :unauthorized and return
+end
+
+payload = JSON.parse(raw)
+head :ok
+```
+
+```go Go
+package main
+
+import (
+  "crypto/hmac"
+  "crypto/sha256"
+  "encoding/hex"
+  "io"
+  "net/http"
+)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+  raw, _ := io.ReadAll(r.Body)
+  signature := r.Header.Get("X-Hub-Signature-256")
+  mac := hmac.New(sha256.New, []byte(os.Getenv("VERIFYYOU_WEBHOOK_SECRET")))
+  mac.Write(raw)
+  expected := "sha256=" + hex.EncodeToString(mac.Sum(nil))
+
+  if !hmac.Equal([]byte(signature), []byte(expected)) {
+    w.WriteHeader(http.StatusUnauthorized)
+    return
+  }
+
+  w.WriteHeader(http.StatusOK)
+}
+```
+
+</CodeGroup>
+
+### Retries
+
+Failed deliveries are retried with exponential backoff, up to 16 total attempts.
+The backoff caps at 6 hours.
+
+### Configure a webhook
+
+```bash
+curl -X POST "$CONNECT_API_BASE/v1/webhook/admin/config/create_or_edit" \
+  -H "Content-Type: application/json" \
+  -H "API-KEY: $CONNECT_API_KEY" \
+  -d '{
+    "webhook_type": "USER_VERIFICATION_COMPLETED",
+    "destination_url": "https://yourapp.com/webhooks/verifyyou"
+  }'
+```
+
+## Next steps
+
+- Add webhook subscriptions so your backend can react to connection state changes.
+- Document your internal return URLs and post-verification UX.

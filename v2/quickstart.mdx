@@ -1,0 +1,443 @@
+---
+title: "Quick start"
+description: "Two API calls. No PII. Verified unique humans in your product."
+---
+
+Two API calls and you're live. VerifyYou runs the entire identity
+check — liveness, spoof detection, uniqueness — and gives you a
+simple yes or no. You never see, store, or touch any biometric data.
+
+We also handle — Bots, dupes, and fraud before they get to you. 
+All you do is decide what happens when someone passes.
+
+<Note>
+  These endpoints are public and heavily rate limited. Grab an
+  [API key](/v2/authentication) to remove the limits.
+</Note>
+
+<Steps>
+  <Step title="Create a verification">
+    ## Step 1: Create a verification
+
+    Call `POST /v2/verification/create` from your backend with a return URL. You get back a link — send your user there.
+
+    <CodeGroup>
+
+    ```javascript Node.js
+    const response = await fetch(
+      "https://api.connect.verifyyou.com/v2/verification/create",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          redirect: "https://yourapp.com/verified",
+        }),
+      }
+    );
+
+    const data = await response.json();
+    const verificationUrl = data.verification_url;
+    // "https://verifyyou.com/i/A3KF9X"
+    ```
+
+    ```python Python
+    import requests
+
+    response = requests.post(
+        "https://api.connect.verifyyou.com/v2/verification/create",
+        json={
+            "redirect": "https://yourapp.com/verified",
+        },
+    )
+
+    data = response.json()
+    verification_url = data["verification_url"]
+    # "https://verifyyou.com/i/A3KF9X"
+    ```
+
+    ```typescript TypeScript
+    interface CreateVerificationResponse {
+      verification_url: string;
+      external_id: string;
+    }
+
+    const response = await fetch(
+      "https://api.connect.verifyyou.com/v2/verification/create",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          redirect: "https://yourapp.com/verified",
+        }),
+      }
+    );
+
+    const data: CreateVerificationResponse = await response.json();
+    const verificationUrl = data.verification_url;
+    // "https://verifyyou.com/i/A3KF9X"
+    ```
+
+    ```csharp C#
+    using var client = new HttpClient();
+
+    var response = await client.PostAsync(
+        "https://api.connect.verifyyou.com/v2/verification/create",
+        new StringContent(
+            """{"redirect": "https://yourapp.com/verified"}""",
+            System.Text.Encoding.UTF8,
+            "application/json"
+        )
+    );
+
+    var body = await response.Content.ReadAsStringAsync();
+    // verification_url: "https://verifyyou.com/i/A3KF9X"
+    ```
+
+    ```java Java
+    var request = HttpRequest.newBuilder()
+        .uri(URI.create("https://api.connect.verifyyou.com/v2/verification/create"))
+        .header("Content-Type", "application/json")
+        .POST(HttpRequest.BodyPublishers.ofString("""
+            {"redirect": "https://yourapp.com/verified"}
+            """))
+        .build();
+
+    var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    // verification_url: "https://verifyyou.com/i/A3KF9X"
+    ```
+
+    ```php PHP
+    $response = file_get_contents("https://api.connect.verifyyou.com/v2/verification/create", false,
+        stream_context_create(["http" => [
+            "method" => "POST",
+            "header" => "Content-Type: application/json",
+            "content" => json_encode(["redirect" => "https://yourapp.com/verified"]),
+        ]])
+    );
+
+    $data = json_decode($response, true);
+    $verificationUrl = $data["verification_url"];
+    // "https://verifyyou.com/i/A3KF9X"
+    ```
+
+    ```go Go
+    body, _ := json.Marshal(map[string]string{
+        "redirect": "https://yourapp.com/verified",
+    })
+
+    req, _ := http.NewRequest("POST",
+        "https://api.connect.verifyyou.com/v2/verification/create",
+        bytes.NewBuffer(body),
+    )
+    req.Header.Set("Content-Type", "application/json")
+
+    resp, _ := http.DefaultClient.Do(req)
+    defer resp.Body.Close()
+    // verification_url: "https://verifyyou.com/i/A3KF9X"
+    ```
+
+    </CodeGroup>
+
+    ```json Response
+    {
+      "verification_url": "https://verifyyou.com/i/A3KF9X",
+      "external_id": "d4f8e2a1-..."
+    }
+    ```
+
+    | Parameter | Description |
+    | --- | --- |
+    | `redirect` | Where to return the user after verification. `vy_token` and `vy_status` query parameters are appended. |
+
+    <Info>
+      You can add `external_id`s to help keep track of accounts. See [External IDs](/v2/external-ids) for details.
+    </Info>
+
+    <Info>
+      Redirect the user to `verification_url` — open it as a redirect, in a modal webview, or a new tab.
+    </Info>
+  </Step>
+
+  <Step title="We verify them">
+    ## Step 2: We verify them
+
+    Once the user lands on our flow, VerifyYou runs a two-stage check automatically:
+
+    1. **2FA check** — handles ~90% of bots instantly, and lets returning users skip the full flow.
+    2. **Liveness + uniqueness scan** — confirms a real human is present and they haven't verified under a different account.
+
+    When done, we redirect back to your `redirect` URL with query params appended:
+
+    ```
+    https://yourapp.com/verified?vy_token=vt:a1b2c3d4-e5f6-7890-abcd-ef1234567890&vy_status=approved
+    ```
+
+    | Param | Values |
+    | --- | --- |
+    | `vy_status` | `approved` — passed all checks. `denied` — didn't pass. |
+    | `vy_token` | Short-lived verification token (expires after 15 minutes). Use this in step 3 to confirm server-side. |
+
+    <Note>
+      Want to try the flow right now? Generate a test phone number with the [sandbox](/v2/testing) — no API key needed:
+      ```bash
+      curl -s https://api.connect.verifyyou.com/v2/sandbox/phone-number -H "Content-Type: application/json" -d '{}'
+      ```
+    </Note>
+
+    <Note>
+      Running the flow yourself? There are a few quirks worth knowing — test phone numbers, account stickiness across browsers, and human review. See [Testing the flow](/v2/testing#what-to-expect-when-testing) before you start.
+    </Note>
+
+    <Accordion title="Extract query params from the redirect">
+      <CodeGroup>
+
+      ```javascript Node.js / Express
+      app.get("/verified", (req, res) => {
+        const vyToken = req.query.vy_token;
+        const vyStatus = req.query.vy_status;
+      });
+      ```
+
+      ```typescript TypeScript
+      const params = new URLSearchParams(window.location.search);
+      const vyToken = params.get("vy_token");
+      const vyStatus = params.get("vy_status");
+      ```
+
+      ```php PHP
+      $vyToken = $_GET["vy_token"];
+      $vyStatus = $_GET["vy_status"];
+      ```
+
+      </CodeGroup>
+    </Accordion>
+  </Step>
+
+  <Step title="Confirm the result">
+    ## Step 3: Confirm the result
+
+    Never trust the `vy_status` query param alone — anyone can fake a URL. Call `POST /v2/verification/status` from your backend to confirm.
+
+    **Option A — check by token:**
+
+    <CodeGroup>
+
+    ```javascript Node.js
+    const response = await fetch(
+      "https://api.connect.verifyyou.com/v2/verification/status",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: vyToken }),
+      }
+    );
+
+    const data = await response.json();
+    if (data.verification_complete) {
+      console.log("User is verified!");
+    }
+    ```
+
+    ```python Python
+    response = requests.post(
+        "https://api.connect.verifyyou.com/v2/verification/status",
+        json={"token": vy_token},
+    )
+
+    data = response.json()
+    if data["verification_complete"]:
+        print("User is verified!")
+    ```
+
+    ```typescript TypeScript
+    interface VerificationStatusResponse {
+      verification_complete: boolean;
+      external_id: string;
+    }
+
+    const response = await fetch(
+      "https://api.connect.verifyyou.com/v2/verification/status",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: vyToken }),
+      }
+    );
+
+    const data: VerificationStatusResponse = await response.json();
+    if (data.verification_complete) {
+      console.log("User is verified!");
+    }
+    ```
+
+    ```csharp C#
+    var response = await client.PostAsync(
+        "https://api.connect.verifyyou.com/v2/verification/status",
+        new StringContent(
+            $"{{\"token\": \"{vyToken}\"}}",
+            System.Text.Encoding.UTF8,
+            "application/json"
+        )
+    );
+
+    var body = await response.Content.ReadAsStringAsync();
+    ```
+
+    ```java Java
+    var request = HttpRequest.newBuilder()
+        .uri(URI.create("https://api.connect.verifyyou.com/v2/verification/status"))
+        .header("Content-Type", "application/json")
+        .POST(HttpRequest.BodyPublishers.ofString(
+            "{\"token\": \"" + vyToken + "\"}"
+        ))
+        .build();
+
+    var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    ```
+
+    ```php PHP
+    $response = file_get_contents("https://api.connect.verifyyou.com/v2/verification/status", false,
+        stream_context_create(["http" => [
+            "method" => "POST",
+            "header" => "Content-Type: application/json",
+            "content" => json_encode(["token" => $vyToken]),
+        ]])
+    );
+
+    $data = json_decode($response, true);
+    if ($data["verification_complete"]) {
+        echo "User is verified!";
+    }
+    ```
+
+    ```go Go
+    body, _ := json.Marshal(map[string]string{"token": vyToken})
+
+    req, _ := http.NewRequest("POST",
+        "https://api.connect.verifyyou.com/v2/verification/status",
+        bytes.NewBuffer(body),
+    )
+    req.Header.Set("Content-Type", "application/json")
+
+    resp, _ := http.DefaultClient.Do(req)
+    defer resp.Body.Close()
+    ```
+
+    </CodeGroup>
+
+    **Option B — check by external ID:**
+
+    Use this when the token has expired (after 15 minutes), or when you want to check status without a redirect flow.
+
+    <CodeGroup>
+
+    ```javascript Node.js
+    const response = await fetch(
+      "https://api.connect.verifyyou.com/v2/verification/status",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ external_id: "user_8f3a29c1" }),
+      }
+    );
+
+    const data = await response.json();
+    ```
+
+    ```python Python
+    response = requests.post(
+        "https://api.connect.verifyyou.com/v2/verification/status",
+        json={"external_id": "user_8f3a29c1"},
+    )
+
+    data = response.json()
+    if data["verification_complete"]:
+        print("User is verified!")
+    ```
+
+    ```typescript TypeScript
+    const response = await fetch(
+      "https://api.connect.verifyyou.com/v2/verification/status",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ external_id: "user_8f3a29c1" }),
+      }
+    );
+
+    const data: VerificationStatusResponse = await response.json();
+    ```
+
+    ```csharp C#
+    var response = await client.PostAsync(
+        "https://api.connect.verifyyou.com/v2/verification/status",
+        new StringContent(
+            """{"external_id": "user_8f3a29c1"}""",
+            System.Text.Encoding.UTF8,
+            "application/json"
+        )
+    );
+
+    var body = await response.Content.ReadAsStringAsync();
+    ```
+
+    ```java Java
+    var request = HttpRequest.newBuilder()
+        .uri(URI.create("https://api.connect.verifyyou.com/v2/verification/status"))
+        .header("Content-Type", "application/json")
+        .POST(HttpRequest.BodyPublishers.ofString(
+            "{\"external_id\": \"user_8f3a29c1\"}"
+        ))
+        .build();
+
+    var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    ```
+
+    ```php PHP
+    $response = file_get_contents("https://api.connect.verifyyou.com/v2/verification/status", false,
+        stream_context_create(["http" => [
+            "method" => "POST",
+            "header" => "Content-Type: application/json",
+            "content" => json_encode(["external_id" => "user_8f3a29c1"]),
+        ]])
+    );
+
+    $data = json_decode($response, true);
+    if ($data["verification_complete"]) {
+        echo "User is verified!";
+    }
+    ```
+
+    ```go Go
+    body, _ := json.Marshal(map[string]string{
+        "external_id": "user_8f3a29c1",
+    })
+
+    req, _ := http.NewRequest("POST",
+        "https://api.connect.verifyyou.com/v2/verification/status",
+        bytes.NewBuffer(body),
+    )
+    req.Header.Set("Content-Type", "application/json")
+
+    resp, _ := http.DefaultClient.Do(req)
+    defer resp.Body.Close()
+    ```
+
+    </CodeGroup>
+
+    ```json Response
+    {
+      "verification_complete": true,
+      "external_id": "user_8f3a29c1"
+    }
+    ```
+
+    <Info>
+      That's it. Two endpoints, one redirect, one check — your user is verified as a real, unique human.
+    </Info>
+  </Step>
+</Steps>
+
+<Card title="API Reference" icon="square-terminal" href="/api-reference">
+  Full endpoint docs with interactive playground
+</Card>

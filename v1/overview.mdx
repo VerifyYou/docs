@@ -1,0 +1,35 @@
+---
+title: "Overview (v1)"
+description: "Build a desktop-to-mobile verification flow with the Connect API"
+---
+
+## What you build
+
+- Create business connections for users tied to your service account.
+- Hand off desktop users to a mobile web flow with QR and short codes.
+- Send users back to your app when verification finishes.
+- Receive webhook events about connection status changes.
+
+## How the web app handoff works
+
+The web app detects desktop traffic and routes it through a desktop handoff screen.
+That screen generates a mobile URL and a QR code so users can continue on their phone.
+
+1. A user opens an invite URL on desktop or mobile.
+1. If the device is not mobile, the app redirects them to `/desktop` and preserves the original route in a `redirect` query param.
+1. The `/desktop` screen renders a QR code so the user can continue on mobile.
+1. The user completes the verification in their mobile browser, and the desktop session is updated automatically.
+1. The desktop screen polls for status and redirects back to the `redirect_url` you provided in the invite when the user finishes.
+1. If there is no `redirect_url`, the user can return to their previous tab.
+
+Users can also open `vyjoin.com` on their phone and enter the invite code if they cannot scan the QR.
+
+## Quick start at a glance
+
+1. Create a service account and API key.
+1. Register a business connect user and generate an invite.
+1. Send desktop users to the web app’s `/desktop` handoff screen.
+1. Handle the return redirect in your app.
+1. Subscribe to webhooks to track connection state changes.
+
+Continue to `quickstart` for the step-by-step flow.

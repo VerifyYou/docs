@@ -1,0 +1,233 @@
+---
+title: "External IDs"
+description: "Tie verifications to your own user identifiers."
+---
+
+Optionally tie a verification to your own user identifier by passing `external_id`. This lets you look up status later by your own ID instead of storing ours.
+
+<CodeGroup>
+
+```javascript Node.js
+const response = await fetch("https://api.connect.verifyyou.com/v2/verification/create", {
+  method: "POST",
+  headers: {
+    "API-KEY": process.env.VERIFYYOU_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    redirect: "https://yourapp.com/verified",
+    external_id: "user_8f3a29c1",
+  }),
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.connect.verifyyou.com/v2/verification/create",
+    headers={"API-KEY": VERIFYYOU_API_KEY},
+    json={
+        "redirect": "https://yourapp.com/verified",
+        "external_id": "user_8f3a29c1",
+    },
+)
+
+data = response.json()
+```
+
+```typescript TypeScript
+const response = await fetch("https://api.connect.verifyyou.com/v2/verification/create", {
+  method: "POST",
+  headers: {
+    "API-KEY": process.env.VERIFYYOU_API_KEY!,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    redirect: "https://yourapp.com/verified",
+    external_id: "user_8f3a29c1",
+  }),
+});
+
+const data: { verification_url: string; external_id: string } = await response.json();
+```
+
+```csharp C#
+using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("API-KEY", Environment.GetEnvironmentVariable("VERIFYYOU_API_KEY"));
+
+var response = await client.PostAsync(
+    "https://api.connect.verifyyou.com/v2/verification/create",
+    new StringContent(
+        """{"redirect": "https://yourapp.com/verified", "external_id": "user_8f3a29c1"}""",
+        System.Text.Encoding.UTF8,
+        "application/json"
+    )
+);
+
+var body = await response.Content.ReadAsStringAsync();
+```
+
+```java Java
+var request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.connect.verifyyou.com/v2/verification/create"))
+    .header("Content-Type", "application/json")
+    .header("API-KEY", System.getenv("VERIFYYOU_API_KEY"))
+    .POST(HttpRequest.BodyPublishers.ofString(
+        "{\"redirect\": \"https://yourapp.com/verified\", \"external_id\": \"user_8f3a29c1\"}"
+    ))
+    .build();
+
+var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+```
+
+```php PHP
+$response = file_get_contents("https://api.connect.verifyyou.com/v2/verification/create", false,
+    stream_context_create(["http" => [
+        "method" => "POST",
+        "header" => "Content-Type: application/json\r\nAPI-KEY: " . $apiKey,
+        "content" => json_encode([
+            "redirect" => "https://yourapp.com/verified",
+            "external_id" => "user_8f3a29c1",
+        ]),
+    ]])
+);
+
+$data = json_decode($response, true);
+```
+
+```go Go
+body, _ := json.Marshal(map[string]string{
+    "redirect":    "https://yourapp.com/verified",
+    "external_id": "user_8f3a29c1",
+})
+
+req, _ := http.NewRequest("POST",
+    "https://api.connect.verifyyou.com/v2/verification/create",
+    bytes.NewBuffer(body),
+)
+req.Header.Set("Content-Type", "application/json")
+req.Header.Set("API-KEY", os.Getenv("VERIFYYOU_API_KEY"))
+
+resp, _ := http.DefaultClient.Do(req)
+defer resp.Body.Close()
+```
+
+</CodeGroup>
+
+Once set, you can check status by your own ID instead of the token:
+
+<CodeGroup>
+
+```javascript Node.js
+const response = await fetch("https://api.connect.verifyyou.com/v2/verification/status", {
+  method: "POST",
+  headers: {
+    "API-KEY": process.env.VERIFYYOU_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ external_id: "user_8f3a29c1" }),
+});
+
+const data = await response.json();
+if (data.verification_complete) {
+  console.log("User is verified!");
+}
+```
+
+```python Python
+response = requests.post(
+    "https://api.connect.verifyyou.com/v2/verification/status",
+    headers={"API-KEY": VERIFYYOU_API_KEY},
+    json={"external_id": "user_8f3a29c1"},
+)
+
+data = response.json()
+if data["verification_complete"]:
+    print("User is verified!")
+```
+
+```typescript TypeScript
+const response = await fetch("https://api.connect.verifyyou.com/v2/verification/status", {
+  method: "POST",
+  headers: {
+    "API-KEY": process.env.VERIFYYOU_API_KEY!,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ external_id: "user_8f3a29c1" }),
+});
+
+const data: { verification_complete: boolean; external_id: string } = await response.json();
+```
+
+```csharp C#
+var response = await client.PostAsync(
+    "https://api.connect.verifyyou.com/v2/verification/status",
+    new StringContent(
+        """{"external_id": "user_8f3a29c1"}""",
+        System.Text.Encoding.UTF8,
+        "application/json"
+    )
+);
+
+var body = await response.Content.ReadAsStringAsync();
+```
+
+```java Java
+var request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.connect.verifyyou.com/v2/verification/status"))
+    .header("Content-Type", "application/json")
+    .header("API-KEY", System.getenv("VERIFYYOU_API_KEY"))
+    .POST(HttpRequest.BodyPublishers.ofString(
+        "{\"external_id\": \"user_8f3a29c1\"}"
+    ))
+    .build();
+
+var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+```
+
+```php PHP
+$response = file_get_contents("https://api.connect.verifyyou.com/v2/verification/status", false,
+    stream_context_create(["http" => [
+        "method" => "POST",
+        "header" => "Content-Type: application/json\r\nAPI-KEY: " . $apiKey,
+        "content" => json_encode(["external_id" => "user_8f3a29c1"]),
+    ]])
+);
+
+$data = json_decode($response, true);
+if ($data["verification_complete"]) {
+    echo "User is verified!";
+}
+```
+
+```go Go
+body, _ := json.Marshal(map[string]string{
+    "external_id": "user_8f3a29c1",
+})
+
+req, _ := http.NewRequest("POST",
+    "https://api.connect.verifyyou.com/v2/verification/status",
+    bytes.NewBuffer(body),
+)
+req.Header.Set("Content-Type", "application/json")
+req.Header.Set("API-KEY", os.Getenv("VERIFYYOU_API_KEY"))
+
+resp, _ := http.DefaultClient.Do(req)
+defer resp.Body.Close()
+```
+
+</CodeGroup>
+
+```json Response
+{
+  "verification_complete": true,
+  "external_id": "user_8f3a29c1"
+}
+```
+
+<Note>
+  If you pass both `external_id` and `region`, the person is still limited to one account per region — but can connect to new regions instantly without redoing the liveness check.
+</Note>
