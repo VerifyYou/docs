@@ -2,6 +2,8 @@
 # .git, .github, .claude, .agents, .idea, node_modules,
 # README.md, LICENSE.md, CHANGELOG.md, CONTRIBUTING.md
 
+node_modules/
+
 # Draft content
 drafts/
 *.draft.mdx

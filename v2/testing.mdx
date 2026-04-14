@@ -1,0 +1,417 @@
+---
+title: "Testing"
+description: "General gotchas and how to use the sandbox API"
+---
+
+## What to expect when testing
+
+If you're running the full flow yourself in a browser — not just hitting the API — there are a few things to know up front.
+
+### Test phone numbers are required
+
+In sandbox mode, you must use a test phone numbers via the [sandbox API](/v2/testing#generate-a-test-phone-number).
+You can generate a number and its verification code first via `POST /v2/sandbox/phone-number`, 
+then enter both when the flow prompts you.
+
+### Account state persists beyond your browser
+
+VerifyYou tracks accounts at the identity level, not the browser level. 
+Clearing cookies, switching devices, or opening an incognito window won't give you a fresh start 
+— your account is tied to your verified identity, not your browser state.
+That said, we know you're going to try. When you do, expect weird stuff — 
+broken states, phantom sessions, cryptic errors. Most of that is just the system pushing back, not 
+actual bugs. But if something feels genuinely wrong, 
+report it to us — we want to know.
+
+If you actually need a clean slate, visit [/del](https://vyjoin.com/del) on the 
+VerifyYou web app to delete your account, then try again.
+
+### Landing in human review
+
+On your second attempt through the flow, you'll get placed into human review.
+This is our catch-all queue — it handles spoof detection, flagged face IDs,
+identity collisions, and general flow hiccups all in one place. Behind the
+scenes, a mix of automation and manual review kicks in to sort out what's a
+real user having a bad time versus what's an actual fraud attempt. It also
+feeds into our data annotation pipeline, so even rejected attempts help us
+improve detection over time.
+
+If you're flagged as a spoof or a duplicate, you won't see a big scary
+error — you just quietly land in this queue and things get sorted in the
+background.
+
+<Info>
+  The human review step can be annoying during development. We're working on
+  a sandbox dashboard where you can self-approve pending verifications for
+  testing — no ETA yet, but reach out if it's slowing you down.
+</Info>
+
+---
+
+
+## Sandbox API
+
+The sandbox endpoints let you test the full verification flow without real phone numbers or SMS. No API key is needed — unauthenticated access works out of the box.
+
+<Note>
+  Public access to these endpoints is heavily rate limited. Please use an [API key](/v2/authentication) when possible.
+</Note>
+
+## Generate a test phone number
+
+Call `POST /v2/sandbox/phone-number` to get a random test phone number and its verification code in one shot.
+
+<CodeGroup>
+
+```javascript Node.js
+const response = await fetch("https://api.connect.verifyyou.com/v2/sandbox/phone-number", {
+  method: "POST",
+});
+
+const data = await response.json();
+const phone = data.phone_number;       // "+999011234567"
+const code = data.verification_code;   // "234567"
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.connect.verifyyou.com/v2/sandbox/phone-number",
+)
+
+data = response.json()
+phone = data["phone_number"]       # "+999011234567"
+code = data["verification_code"]   # "234567"
+```
+
+```typescript TypeScript
+interface SandboxPhoneResponse {
+  phone_number: string;
+  verification_code: string;
+}
+
+const response = await fetch("https://api.connect.verifyyou.com/v2/sandbox/phone-number", {
+  method: "POST",
+});
+
+const data: SandboxPhoneResponse = await response.json();
+const phone = data.phone_number;       // "+999011234567"
+const code = data.verification_code;   // "234567"
+```
+
+```csharp C#
+using var client = new HttpClient();
+
+var response = await client.PostAsync(
+    "https://api.connect.verifyyou.com/v2/sandbox/phone-number",
+    null
+);
+
+var json = await response.Content.ReadAsStringAsync();
+// { "phone_number": "+999011234567", "verification_code": "234567" }
+```
+
+```java Java
+var request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.connect.verifyyou.com/v2/sandbox/phone-number"))
+    .POST(HttpRequest.BodyPublishers.noBody())
+    .build();
+
+var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+// { "phone_number": "+999011234567", "verification_code": "234567" }
+```
+
+```php PHP
+$response = file_get_contents("https://api.connect.verifyyou.com/v2/sandbox/phone-number", false,
+    stream_context_create(["http" => ["method" => "POST"]])
+);
+
+$data = json_decode($response, true);
+$phone = $data["phone_number"];       // "+999011234567"
+$code = $data["verification_code"];   // "234567"
+```
+
+```go Go
+req, _ := http.NewRequest("POST",
+    "https://api.connect.verifyyou.com/v2/sandbox/phone-number",
+    nil,
+)
+
+resp, _ := http.DefaultClient.Do(req)
+defer resp.Body.Close()
+
+var data struct {
+    PhoneNumber      string `json:"phone_number"`
+    VerificationCode string `json:"verification_code"`
+}
+json.NewDecoder(resp.Body).Decode(&data)
+// data.PhoneNumber: "+999011234567"
+// data.VerificationCode: "234567"
+```
+
+</CodeGroup>
+
+```json Response
+{
+  "phone_number": "+999011234567",
+  "verification_code": "234567"
+}
+```
+
+You can request US-formatted numbers by passing `type` and `area_code`:
+
+<CodeGroup>
+
+```javascript Node.js
+const response = await fetch("https://api.connect.verifyyou.com/v2/sandbox/phone-number", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ type: "us", area_code: "415" }),
+});
+```
+
+```python Python
+response = requests.post(
+    "https://api.connect.verifyyou.com/v2/sandbox/phone-number",
+    json={"type": "us", "area_code": "415"},
+)
+```
+
+```typescript TypeScript
+interface SandboxPhoneRequest {
+  type?: "us" | "global";
+  area_code?: string;
+}
+
+const payload: SandboxPhoneRequest = { type: "us", area_code: "415" };
+
+const response = await fetch("https://api.connect.verifyyou.com/v2/sandbox/phone-number", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+});
+
+const data: SandboxPhoneResponse = await response.json();
+```
+
+```csharp C#
+var response = await client.PostAsync(
+    "https://api.connect.verifyyou.com/v2/sandbox/phone-number",
+    new StringContent(
+        """{"type": "us", "area_code": "415"}""",
+        System.Text.Encoding.UTF8,
+        "application/json"
+    )
+);
+```
+
+```java Java
+var request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.connect.verifyyou.com/v2/sandbox/phone-number"))
+    .header("Content-Type", "application/json")
+    .POST(HttpRequest.BodyPublishers.ofString(
+        "{\"type\": \"us\", \"area_code\": \"415\"}"
+    ))
+    .build();
+
+var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+```
+
+```php PHP
+$response = file_get_contents("https://api.connect.verifyyou.com/v2/sandbox/phone-number", false,
+    stream_context_create(["http" => [
+        "method" => "POST",
+        "header" => "Content-Type: application/json",
+        "content" => json_encode(["type" => "us", "area_code" => "415"]),
+    ]])
+);
+```
+
+```go Go
+body, _ := json.Marshal(map[string]string{
+    "type":      "us",
+    "area_code": "415",
+})
+
+req, _ := http.NewRequest("POST",
+    "https://api.connect.verifyyou.com/v2/sandbox/phone-number",
+    bytes.NewBuffer(body),
+)
+req.Header.Set("Content-Type", "application/json")
+
+resp, _ := http.DefaultClient.Do(req)
+defer resp.Body.Close()
+```
+
+</CodeGroup>
+
+```json Response
+{
+  "phone_number": "+14155550142",
+  "verification_code": "550142"
+}
+```
+
+---
+
+## Look up a verification code
+
+Already have a test phone number? Call `POST /v2/sandbox/verification-code` to get its code.
+
+<CodeGroup>
+
+```javascript Node.js
+const response = await fetch("https://api.connect.verifyyou.com/v2/sandbox/verification-code", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ phone_number: "+14155550142" }),
+});
+
+const code = (await response.json()).verification_code;  // "550142"
+```
+
+```python Python
+response = requests.post(
+    "https://api.connect.verifyyou.com/v2/sandbox/verification-code",
+    json={"phone_number": "+14155550142"},
+)
+
+code = response.json()["verification_code"]  # "550142"
+```
+
+```typescript TypeScript
+interface VerificationCodeRequest {
+  phone_number: string;
+}
+
+interface VerificationCodeResponse {
+  verification_code: string;
+}
+
+const response = await fetch("https://api.connect.verifyyou.com/v2/sandbox/verification-code", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ phone_number: "+14155550142" } satisfies VerificationCodeRequest),
+});
+
+const data: VerificationCodeResponse = await response.json();
+const code = data.verification_code;  // "550142"
+```
+
+```csharp C#
+var response = await client.PostAsync(
+    "https://api.connect.verifyyou.com/v2/sandbox/verification-code",
+    new StringContent(
+        """{"phone_number": "+14155550142"}""",
+        System.Text.Encoding.UTF8,
+        "application/json"
+    )
+);
+
+var json = await response.Content.ReadAsStringAsync();
+// { "verification_code": "550142" }
+```
+
+```java Java
+var request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.connect.verifyyou.com/v2/sandbox/verification-code"))
+    .header("Content-Type", "application/json")
+    .POST(HttpRequest.BodyPublishers.ofString(
+        "{\"phone_number\": \"+14155550142\"}"
+    ))
+    .build();
+
+var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+// { "verification_code": "550142" }
+```
+
+```php PHP
+$response = file_get_contents("https://api.connect.verifyyou.com/v2/sandbox/verification-code", false,
+    stream_context_create(["http" => [
+        "method" => "POST",
+        "header" => "Content-Type: application/json",
+        "content" => json_encode(["phone_number" => "+14155550142"]),
+    ]])
+);
+
+$code = json_decode($response, true)["verification_code"];  // "550142"
+```
+
+```go Go
+body, _ := json.Marshal(map[string]string{
+    "phone_number": "+14155550142",
+})
+
+req, _ := http.NewRequest("POST",
+    "https://api.connect.verifyyou.com/v2/sandbox/verification-code",
+    bytes.NewBuffer(body),
+)
+req.Header.Set("Content-Type", "application/json")
+
+resp, _ := http.DefaultClient.Do(req)
+defer resp.Body.Close()
+
+var data struct {
+    VerificationCode string `json:"verification_code"`
+}
+json.NewDecoder(resp.Body).Decode(&data)
+// data.VerificationCode: "550142"
+```
+
+</CodeGroup>
+
+```json Response
+{
+  "verification_code": "550142"
+}
+```
+
+<Info>
+  The verification code is always the last 6 digits of the phone number. Only test phone numbers are accepted — real numbers will return a `400` error.
+</Info>
+
+---
+
+## Test phone number ranges
+
+Test numbers use reserved ranges that never send real SMS and never trigger real verifications:
+
+| Range | Format | Example |
+| --- | --- | --- |
+| **Global** (ITU E.164 test range) | `+99901` followed by 7-12 digits | `+999011234567` |
+| **US** (NANP 555 block) | `+1{area_code}555-01xx` | `+14155550142` |
+
+---
+
+
+## Full test flow
+
+Here's how to test the complete verification cycle end-to-end:
+
+```python Python
+import requests
+
+# 1. Generate a test phone number
+sandbox = requests.post(
+    "https://api.connect.verifyyou.com/v2/sandbox/phone-number",
+).json()
+print(sandbox)
+# {"phone_number": "+999011234567", "verification_code": "234567"}
+
+# 2. Create a verification
+verification = requests.post(
+    "https://api.connect.verifyyou.com/v2/verification/create",
+    json={"redirect": "https://yourapp.com/verified"},
+).json()
+print(verification)
+# {"verification_url": "https://verifyyou.com/i/A3KF9X", "external_id": "d4f8e2a1-..."}
+
+# 3. Check the status
+status = requests.post(
+    "https://api.connect.verifyyou.com/v2/verification/status",
+    json={"external_id": verification["external_id"]},
+).json()
+print(status)
+# {"verification_complete": false, "external_id": "d4f8e2a1-..."}
+```

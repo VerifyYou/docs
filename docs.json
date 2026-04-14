@@ -1,80 +1,78 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "VerifyYou Docs",
-  "colors": {
-    "primary": "#16A34A",
-    "light": "#FFFFFF",
-    "dark": "#000000"
-  },
-  "fonts": {
-    "family": "Inter"
-  },
-  "favicon": "/favicon.svg",
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Start here",
-            "pages": [
-              "index",
-              "quickstart",
-              "webhooks"
-            ]
-          },
-          {
-            "group": "Tools",
-            "pages": [
-              "llm-tools"
-            ]
-          }
+    "$schema": "https://mintlify.com/docs.json",
+    "theme": "mint",
+    "name": "VerifyYou",
+    "colors": {
+        "primary": "#16A34A",
+        "light": "#FFFFFF",
+        "dark": "#000000"
+    },
+    "fonts": {
+        "family": "Inter"
+    },
+    "favicon": "/favicon.svg",
+    "logo": {
+        "light": "/logo/light.svg",
+        "dark": "/logo/dark.svg"
+    },
+    "navigation": {
+        "tabs": [
+            {
+                "tab": "Docs",
+                "versions": [
+                    {
+                        "version": "1.0.0",
+                        "default": true,
+                        "groups": [
+                            {
+                                "group": "Start here",
+                                "pages": [
+                                    "index",
+                                    "quickstart",
+                                    "webhooks"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "version": "2.0.0",
+                        "pages": [
+                            "v2/quickstart",
+                            {
+                                "group": "Configuration",
+                                "pages": [
+                                    "v2/authentication",
+                                    "v2/external-ids",
+                                    "v2/uniqueness-regions"
+                                ]
+                            },
+                            "v2/testing"
+                        ]
+                    }
+                ]
+            },
+            {
+                "tab": "API Reference",
+                "openapi": "v2/openapi.yaml"
+            }
         ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "VerifyYou Docs",
-          "href": "https://verifyyou.com/",
-          "icon": "globe"
+    },
+    "navbar": {
+        "links": [
+            {
+                "label": "Website",
+                "href": "https://verifyyou.com/"
+            }
+        ]
+    },
+    "contextual": {
+        "options": [
+            "copy"
+        ]
+    },
+    "footer": {
+        "socials": {
+            "linkedin": "https://www.linkedin.com/search/results/all/?keywords=verifyyou&origin=RICH_QUERY_SUGGESTION&heroEntityKey=urn%3Ali%3Aorganization%3A105571405&position=0"
         }
-      ]
     }
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Website",
-        "href": "https://verifyyou.com/"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "VerifyYou",
-      "href": "https://verifyyou.com/"
-    }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
-  },
-  "footer": {
-    "socials": {
-      "linkedin": "https://www.linkedin.com/search/results/all/?keywords=verifyyou&origin=RICH_QUERY_SUGGESTION&heroEntityKey=urn%3Ali%3Aorganization%3A105571405&position=0"
-    }
-  }
 }

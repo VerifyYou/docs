@@ -1,0 +1,126 @@
+---
+title: "Uniqueness Regions"
+description: "Scope one-account-per-person limits to specific contexts like competitions, forms, or servers."
+---
+
+By default, each verified person is limited to one account across your entire integration — preventing duplicate accounts and fraud.
+
+Pass a `region` to scope that limit per context. Each verified person is limited to one account **per region**, so they can't create duplicates within the same context. Users who are already verified can connect to new regions instantly without redoing the liveness check.
+
+Use this when you need to ensure one real human per context — for example, one account per competition, one response per form, or one player per server.
+
+<CodeGroup>
+
+```javascript Node.js
+const response = await fetch("https://api.connect.verifyyou.com/v2/verification/create", {
+  method: "POST",
+  headers: {
+    "API-KEY": process.env.VERIFYYOU_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    redirect: "https://yourapp.com/verified",
+    region: "survey_q3_2026",
+  }),
+});
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.connect.verifyyou.com/v2/verification/create",
+    headers={"API-KEY": VERIFYYOU_API_KEY},
+    json={
+        "redirect": "https://yourapp.com/verified",
+        "region": "survey_q3_2026",
+    },
+)
+
+data = response.json()
+```
+
+```typescript TypeScript
+const response = await fetch("https://api.connect.verifyyou.com/v2/verification/create", {
+  method: "POST",
+  headers: {
+    "API-KEY": process.env.VERIFYYOU_API_KEY!,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    redirect: "https://yourapp.com/verified",
+    region: "survey_q3_2026",
+  }),
+});
+
+const data: { verification_url: string; external_id: string } = await response.json();
+```
+
+```csharp C#
+using var client = new HttpClient();
+client.DefaultRequestHeaders.Add("API-KEY", Environment.GetEnvironmentVariable("VERIFYYOU_API_KEY"));
+
+var response = await client.PostAsync(
+    "https://api.connect.verifyyou.com/v2/verification/create",
+    new StringContent(
+        """{"redirect": "https://yourapp.com/verified", "region": "survey_q3_2026"}""",
+        System.Text.Encoding.UTF8,
+        "application/json"
+    )
+);
+
+var body = await response.Content.ReadAsStringAsync();
+```
+
+```java Java
+var request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.connect.verifyyou.com/v2/verification/create"))
+    .header("Content-Type", "application/json")
+    .header("API-KEY", System.getenv("VERIFYYOU_API_KEY"))
+    .POST(HttpRequest.BodyPublishers.ofString(
+        "{\"redirect\": \"https://yourapp.com/verified\", \"region\": \"survey_q3_2026\"}"
+    ))
+    .build();
+
+var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+```
+
+```php PHP
+$response = file_get_contents("https://api.connect.verifyyou.com/v2/verification/create", false,
+    stream_context_create(["http" => [
+        "method" => "POST",
+        "header" => "Content-Type: application/json\r\nAPI-KEY: " . $apiKey,
+        "content" => json_encode([
+            "redirect" => "https://yourapp.com/verified",
+            "region" => "survey_q3_2026",
+        ]),
+    ]])
+);
+
+$data = json_decode($response, true);
+```
+
+```go Go
+body, _ := json.Marshal(map[string]string{
+    "redirect": "https://yourapp.com/verified",
+    "region":   "survey_q3_2026",
+})
+
+req, _ := http.NewRequest("POST",
+    "https://api.connect.verifyyou.com/v2/verification/create",
+    bytes.NewBuffer(body),
+)
+req.Header.Set("Content-Type", "application/json")
+req.Header.Set("API-KEY", os.Getenv("VERIFYYOU_API_KEY"))
+
+resp, _ := http.DefaultClient.Do(req)
+defer resp.Body.Close()
+```
+
+</CodeGroup>
+
+<Info>
+  Region strings are arbitrary — define them however makes sense for your product. Something descriptive and stable like `survey_abc123` or `event_2026_austin` works better than a timestamp.
+</Info>
