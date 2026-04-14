@@ -3,12 +3,10 @@ title: "Quick start"
 description: "Two API calls. No PII. Verified unique humans in your product."
 ---
 
-Two API calls and you're live. VerifyYou runs the entire identity
-check — liveness, spoof detection, uniqueness — and gives you a
-simple yes or no. You never see, store, or touch any biometric data.
+Two API calls and you're live.
 
-We also handle — Bots, dupes, and fraud before they get to you. 
-All you do is decide what happens when someone passes.
+We handle — Bots, dupes, and fraud before they get to you.
+All you decide is where to put the human check in your flow and what happens when someone passes.
 
 <Note>
   These endpoints are public and heavily rate limited. Grab an
@@ -163,8 +161,10 @@ All you do is decide what happens when someone passes.
 
     Once the user lands on our flow, VerifyYou runs a two-stage check automatically:
 
-    1. **2FA check** — handles ~90% of bots instantly, and lets returning users skip the full flow.
+    1. **Phone number check** — a verified phone number acts as a persistent identifier that follows the user across devices, browsers, and sessions. Returning users skip the full flow.
     2. **Liveness + uniqueness scan** — confirms a real human is present and they haven't verified under a different account.
+
+    {/* TODO: update this section once the new retry + human-review flow is finalized. Emphasize that it's a safety net — very little traffic should actually pass through it. */}
 
     When done, we redirect back to your `redirect` URL with query params appended:
 
