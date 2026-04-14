@@ -22,6 +22,7 @@
                 "versions": [
                     {
                         "version": "1.0.0",
+                        "default": true,
                         "groups": [
                             {
                                 "group": "Start here",
@@ -35,7 +36,6 @@
                     },
                     {
                         "version": "2.0.0",
-                        "default": true,
                         "pages": [
                             "v2/quickstart",
                             {
