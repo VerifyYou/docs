@@ -1,6 +1,6 @@
 ---
 title: "Quick start"
-description: "Two API calls. No PII. Verified unique humans in your product."
+description: "Two API calls. Verified unique humans in your product."
 ---
 
 Two API calls and you're live.
@@ -161,10 +161,24 @@ All you decide is where to put the human check in your flow and what happens whe
 
     Once the user lands on our flow, VerifyYou runs a two-stage check automatically:
 
-    1. **Phone number check** — a verified phone number acts as a persistent identifier that follows the user across devices, browsers, and sessions. Returning users skip the full flow.
+    1. **Phone number check** — a verified phone number acts as a persistent identifier that follows the user across devices, browsers, and sessions.
     2. **Liveness + uniqueness scan** — confirms a real human is present and they haven't verified under a different account.
 
     {/* TODO: update this section once the new retry + human-review flow is finalized. Emphasize that it's a safety net — very little traffic should actually pass through it. */}
+
+    <Info>
+      **Desktop vs. mobile.** If your user hits the flow on desktop, we hand them off to their phone via a QR code — they scan, complete the liveness capture on mobile, and (on success) the desktop session automatically advances and redirects back to your `redirect` URL. Users who start on mobile stay on mobile and complete the whole flow on one device. Either way, your app just gets one redirect back with the same query params — you don't need to branch your integration on device type.
+    </Info>
+
+    <Accordion title="Why a verification can be denied">
+      A `denied` result isn't a single thing — it means the user failed one of a few checks:
+
+      - **Liveness** — the capture didn't confirm a real person was present (e.g. photo of a photo, screen replay, mask).
+      - **Uniqueness** — the person has already verified under another account, either in your app or elsewhere on our network.
+      - **Risk signals** — patterns consistent with fraudulent attempts.
+
+      We don't return the specific reason per attempt on purpose. Exposing which check failed would give bad actors a map of what to try next. That said, we're working on getting this data back to you in a shape that's actually useful — more on that down the road. 
+    </Accordion>
 
     When done, we redirect back to your `redirect` URL with query params appended:
 
