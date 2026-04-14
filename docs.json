@@ -15,6 +15,16 @@
         "light": "/logo/light.svg",
         "dark": "/logo/dark.svg"
     },
+    "redirects": [
+        {
+            "source": "/",
+            "destination": "/v2/quickstart"
+        },
+        {
+            "source": "/index",
+            "destination": "/v2/quickstart"
+        }
+    ],
     "navigation": {
         "tabs": [
             {
