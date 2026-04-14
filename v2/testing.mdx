@@ -15,19 +15,22 @@ then enter both when the flow prompts you.
 
 ### Account state persists beyond your browser
 
-VerifyYou tracks accounts at the identity level, not the browser level. 
-Clearing cookies, switching devices, or opening an incognito window won't give you a fresh start 
-— your account is tied to your verified identity, not your browser state.
-That said, we know you're going to try. When you do, expect weird stuff — 
-broken states, phantom sessions, cryptic errors. Most of that is just the system pushing back, not 
-actual bugs. But if something feels genuinely wrong, 
+{/* TODO: Ammar + James to riff on final wording — move off the word "identity". Using "verified account" / "persistent identifier" for now. */}
+VerifyYou tracks accounts at the user level, not the browser level.
+Your verified phone number acts as a persistent identifier that follows the account
+across devices and sessions — clearing cookies, switching devices, or opening an
+incognito window won't give you a fresh start.
+That said, we know you're going to try. When you do, expect weird stuff —
+broken states, phantom sessions, cryptic errors. Most of that is just the system pushing back, not
+actual bugs. But if something feels genuinely wrong,
 report it to us — we want to know.
 
-If you actually need a clean slate, visit [/del](https://vyjoin.com/del) on the 
+If you actually need a clean slate, visit [/del](https://vyjoin.com/del) on the
 VerifyYou web app to delete your account, then try again.
 
 ### Landing in human review
 
+{/* TODO: rewrite this section once the new retry + review logic is finalized. Frame it as a safety net — emphasize that minimal traffic should actually flow through here. */}
 On your second attempt through the flow, you'll get placed into human review.
 This is our catch-all queue — it handles spoof detection, flagged face IDs,
 identity collisions, and general flow hiccups all in one place. Behind the
