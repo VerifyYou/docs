@@ -7,6 +7,10 @@ description: "General gotchas and how to use the sandbox API"
 
 If you're running the full flow yourself in a browser — not just hitting the API — there are a few things to know up front.
 
+### Heads up if you're testing on desktop
+
+If you open the verification URL on a laptop or desktop, you'll be handed off to your phone via a QR code — the liveness capture only runs on mobile. Scan the QR, finish the flow on your phone, and the desktop tab will advance and redirect back on its own. See the [Quick start](/v2/quickstart) for the full breakdown.
+
 ### Test phone numbers are required
 
 In sandbox mode, you must use a test phone numbers via the [sandbox API](/v2/testing#generate-a-test-phone-number).
@@ -15,33 +19,42 @@ then enter both when the flow prompts you.
 
 ### Account state persists beyond your browser
 
-{/* TODO: Ammar + James to riff on final wording — move off the word "identity". Using "verified account" / "persistent identifier" for now. */}
+{/* TODO: Ammar + James to riff on final wording — confirm BCU / alts-exhausted naming matches what the system actually returns. */}
 VerifyYou tracks accounts at the user level, not the browser level.
 Your verified phone number acts as a persistent identifier that follows the account
 across devices and sessions — clearing cookies, switching devices, or opening an
 incognito window won't give you a fresh start.
-That said, we know you're going to try. When you do, expect weird stuff —
-broken states, phantom sessions, cryptic errors. Most of that is just the system pushing back, not
-actual bugs. But if something feels genuinely wrong,
+
+When you're testing, you'll probably run into this pretty quickly — and from the API
+side it can feel like a bug. You'll call `verification.create`, push the same user
+(or someone close) through the flow a second time, and not get the fresh slate you
+expected. That's by design: every verification you create is tied to a user at
+creation time, and that tie follows them through the whole lifecycle on our end.
+Incognito, cleared cookies, a different browser, a new device — none of that gives
+you a fresh start, because the state lives on our servers, not in your browser.
+One verified account per user per company is the rule.
+
+To keep testing, you've got two options: delete the account (see below) and re-run
+the same user, or kick off a new `verification.create` with a different test phone
+number so you're binding a different user.
+
+If something looks genuinely broken (not just "I got blocked again"),
 report it to us — we want to know.
 
-If you actually need a clean slate, visit [/del](https://vyjoin.com/del) on the
+If you actually need a clean slate (which is often when testing), visit [/del](https://vyjoin.com/del) on the
 VerifyYou web app to delete your account, then try again.
 
 ### Landing in human review
 
 {/* TODO: rewrite this section once the new retry + review logic is finalized. Frame it as a safety net — emphasize that minimal traffic should actually flow through here. */}
-On your second attempt through the flow, you'll get placed into human review.
-This is our catch-all queue — it handles spoof detection, flagged face IDs,
-identity collisions, and general flow hiccups all in one place. Behind the
-scenes, a mix of automation and manual review kicks in to sort out what's a
-real user having a bad time versus what's an actual fraud attempt. It also
-feeds into our data annotation pipeline, so even rejected attempts help us
-improve detection over time.
+On your second attempt through the flow, you'll should land in human review. The
+reason is simple: your face is already on file from the first run, so the second
+attempt collides with an existing verified account — and that collision is what
+sends you to human review.
 
-If you're flagged as a spoof or a duplicate, you won't see a big scary
-error — you just quietly land in this queue and things get sorted in the
-background.
+Human review is a safety net, not a catch-all — in production it should see very
+little traffic. You won't see a big scary error when you land here; things just
+sort themselves out in the background.
 
 <Info>
   The human review step can be annoying during development. We're working on
@@ -390,7 +403,19 @@ Test numbers use reserved ranges that never send real SMS and never trigger real
 
 ## Full test flow
 
-Here's how to test the complete verification cycle end-to-end:
+Here's how to run the complete verification cycle end-to-end. The loop is:
+**generate a test phone number → create a verification → complete the human
+step in a browser → check status → delete the account and repeat** if you want
+another clean run.
+
+<Warning>
+  The liveness + uniqueness scan has to be completed in a browser by a real
+  human in front of a camera. It's intentionally not API-automatable — don't
+  try to wire it into an automated test suite. The script below handles the
+  backend steps; the human step happens in the hosted flow.
+</Warning>
+
+**1. Backend steps (scriptable):**
 
 ```python Python
 import requests
@@ -409,12 +434,28 @@ verification = requests.post(
 ).json()
 print(verification)
 # {"verification_url": "https://verifyyou.com/i/A3KF9X", "external_id": "d4f8e2a1-..."}
+```
 
-# 3. Check the status
+**2. Human step (browser, manual):** open `verification_url` in a browser,
+enter the sandbox phone number and its verification code, then complete the
+liveness capture in front of a camera.
+
+**3. Check the status (scriptable):**
+
+```python Python
+# After the human has finished the flow in the browser
 status = requests.post(
     "https://api.connect.verifyyou.com/v2/verification/status",
     json={"external_id": verification["external_id"]},
 ).json()
 print(status)
-# {"verification_complete": false, "external_id": "d4f8e2a1-..."}
+# {"verification_complete": true, "external_id": "d4f8e2a1-..."}
 ```
+
+**4. Restart the loop (for repeat testing, spoof attempts, etc.):**
+
+Once you've verified, your face is on file — the next run through the flow
+will collide with your existing account and land in human review (see
+[Landing in human review](#landing-in-human-review)). To get a clean slate,
+visit [/del](https://vyjoin.com/del) on the VerifyYou web app to delete your
+account, then start again from step 1.
