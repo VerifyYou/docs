@@ -33,7 +33,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
     const data = await response.json();
     const verificationUrl = data.verification_url;
-    // "https://verifyyou.com/i/A3KF9X"
+    // "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```python Python
@@ -48,7 +48,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
     data = response.json()
     verification_url = data["verification_url"]
-    # "https://verifyyou.com/i/A3KF9X"
+    # "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```typescript TypeScript
@@ -70,7 +70,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
     const data: CreateVerificationResponse = await response.json();
     const verificationUrl = data.verification_url;
-    // "https://verifyyou.com/i/A3KF9X"
+    // "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```csharp C#
@@ -86,7 +86,7 @@ All you decide is where to put the human check in your flow and what happens whe
     );
 
     var body = await response.Content.ReadAsStringAsync();
-    // verification_url: "https://verifyyou.com/i/A3KF9X"
+    // verification_url: "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```java Java
@@ -99,7 +99,7 @@ All you decide is where to put the human check in your flow and what happens whe
         .build();
 
     var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    // verification_url: "https://verifyyou.com/i/A3KF9X"
+    // verification_url: "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```php PHP
@@ -113,7 +113,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
     $data = json_decode($response, true);
     $verificationUrl = $data["verification_url"];
-    // "https://verifyyou.com/i/A3KF9X"
+    // "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```go Go
@@ -129,14 +129,14 @@ All you decide is where to put the human check in your flow and what happens whe
 
     resp, _ := http.DefaultClient.Do(req)
     defer resp.Body.Close()
-    // verification_url: "https://verifyyou.com/i/A3KF9X"
+    // verification_url: "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     </CodeGroup>
 
     ```json Response
     {
-      "verification_url": "https://verifyyou.com/i/A3KF9X",
+      "verification_url": "https://verifyyou.com/invite?session_id=zsjmq6",
       "external_id": "d4f8e2a1-..."
     }
     ```
@@ -144,6 +144,7 @@ All you decide is where to put the human check in your flow and what happens whe
     | Parameter | Description |
     | --- | --- |
     | `redirect` | Where to return the user after verification. `vy_token` and `vy_status` query parameters are appended. |
+    | `phone` | Optional. E.164 phone number. When supplied, `verification_url` skips the phone-OTP step. See [Skip phone verification](#skip-phone-verification-with-phone) below. |
 
     <Info>
       You can add `external_id`s to help keep track of accounts. See [External IDs](/v2/external-ids) for details.
@@ -152,6 +153,32 @@ All you decide is where to put the human check in your flow and what happens whe
     <Info>
       Redirect the user to `verification_url` — open it as a redirect, in a modal webview, or a new tab.
     </Info>
+
+    <Accordion title="Skip phone verification with `phone`" icon="phone">
+      ### Skip phone verification with `phone`
+
+      If you've already verified the user's phone number on your end (e.g. your own SMS login, an authenticated session), pass it in `phone`. The returned `verification_url` will land the user directly on the liveness check — no phone-OTP step. Same field, same code path on your side; only the URL shape changes.
+
+      ```json Request
+      {
+        "redirect": "https://yourapp.com/verified",
+        "phone": "+12105550142"
+      }
+      ```
+
+      ```json Response
+      {
+        "verification_url": "https://verifyyou.com/verify?session_id=zsjmq6&t=eyJwaG9uZU51bWJlciI6IisxMjEwNTU1MDE0MiIsInBob25lQ29kZSI6IjU1MDE0MiJ9",
+        "external_id": "d4f8e2a1-..."
+      }
+      ```
+
+      <Warning>
+        The `verification_url` is the trust anchor — anyone with it can complete the flow as that user. Deliver it over a channel you've already authenticated (post-login redirect, authenticated email, push notification). Don't drop it in a public page or unauthenticated email.
+      </Warning>
+
+      `phone` skips the OTP step, not the verification itself — every call runs the full liveness check.
+    </Accordion>
   </Step>
 
   <Step title="We verify them">
@@ -229,6 +256,10 @@ All you decide is where to put the human check in your flow and what happens whe
     ## Step 3: Confirm the result
 
     Never trust the `vy_status` query param alone — anyone can fake a URL. Call `POST /v2/verification/status` from your backend to confirm.
+
+    <Info>
+      Safe to poll — an in-flight verification (created but the user hasn't finished yet) returns `200` with `verification_complete: false`. A `404` only happens for tokens or `external_id`s that don't match any verification.
+    </Info>
 
     **Option A — check by token:**
 
@@ -443,6 +474,10 @@ All you decide is where to put the human check in your flow and what happens whe
       "external_id": "user_8f3a29c1"
     }
     ```
+
+    <Info>
+      **Status answers at the user level, not the session level.** Looking up by `external_id` returns `true` as soon as *any* session for that user has completed — useful if you call `verification/create` more than once for the same user (e.g. to deliver the URL via different channels). See [Reusing the same external_id](/v2/external-ids#reusing-the-same-external-id) for details. Looking up by `token` is always session-scoped.
+    </Info>
 
     <Info>
       That's it. Two endpoints, one redirect, one check — your user is verified as a real, unique human.
