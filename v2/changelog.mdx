@@ -1,0 +1,27 @@
+---
+title: "Changelog"
+description: "What's new in the VerifyYou V2 API."
+---
+
+## 2.1.0
+
+### Added
+
+- **`phone` parameter on `POST /v2/verification/create`.** When you've already verified the user's phone number out-of-band (e.g. your own SMS login), pass it as `phone` and the returned `verification_url` lands the user directly on the liveness check — no phone-OTP step. See [Skip phone verification](/v2/quickstart#skip-phone-verification-with-phone).
+- **Documented `external_id` reuse semantics.** Calling `verification/create` multiple times with the same `external_id` is intentional, not an error — each call returns its own `verification_url`. `verification/status` answers at the user level, not per session. See [Reusing the same external_id](/v2/external-ids#reusing-the-same-external-id).
+
+### Changed
+
+- **`verification_url` is now conditional** on whether `phone` is supplied — same field, two URL shapes. The standard `/invite?…` form is returned when `phone` is omitted; an `/auto-login?…` form is returned when `phone` is provided. No FE integration change on your side either way.
+
+### Removed
+
+- **`session_id` is no longer returned in the `verification/create` response body.** It's an internal identifier; the only public artifact is `verification_url`. If you were storing it, switch to storing `verification_url` (or its query parameter) instead. The customer-facing flow doesn't reference `session_id` directly anywhere.
+
+### Notes
+
+- All existing 2.0.0 integrations continue to work unchanged — the removed `session_id` was undocumented, and every other change is additive.
+
+## 2.0.0
+
+Initial public release. Two endpoints, one redirect, one check — see the [quick start](/v2/quickstart).

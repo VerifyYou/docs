@@ -17,6 +17,10 @@ In sandbox mode, you must use a test phone numbers via the [sandbox API](/v2/tes
 You can generate a number and its verification code first via `POST /v2/sandbox/phone-number`, 
 then enter both when the flow prompts you.
 
+<Tip>
+  Want to skip the phone-OTP step entirely during testing? Pass the test phone number as `phone` on `verification.create` — the flow lands straight on the liveness check. See [Skip phone verification](/v2/quickstart#skip-phone-verification-with-phone).
+</Tip>
+
 ### Account state persists beyond your browser
 
 {/* TODO: Ammar + James to riff on final wording — confirm BCU / alts-exhausted naming matches what the system actually returns. */}

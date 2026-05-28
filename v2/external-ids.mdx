@@ -231,3 +231,50 @@ defer resp.Body.Close()
 <Note>
   If you pass both `external_id` and `region`, the person is still limited to one account per region — but can connect to new regions instantly without redoing the liveness check.
 </Note>
+
+## Reusing the same `external_id`
+
+Calling `verification/create` more than once with the same `external_id` is **not an error**. Each call returns its own `verification_url` — independent, both valid. Nothing is overwritten on our side.
+
+```json First call
+{
+  "external_id": "user_8f3a29c1",
+  "verification_url": "https://verifyyou.com/i/A3KF9X"
+}
+```
+
+```json Second call (same external_id)
+{
+  "external_id": "user_8f3a29c1",
+  "verification_url": "https://verifyyou.com/i/Z9PQ2R"
+}
+```
+
+This is intentional: `external_id` identifies *your user*, not a single verification attempt. You might legitimately want multiple URLs for the same user — e.g. one for email delivery, one for a fallback SMS — and we don't want to block that.
+
+### How status resolves a reused `external_id`
+
+`verification/status` answers at the **user level**, not the session level. It returns one boolean:
+
+```json
+{
+  "verification_complete": true,
+  "external_id": "user_8f3a29c1"
+}
+```
+
+- If **any** session for that `external_id` has completed verification, `verification_complete` is `true`.
+- If all are still in-flight, `verification_complete` is `false` (200 — safe to poll).
+- If no session has ever been created for that `external_id`, you get a `404` with `failure_code: DOES_NOT_EXIST`:
+
+  ```json
+  {
+    "status": "failure",
+    "failure_code": "DOES_NOT_EXIST",
+    "failure_reason": "User not found"
+  }
+  ```
+
+<Warning>
+  Status does not enumerate the individual verification attempts behind an `external_id` — it answers at the user level. If you need to track individual attempts (e.g. retry analytics, expiring stale URLs), store the `verification_url` from each `verification/create` response yourself.
+</Warning>

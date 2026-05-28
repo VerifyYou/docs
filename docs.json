@@ -34,7 +34,7 @@
                         ]
                     },
                     {
-                        "version": "2.0.0",
+                        "version": "2.1.0",
                         "default": true,
                         "pages": [
                             "v2/quickstart",
@@ -46,7 +46,8 @@
                                     "v2/uniqueness-regions"
                                 ]
                             },
-                            "v2/testing"
+                            "v2/testing",
+                            "v2/changelog"
                         ]
                     }
                 ]

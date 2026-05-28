@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: VerifyYou V2 API
-  version: 2.0.0
+  version: 2.1.0
   description: |
     Two API calls to verify a user is a real, unique human.
 
@@ -57,6 +57,11 @@ paths:
         Look up whether a verification has been completed. Supply either the
         short-lived `token` from the redirect callback, or the `external_id`
         you used when creating the verification.
+
+        An in-flight verification (created but the user hasn't finished the
+        liveness check yet) returns `200` with `verification_complete: false`
+        — safe to poll. `404` is only returned when the token or `external_id`
+        has no matching verification at all.
 
         Tokens expire after 15 minutes. After expiry, use `external_id` instead.
       requestBody:
@@ -196,6 +201,19 @@ components:
             redoing the liveness check. If omitted, each person is limited to
             one account across your entire integration.
           example: "event_2026_austin"
+        phone:
+          type: string
+          description: |
+            Optional E.164 phone number. When supplied, the returned
+            `verification_url` lands the user directly on the liveness check
+            with no phone-OTP step (instead of the usual `/invite` landing
+            page). Use this only when you've already verified the number
+            out-of-band (e.g. your own SMS/login flow) — the URL is the
+            trust anchor for the shortcut, so deliver it over a channel
+            you've already authenticated. Test phone numbers from the
+            sandbox work today; real-phone bypass requires server-side OTP
+            suppression that isn't shipped yet.
+          example: "+12105550142"
 
     CreateVerificationResponse:
       type: object
@@ -203,7 +221,10 @@ components:
         verification_url:
           type: string
           format: uri
-          description: URL to send the user to for verification.
+          description: |
+            URL to send the user to for verification. If `phone` was supplied
+            in the request, this URL skips the phone-OTP step and lands the
+            user directly on the liveness check.
           example: "https://verifyyou.com/i/A3KF9X"
         external_id:
           type: string
@@ -327,7 +348,11 @@ components:
             failure_reason: "Sandbox endpoints are only available for demo accounts"
 
     NotFound:
-      description: Resource not found.
+      description: |
+        No verification exists for the supplied token or `external_id`. An
+        in-flight verification (not yet completed) returns `200` with
+        `verification_complete: false` — only truly unknown identifiers hit
+        this response.
       content:
         application/json:
           schema:
