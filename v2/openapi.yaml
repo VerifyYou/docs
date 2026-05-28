@@ -222,10 +222,13 @@ components:
           type: string
           format: uri
           description: |
-            URL to send the user to for verification. If `phone` was supplied
-            in the request, this URL skips the phone-OTP step and lands the
-            user directly on the liveness check.
-          example: "https://verifyyou.com/i/A3KF9X"
+            URL to send the user to for verification. Two possible shapes:
+
+            - **No `phone` in the request**: `https://verifyyou.com/invite?session_id=<id>` — landing page → phone-OTP → liveness.
+            - **`phone` supplied**: `https://verifyyou.com/verify?session_id=<id>&t=<opaque>` — skips the phone-OTP step and lands the user directly on the liveness check.
+
+            Always send your user to whichever URL came back; the path is an implementation detail.
+          example: "https://verifyyou.com/invite?session_id=zsjmq6"
         external_id:
           type: string
           description: The `external_id` used for this verification. Matches what you sent, or the auto-generated ID if omitted.

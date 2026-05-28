@@ -33,7 +33,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
     const data = await response.json();
     const verificationUrl = data.verification_url;
-    // "https://verifyyou.com/i/A3KF9X"
+    // "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```python Python
@@ -48,7 +48,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
     data = response.json()
     verification_url = data["verification_url"]
-    # "https://verifyyou.com/i/A3KF9X"
+    # "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```typescript TypeScript
@@ -70,7 +70,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
     const data: CreateVerificationResponse = await response.json();
     const verificationUrl = data.verification_url;
-    // "https://verifyyou.com/i/A3KF9X"
+    // "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```csharp C#
@@ -86,7 +86,7 @@ All you decide is where to put the human check in your flow and what happens whe
     );
 
     var body = await response.Content.ReadAsStringAsync();
-    // verification_url: "https://verifyyou.com/i/A3KF9X"
+    // verification_url: "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```java Java
@@ -99,7 +99,7 @@ All you decide is where to put the human check in your flow and what happens whe
         .build();
 
     var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    // verification_url: "https://verifyyou.com/i/A3KF9X"
+    // verification_url: "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```php PHP
@@ -113,7 +113,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
     $data = json_decode($response, true);
     $verificationUrl = $data["verification_url"];
-    // "https://verifyyou.com/i/A3KF9X"
+    // "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     ```go Go
@@ -129,14 +129,14 @@ All you decide is where to put the human check in your flow and what happens whe
 
     resp, _ := http.DefaultClient.Do(req)
     defer resp.Body.Close()
-    // verification_url: "https://verifyyou.com/i/A3KF9X"
+    // verification_url: "https://verifyyou.com/invite?session_id=zsjmq6"
     ```
 
     </CodeGroup>
 
     ```json Response
     {
-      "verification_url": "https://verifyyou.com/i/A3KF9X",
+      "verification_url": "https://verifyyou.com/invite?session_id=zsjmq6",
       "external_id": "d4f8e2a1-..."
     }
     ```
@@ -168,7 +168,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
       ```json Response
       {
-        "verification_url": "https://verifyyou.com/auto-login?phoneNumber=%2B12105550142&phoneCode=550142&session_id=zsjmq6",
+        "verification_url": "https://verifyyou.com/verify?session_id=zsjmq6&t=eyJwaG9uZU51bWJlciI6IisxMjEwNTU1MDE0MiIsInBob25lQ29kZSI6IjU1MDE0MiJ9",
         "external_id": "d4f8e2a1-..."
       }
       ```
