@@ -1,0 +1,81 @@
+---
+title: "Confirmations"
+description: "Read a verification result and consume a one-time pass."
+---
+
+<Info>
+  **Preview.** These endpoints describe the intended v3 flow and are not yet
+  live. Field names and shapes may change before launch.
+</Info>
+
+A **confirmation** is one person's result. When a user finishes the hosted flow we redirect to your `redirect_url` with the confirmation token:
+
+```
+https://yourapp.com/verified?vy_confirmation=cnf_7a2e51bd&vy_status=approved
+```
+
+Never trust `vy_status` from the URL alone — anyone can forge a query string. Read the confirmation server-side to confirm. You only need the token; the verification id isn't required.
+
+## Read a confirmation
+
+Safe to poll. An in-flight confirmation (the user hasn't finished yet) returns `verified: false` rather than an error.
+
+```http
+GET /v3/confirmations/{confirmation}
+Authorization: Bearer YOUR_API_KEY
+```
+
+<ResponseField name="confirmation" type="string">
+  The confirmation token.
+</ResponseField>
+
+<ResponseField name="verified" type="boolean">
+  `true` once the person has passed the liveness and uniqueness checks.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  `approved`, `denied`, or `consumed` (see below).
+</ResponseField>
+
+<ResponseField name="external_id" type="string">
+  The identifier associated with this confirmation.
+</ResponseField>
+
+```json Response
+{
+  "confirmation": "cnf_7a2e51bd",
+  "verified": true,
+  "status": "approved",
+  "external_id": "user_8f3a29c1"
+}
+```
+
+## Consume a confirmation
+
+<Note>
+  Only relevant when the verification was created with `consumable: true`.
+</Note>
+
+Spend the verified human's one-time pass. Call this once the user finishes the action you verified them for — submitting the survey, claiming the reward, casting the vote. From this point the same human is permanently barred from this verification, even on a new device or account.
+
+This is one-and-done: the call returns the full confirmation, so you confirm they were verified **and** lock them out in a single request.
+
+```http
+POST /v3/confirmations/{confirmation}/consume
+Authorization: Bearer YOUR_API_KEY
+```
+
+```json Response
+{
+  "confirmation": "cnf_7a2e51bd",
+  "verified": true,
+  "status": "consumed",
+  "external_id": "user_8f3a29c1"
+}
+```
+
+<Info>
+  `consumed` is its own terminal state — distinct from `denied` (failed the
+  checks) and from a verification being revoked for risk. A `consumed` person
+  passed legitimately; they've simply used their one allowance.
+</Info>
