@@ -1,0 +1,31 @@
+---
+title: "Authentication"
+description: "Authenticate v3 requests with a bearer token."
+---
+
+<Info>
+  **Preview.** v3 is not yet generally available. v2 keeps using the `API-KEY`
+  header — this bearer scheme applies to v3 only.
+</Info>
+
+v3 authenticates with a standard bearer token. Send your API key in the `Authorization` header on every request.
+
+```http
+Authorization: Bearer YOUR_API_KEY
+```
+
+```bash cURL
+curl https://api.connect.verifyyou.com/v3/verification/ver_3b1f9a20 \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+<Warning>
+  Keep your key secret. Call the API from your backend — never embed it in
+  client-side code.
+</Warning>
+
+<Note>
+  Prefer to try before you wire up auth? The [sandbox](/v2/testing) accepts
+  unauthenticated requests at a low rate limit and runs against a public test
+  account.
+</Note>

@@ -48,6 +48,32 @@
                             },
                             "v2/testing"
                         ]
+                    },
+                    {
+                        "version": "3.0.0 (Preview)",
+                        "groups": [
+                            {
+                                "group": "Get started",
+                                "pages": [
+                                    "v3/overview",
+                                    "v3/authentication"
+                                ]
+                            },
+                            {
+                                "group": "Verification flow",
+                                "pages": [
+                                    "v3/confirmations",
+                                    "v3/uniqueness"
+                                ]
+                            },
+                            {
+                                "group": "For platforms",
+                                "pages": [
+                                    "v3/verifications",
+                                    "v3/assets"
+                                ]
+                            }
+                        ]
                     }
                 ]
             },

@@ -1,0 +1,80 @@
+---
+title: "Overview"
+description: "Reusable verifications, white-label assets, and confirmations that travel with the user."
+---
+
+<Info>
+  **Preview.** v3 is the next version of the VerifyYou API. It is not yet
+  generally available — shapes and field names may change before launch. This
+  section describes the intended flow so you can plan your integration early.
+</Info>
+
+v2 gives you two calls to verify a real, unique human. v3 keeps that simplicity and adds reusable configs, white-label branding, and a per-user enrollment step — so it fits both a single product and a platform serving many companies.
+
+## Two ways to integrate
+
+<CardGroup cols={2}>
+  <Card title="Verify for your product" icon="user-check">
+    You're verifying people for **your** product. Set up one verification, send users to its link, and read the result.
+  </Card>
+  <Card title="Build into your platform" icon="layer-group">
+    You serve **multiple companies**. Programmatically create a verification per company, bind each one's branding with the asset API, and group work under your own tenant ids.
+  </Card>
+</CardGroup>
+
+## Concepts
+
+<CardGroup cols={2}>
+  <Card title="Verification" icon="gear">
+    A reusable config — redirect URL, an attached asset, and the rules a person must satisfy. Create it **once** and reuse its link for everyone.
+  </Card>
+  <Card title="Confirmation" icon="circle-check">
+    One person's result. The hosted flow returns a confirmation token in the redirect; you read it to learn whether they're verified.
+  </Card>
+  <Card title="Asset" icon="palette">
+    A reusable white-label bundle — company name, logo, banner, font. One asset can brand many verifications. (Platform feature.)
+  </Card>
+  <Card title="Uniqueness pool" icon="fingerprint">
+    The set a verified human is deduped against. Account-backed people are unique forever; anonymous ones reset monthly. See [Uniqueness](/v3/uniqueness).
+  </Card>
+</CardGroup>
+
+## How the flow fits together
+
+<Steps>
+  <Step title="Create a verification">
+    Define your rules once with `POST /v3/verification/create`. You get back a reusable `verification_url`.
+  </Step>
+  <Step title="Send users to it">
+    Share that link with anyone you want to verify. Optionally [enroll](/v3/verifications#enroll-a-user) a known user first to pre-attach their data.
+  </Step>
+  <Step title="We verify them">
+    The user completes the hosted flow (phone check → liveness + uniqueness). We redirect back to your `redirect_url` with `vy_confirmation` and `vy_status`.
+  </Step>
+  <Step title="Read the confirmation">
+    Confirm the result server-side with `GET /v3/confirmations/{confirmation}` using the token from the redirect.
+  </Step>
+  <Step title="Consume it (optional)">
+    If the verification was `consumable`, call `POST /v3/confirmations/{confirmation}/consume` once the user finishes the gated action — they can't come back through.
+  </Step>
+</Steps>
+
+<Note>
+  Coming from v2? Your two-call integration keeps working. v3 is additive —
+  adopt the pieces you need.
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="Verifications" icon="gear" href="/v3/verifications">
+    Create, manage, and enroll users into a verification.
+  </Card>
+  <Card title="Confirmations" icon="circle-check" href="/v3/confirmations">
+    Read a result and consume a one-time pass.
+  </Card>
+  <Card title="Uniqueness" icon="fingerprint" href="/v3/uniqueness">
+    How one-human-per-account works, and the anonymous pool.
+  </Card>
+  <Card title="Assets" icon="palette" href="/v3/assets">
+    White-label branding for platforms.
+  </Card>
+</CardGroup>

@@ -1,0 +1,114 @@
+---
+title: "Assets"
+description: "Reusable white-label branding for the companies your platform serves."
+---
+
+<Info>
+  **Preview.** These endpoints describe the intended v3 flow and are not yet
+  live. Field names and shapes may change before launch.
+</Info>
+
+<Note>
+  **For platforms.** Assets exist so a platform can white-label the hosted flow
+  per company it serves. If you're verifying for a single product, you can skip
+  this — set branding once and forget it.
+</Note>
+
+An **asset** is a brand, defined once and reused. Attach it to a [verification](/v3/verifications) with `asset_id` and the hosted flow renders with that company's name, logo, and colors. One asset can back many verifications, so each company's branding lives in one place. All requests use bearer [authentication](/v3/authentication).
+
+## The asset object
+
+<ResponseField name="id" type="string">
+  The asset identifier. Pass it as `asset_id` when creating a verification.
+</ResponseField>
+<ResponseField name="external_tenant_id" type="string">
+  Your own identifier for the company this asset belongs to. Duplicable — group many assets under one tenant.
+</ResponseField>
+<ResponseField name="company_name" type="string">
+  The company name shown to the user during the flow.
+</ResponseField>
+<ResponseField name="logo_url" type="string">Logo image URL.</ResponseField>
+<ResponseField name="banner_url" type="string">Banner image URL.</ResponseField>
+<ResponseField name="tile_url" type="string">Tile / icon image URL.</ResponseField>
+<ResponseField name="font_url" type="string">Web font URL, to render the flow in the brand typeface.</ResponseField>
+
+Every field except `id` is optional — set only what you want to customize.
+
+## Create an asset
+
+```http
+POST /v3/assets
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+```
+
+```json Body
+{
+  "external_tenant_id": "company_42",
+  "company_name": "Acme Inc.",
+  "logo_url": "https://cdn.acme.com/logo.svg",
+  "font_url": "https://cdn.acme.com/Inter.woff2"
+}
+```
+
+```json Response
+{
+  "id": "ast_8f3a29c1",
+  "external_tenant_id": "company_42",
+  "company_name": "Acme Inc.",
+  "logo_url": "https://cdn.acme.com/logo.svg",
+  "banner_url": null,
+  "tile_url": null,
+  "font_url": "https://cdn.acme.com/Inter.woff2"
+}
+```
+
+## Retrieve an asset
+
+```http
+GET /v3/assets/{asset_id}
+Authorization: Bearer YOUR_API_KEY
+```
+
+## List assets
+
+Returns every asset on your account.
+
+```http
+GET /v3/assets
+Authorization: Bearer YOUR_API_KEY
+```
+
+```json Response
+{
+  "assets": [
+    { "id": "ast_8f3a29c1", "company_name": "Acme Inc.", "external_tenant_id": "company_42" }
+  ]
+}
+```
+
+## Update an asset
+
+Send only the fields you want to change. Updates apply to every verification using this asset.
+
+```http
+PUT /v3/assets/{asset_id}
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+```
+
+```json Body
+{ "logo_url": "https://cdn.acme.com/logo-2026.svg" }
+```
+
+## Delete an asset
+
+```http
+DELETE /v3/assets/{asset_id}
+Authorization: Bearer YOUR_API_KEY
+```
+
+<Note>
+  Verifications still pointing at a deleted asset fall back to the default,
+  unbranded flow.
+</Note>

@@ -1,0 +1,37 @@
+---
+title: "Uniqueness"
+description: "How one-account-per-person works, and the anonymous pool."
+---
+
+<Info>
+  **Preview.** v3 replaces v2's [regions](/v2/uniqueness-regions) with pools.
+  Not yet generally available.
+</Info>
+
+Every verified person is deduped against a **uniqueness pool** — the set we check to guarantee one real human per account. v3 has two:
+
+<CardGroup cols={2}>
+  <Card title="Account pool" icon="infinity">
+    People who verify with a linked account (phone or [enrolled](/v3/verifications#enroll-a-user) identity). **Never cleared** — uniqueness is permanent, and a verified user's status travels with them across your integrations.
+  </Card>
+  <Card title="Anonymous pool" icon="rotate">
+    People who verify without an account (when `allow_anonymous` is on). **Resets monthly** — uniqueness is rolling, so an anonymous human can verify again after the reset.
+  </Card>
+</CardGroup>
+
+Which pool a person lands in is decided by how they verify, not by a per-call setting. Turn on `allow_anonymous` in a verification's [config](/v3/verifications#config) to accept anonymous verifications at all.
+
+<Note>
+  Need anonymous uniqueness to last longer than a month — a season, a full
+  event, a year? We can extend the anonymous pool's retention for your use case.
+  Reach out.
+</Note>
+
+## Coming from v2 regions
+
+Regions scoped a one-per-person limit to a context (a survey, an event). v3 splits that job in two:
+
+- **Who's unique** is handled by the pools above — global per account, rolling for anonymous.
+- **One action per human** is handled by [`consumable`](/v3/verifications#config) — mark the verification consumable and [consume](/v3/confirmations#consume-a-confirmation) the confirmation when the action's done.
+
+Between them you get the same guarantees regions gave you, without managing region strings.
