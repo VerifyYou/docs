@@ -38,7 +38,7 @@ Content-Type: application/json
       "geo": { "bounds": [{ "lat": 29.42, "lng": -98.49, "radius": 50000 }] },
       "demographics": {
         "age": [{ "min": 25, "max": 34 }],
-        "apparent_gender": ["female"]
+        "estimated_gender": ["female"]
       }
     },
     "consumable": true,
@@ -100,7 +100,7 @@ Everything is optional; omit a check to skip it.
           Allowed age ranges, each `{ "min": <int>, "max": <int> }` (inclusive). The person's estimated age must fall in one of them.
         </ParamField>
 
-        <ParamField body="apparent_gender" type="string[]">
+        <ParamField body="estimated_gender" type="string[]">
           Allowed values: `"male"`, `"female"`. An estimate of *apparent* gender from facial analysis — a perceived attribute, not a claim about identity. List both to accept either.
         </ParamField>
       </Expandable>
@@ -121,14 +121,14 @@ Everything is optional; omit a check to skip it.
 </ParamField>
 
 <ParamField body="signals" type="string[]" default="[]">
-  Attributes to estimate for everyone who comes through, surfaced as per-verification analytics in the upcoming Stats API. Signals are observations, never gates — listing one never blocks anyone or changes the flow. Available: `age`, `apparent_gender`, `device` (platform + form factor), `geo` (where they verified from).
+  Attributes to estimate for everyone who comes through, surfaced as per-verification analytics in the upcoming Stats API. Signals are observations, never gates — listing one never blocks anyone or changes the flow. Available: `age`, `estimated_gender`, `device` (platform + form factor), `geo` (where they verified from).
 </ParamField>
 
 <Note>
   The same attribute can gate or only report, depending on where it sits.
   `checks.geo` requires a location; `"geo"` in `signals` just reports one.
   `checks.demographics` blocks anyone outside your age/gender selection, while
-  `"age"` or `"apparent_gender"` in `signals` only estimates them for your
+  `"age"` or `"estimated_gender"` in `signals` only estimates them for your
   stats. Where it lives in `config` tells you whether it gates or reports.
 </Note>
 
@@ -149,7 +149,7 @@ Authorization: Bearer YOUR_API_KEY
       "mfa": "phone",
       "demographics": {
         "age": [{ "min": 25, "max": 34 }],
-        "apparent_gender": ["female"]
+        "estimated_gender": ["female"]
       }
     },
     "consumable": true,
