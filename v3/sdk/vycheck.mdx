@@ -1,0 +1,83 @@
+---
+title: "vycheck()"
+description: "Start a verification from the browser — it builds the link and redirects for you."
+---
+
+`vycheck()` kicks off a verification for the current page. It mints a session, redirects the user to the hosted flow, and brings them back to where they started. It's the simplest way to add verification: one call, no backend round-trip to start.
+
+```ts
+import { init, vycheck } from "@verifyyou-sdk/client";
+
+init({ publishableKey: "pk_test_…" }); // once, at app startup
+
+await vycheck();
+```
+
+## What it does
+
+`vycheck()` is the client-side counterpart to the server's [`POST /v3/initialize`](/v3/api/initialize). Under the hood it calls that same endpoint with your publishable key, then sends the browser to the returned URL.
+
+It's **always safe to call** — it checks for an existing result first:
+
+<Steps>
+  <Step title="Already came back? Return the token.">
+    If the URL already has a `vyt` token (the user just verified), `vycheck()` returns it immediately and does **not** redirect.
+  </Step>
+  <Step title="Otherwise, start the flow.">
+    It calls `POST /v3/initialize` for the current page and redirects the browser to the hosted verification URL.
+  </Step>
+  <Step title="The user comes back.">
+    After verifying, they land back on the same page with `?vyt=<token>&vyc=<0|1>` — read it with [`vyget()`](/v3/sdk/vyget).
+  </Step>
+</Steps>
+
+## Signature
+
+```ts
+function vycheck(opts?: { externalTracker?: string }): Promise<string | undefined>;
+```
+
+<ParamField path="opts.externalTracker" type="string">
+  A non-PII label that rides along with this session and is echoed back in your
+  [flow webhooks](/v3/advanced/flow-tracking) — use it to correlate funnel
+  events with your own analytics.
+</ParamField>
+
+**Returns** the existing token (a `string`) if the user already came back; otherwise `undefined` after kicking off the redirect.
+
+## How the session is built
+
+When it starts a flow, `vycheck()` derives everything from the current page:
+
+- **`origin`** — `window.location.origin`. Used to look up which of your verifications to run.
+- **`start_path`** — `window.location.pathname`. The page the user started from, so you can run different flows on different paths.
+- **`pass_params`** — every current query parameter **except** the reserved `vy*` ones is carried through the round-trip and re-appended when the user returns. Your own `?ref=…` or `?plan=…` survives the trip.
+- **`external_tracker`** — whatever you passed in `opts`.
+
+<Note>
+  Call [`init()`](/v3/api/initialize) with your publishable key before
+  `vycheck()`. If the SDK isn't initialized and there's no token to return,
+  `vycheck()` throws.
+</Note>
+
+## Typical usage
+
+```ts
+import { init, vyget, vycheck } from "@verifyyou-sdk/client";
+
+init({ publishableKey: "pk_test_…" });
+
+// On a "Verify" button, or on load behind a gate:
+const { token } = vyget();
+if (!token) {
+  await vycheck(); // redirects to the hosted flow, then back here
+}
+```
+
+Because `vycheck()` short-circuits when a token is already present, you can wire it to a button and a page-load gate without double-starting the flow.
+
+<Warning>
+  `vycheck()` only starts verification. The result still has to be
+  [confirmed server-side](/v3/api/confirmations) — don't grant access on the
+  redirect alone.
+</Warning>

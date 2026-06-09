@@ -1,0 +1,26 @@
+---
+title: "Platform API"
+description: "Embed VerifyYou into your own platform and let your users add verification to their flows."
+---
+
+<Warning>
+  **Coming soon — under construction.** The platform API is in active
+  development. Shapes and availability aren't final; this page describes intent
+  so you can plan ahead. [Talk to us](https://verifyyou.com/) if you're building
+  on it now.
+</Warning>
+
+Everything elsewhere in these docs assumes **you** verify people for **your** product. The platform API is for the other shape: you run a platform, and you want **your own users** to add VerifyYou verification to *their* flows — without each of them integrating us directly.
+
+With it you'll be able to:
+
+- **Provision verifications programmatically** — create and manage a verification per customer on your platform, instead of one shared config.
+- **White-label the flow per customer** — bind each customer's branding (name, logo, colors) so the hosted experience looks like theirs, not yours.
+- **Group work under your own tenancy** — tag verifications and results with your own tenant identifiers so each customer's data stays cleanly separated.
+- **Let your users self-serve** — surface verification as a feature inside your platform that your customers switch on for their own end users.
+
+<Note>
+  If you only need to verify people for a single product, you don't need the
+  platform API — the [SDK and API](/v3/sdk/vyget) cover you. Reach out if the
+  multi-tenant, embed-into-your-platform model is what you're after.
+</Note>

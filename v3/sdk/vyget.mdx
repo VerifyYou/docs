@@ -1,0 +1,78 @@
+---
+title: "vyget()"
+description: "Read the verification result the hosted flow appended to your return URL."
+---
+
+`vyget()` reads the result of a verification straight off the current URL. When the hosted flow sends a user back to your page, it appends the outcome as query parameters; `vyget()` parses them for you so you don't have to touch the URL yourself.
+
+```bash
+npm install @verifyyou-sdk/client
+```
+
+```ts
+import { vyget } from "@verifyyou-sdk/client";
+
+const { verified, token } = vyget();
+```
+
+## What it does
+
+When a user returns from verification, the URL looks like this:
+
+```
+https://yourapp.com/verified?vyt=<token>&vyc=1
+```
+
+`vyget()` reads the two reserved parameters and returns them as a typed object:
+
+- **`vyt`** — the confirmation **token**. This is the proof you exchange on your backend for the authoritative result.
+- **`vyc`** — the client-side **verdict** hint: `1` (passed) or `0` (failed).
+
+```ts
+interface VyResult {
+  verified: boolean | undefined; // from vyc: "1" → true, "0" → false, absent → undefined
+  token: string | undefined; // from vyt: the confirmation token, or undefined
+}
+```
+
+## How it works
+
+`vyget()` is fully synchronous and makes no network calls. It reads `window.location.search`, looks for `vyc` and `vyt`, and maps them:
+
+| URL | Returns |
+| --- | --- |
+| `?vyt=tok_123&vyc=1` | `{ verified: true, token: "tok_123" }` |
+| `?vyc=0` | `{ verified: false, token: undefined }` |
+| _(no vy params)_ | `{ verified: undefined, token: undefined }` |
+
+It's **safe to call anywhere, on every page load** — if there's nothing to read, you get `undefined`s. Outside a browser (SSR) it also returns `undefined`s rather than throwing.
+
+## Use it on page load
+
+Call `vyget()` when your page mounts. A token present means the user just came back from verifying — hand it to your backend to [confirm](/v3/api/confirmations), then clean the parameters off the URL so a refresh can't replay them.
+
+```ts
+import { vyget } from "@verifyyou-sdk/client";
+
+const { token } = vyget();
+if (token) {
+  await fetch("/api/verify/confirm", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+  // Then strip ?vyt / ?vyc from the URL:
+  window.history.replaceState({}, "", window.location.pathname);
+}
+```
+
+<Warning>
+  `verified` is a convenience for your UI — anyone can edit a URL. For anything
+  that matters, send the `token` to your backend and
+  [confirm](/v3/api/confirmations) it with your secret key.
+</Warning>
+
+<Note>
+  No token on the URL? Start a verification with
+  [`vycheck()`](/v3/sdk/vycheck).
+</Note>

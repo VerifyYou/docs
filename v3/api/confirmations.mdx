@@ -1,0 +1,109 @@
+---
+title: "GET /v3/confirmations/{token}"
+description: "Exchange a return token for the authoritative verification result."
+---
+
+When a user returns from the hosted flow, they carry a `vyt` **token** on the URL. `GET /v3/confirmations/{token}` exchanges that token for the **authoritative** result. This is the check that matters — run it on your backend with your secret key before you grant access. The `vyc` value on the URL is only a UI hint.
+
+```http
+GET https://trust.verifyyou.com/v3/confirmations/{token}
+Authorization: Bearer sk_…
+```
+
+<Warning>
+  **Secret key only.** Never confirm from the browser — that would expose your
+  secret key.
+</Warning>
+
+<Tip>
+  This page is the guided walkthrough. To see every endpoint and **try it out**
+  against the live API, use the [API Reference](/api-reference) — it's generated
+  from the same spec, so it never drifts.
+</Tip>
+
+## Path parameter
+
+<ParamField path="token" type="string" required>
+  The `vyt` confirmation token the user returned with after verifying. Read it
+  off the URL with [`vyget()`](/v3/sdk/vyget).
+</ParamField>
+
+## Response
+
+<ResponseField name="verified" type="boolean">
+  Authoritative result — `true` only if the person passed the
+  [liveness and uniqueness](/v3/concepts/humanness-and-uniqueness) checks and the
+  confirmation isn't locked. **Gate access on this field.**
+</ResponseField>
+
+<ResponseField name="external_id" type="string | null">
+  The `external_id` attached to the session at [initialize](/v3/api/initialize), if any.
+</ResponseField>
+
+<ResponseField name="verification" type="object">
+  A reference to the verification this confirmation belongs to.
+
+  <Expandable title="verification">
+    <ResponseField name="external_id" type="string | null">
+      Your external id for the verification, if one was set.
+    </ResponseField>
+    <ResponseField name="external_tenant_id" type="string | null">
+      Your external tenant id for the verification, if one was set.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+```json Response
+{
+  "verified": true,
+  "external_id": "user_123",
+  "verification": {
+    "external_id": "signup-flow",
+    "external_tenant_id": null
+  }
+}
+```
+
+## Example
+
+<CodeGroup>
+```bash cURL
+curl https://trust.verifyyou.com/v3/confirmations/<token> \
+  -H "Authorization: Bearer sk_test_…"
+# => { "verified": true, "external_id": null, "verification": { ... } }
+```
+
+```ts Node
+const res = await fetch(
+  `https://trust.verifyyou.com/v3/confirmations/${token}`,
+  { headers: { Authorization: `Bearer ${process.env.VY_SK}` } },
+);
+const { verified, external_id } = await res.json();
+if (verified) {
+  // grant access
+}
+```
+</CodeGroup>
+
+## Lock a confirmation (optional)
+
+For one-time flows where the user won't return — a single collection form, a one-time gate, where you're not tracking identities and don't want a second submission — **lock** the confirmation once you've accepted it. The token then becomes invalid for that verification: a subsequent `GET /v3/confirmations/{token}` returns `verified: false`.
+
+```http
+POST https://trust.verifyyou.com/v3/confirmations/{token}/lock
+Authorization: Bearer sk_…
+```
+
+<ResponseField name="locked" type="boolean">
+  `true` once the confirmation is locked. A locked confirmation can't be confirmed again.
+</ResponseField>
+
+```json Response
+{ "locked": true }
+```
+
+<Note>
+  Locking is single-use enforcement at the confirmation level. To bar the same
+  *human* across devices and accounts, rely on
+  [uniqueness](/v3/concepts/humanness-and-uniqueness) instead.
+</Note>

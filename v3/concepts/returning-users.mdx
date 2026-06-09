@@ -1,0 +1,27 @@
+---
+title: "Returning users"
+description: "How a verified human is recognized the next time they come through."
+---
+
+A verified human stays bound to their **humanness and uniqueness** for as long as they hold the identifier they verified with. Recognizing a returning user is just a matter of which identifier they still have.
+
+## What recognition hangs on
+
+| Verified as | Recognized by | How long it lasts |
+| --- | --- | --- |
+| **Account** | A phone or email (optionally your [external id](/v3/advanced/account-linking)) | Permanent — survives new devices, new browsers, cleared cookies |
+| **Guest** | An anonymous identifier in the browser | Until the identifier is cleared, or the guest record rolls off the pool |
+
+In both cases the person doesn't redo work they've already done — as long as they still carry the identifier that points back to their verification. An account holder presents the same phone or email and is recognized anywhere. A guest is recognized on the same browser, until that identifier goes away.
+
+## Designing for the return trip
+
+- **Re-run the same call.** Send returning users through the same [`vycheck()`](/v3/sdk/vycheck) or [`initialize`](/v3/api/initialize) entry point. A recognized human passes through quickly instead of starting over.
+- **Bind an identity if they'll come back.** If you expect repeat visits, verify them as an account by attaching a phone, email, or [external id](/v3/advanced/account-linking). It's the difference between "recognized forever" and "recognized until they clear cookies."
+- **Confirm server-side every time.** Recognition still produces a fresh token each trip — always [confirm it](/v3/api/confirmations) on your backend before granting access.
+
+<Note>
+  Guests intentionally re-verify more often than account holders — see
+  [Accounts vs guests](/v3/concepts/accounts-vs-guests) for why, and when to
+  prefer one over the other.
+</Note>

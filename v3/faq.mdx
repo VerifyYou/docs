@@ -1,0 +1,82 @@
+---
+title: "FAQ"
+description: "Common questions about verifying, keys, returning users, and data."
+---
+
+<AccordionGroup>
+  <Accordion title="What does “verified” actually mean?">
+    That the person passed two checks: they're a **live human** (liveness — not a
+    photo, video, mask, or generated face) and they're **unique** (their face
+    doesn't match anyone who already verified in their
+    [uniqueness pool](/v3/concepts/humanness-and-uniqueness)). A confirmation
+    returns `verified: true` only when both pass.
+  </Accordion>
+
+  <Accordion title="Can I trust the ?vyc value on the return URL?">
+    No — treat it as a UI hint only. Anyone can edit a URL. Always send the
+    `vyt` token to your backend and
+    [confirm it](/v3/api/confirmations) with your secret key. That result is
+    authoritative.
+  </Accordion>
+
+  <Accordion title="What's the difference between publishable and secret keys?">
+    The **publishable key** (`pk_…`) is safe in the browser and is what the SDK
+    uses to start a verification. The **secret key** (`sk_…`) stays on your
+    server and is required to confirm tokens, lock confirmations, and attach
+    identities at initialize. Never ship a secret key to the client.
+  </Accordion>
+
+  <Accordion title="How do test and live modes work?">
+    Each key comes in a test and a live flavor (`pk_test_…` / `pk_live_…`,
+    `sk_test_…` / `sk_live_…`). Test keys run a sandbox flow that creates test
+    users — build against them freely. Switch to live keys to verify real people.
+  </Accordion>
+
+  <Accordion title="Why did a returning user get blocked?">
+    Most often it's a **guest** who cleared their browser identifier. They look
+    like a new person, but their face is still in the uniqueness pool — so they
+    collide with their own earlier verification. Verify repeat users as
+    [accounts](/v3/concepts/accounts-vs-guests) (bind a phone or email) so their
+    uniqueness is permanent and portable.
+  </Accordion>
+
+  <Accordion title="Do users have to verify every time?">
+    No. A recognized human passes through quickly. **Account** holders are
+    recognized permanently — across devices, browsers, and products.
+    **Guests** are recognized by a browser identifier and re-verify more often,
+    because guest uniqueness is cleared on a rolling basis. See
+    [Returning users](/v3/concepts/returning-users).
+  </Accordion>
+
+  <Accordion title="What if my user is on a desktop without a good camera?">
+    The hosted flow hands the session off to their phone via a QR code, runs the
+    camera step there, and brings the desktop along automatically over a realtime
+    channel — no copying codes or refreshing. See
+    [Humanness and uniqueness](/v3/concepts/humanness-and-uniqueness#desktop-to-mobile-handoff).
+  </Accordion>
+
+  <Accordion title="How do I tie a verification to my own user?">
+    Pass `external_id` (and optionally `phone`/`email`) at
+    [initialize](/v3/api/initialize) from your server. The `external_id` comes
+    back on the confirmation. See [Account linking](/v3/advanced/account-linking).
+  </Accordion>
+
+  <Accordion title="I have a one-time form and don't want resubmissions. What do I use?">
+    [Lock the confirmation](/v3/api/confirmations#lock-a-confirmation-optional)
+    once you've accepted it. The token becomes invalid for that verification, so
+    re-checking it returns `verified: false`.
+  </Accordion>
+
+  <Accordion title="How do I track where users drop off?">
+    Register a [webhook](/v3/advanced/flow-tracking). You get a signed event at
+    each step — including `liveness_failed`, `liveness_cancelled`, and
+    `face_collision`, which are where funnel loss shows up.
+  </Accordion>
+
+  <Accordion title="Can I embed VerifyYou into my own platform for my customers?">
+    That's the [Platform API](/v3/advanced/platform-api) — provision
+    verifications per customer, white-label the flow, and let your users add
+    verification to their own flows. It's under construction;
+    [reach out](https://verifyyou.com/) if you're building on it.
+  </Accordion>
+</AccordionGroup>
