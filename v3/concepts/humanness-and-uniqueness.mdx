@@ -1,0 +1,47 @@
+---
+title: "Humanness and uniqueness"
+description: "How we prove someone is a live human, then prove they're the only one."
+---
+
+Every verification answers two questions in order: **is this a live human?** and **is this human new?** The first is the humanness check; the second is the uniqueness check. A person has to pass both.
+
+## Humanness
+
+The hosted flow runs a **liveness** check using the device camera — a short, guided capture that confirms a real, present person, not a photo, a video replay, a mask, or a generated face. We score the capture for confidence; below the threshold, the verification doesn't pass.
+
+Because liveness needs a real camera in good conditions, the best place to run it is a phone — so the flow is camera-first and mobile-first.
+
+### Desktop to mobile handoff
+
+If someone starts on a desktop, we don't dead-end them at a weak webcam. We hand the session off to their phone and bring them back automatically:
+
+<Steps>
+  <Step title="Desktop opens a session">
+    The desktop page starts a verification session and shows a QR code.
+  </Step>
+  <Step title="Phone claims it">
+    The user scans the code and continues the camera step on their phone. The two devices are bound to the **same session**.
+  </Step>
+  <Step title="Realtime sync brings the desktop along">
+    The desktop listens on a realtime channel for that session. The moment the phone claims it — and again when it finishes — the desktop reacts instantly and redirects on its own.
+  </Step>
+</Steps>
+
+The user never copies a code back, refreshes, or wonders if it worked. The session is the thread tying the two devices together, so the experience stays one continuous flow across both screens — friction stays as low as possible while keeping the camera step on the better device.
+
+## Uniqueness
+
+Once we know the person is live, we check that they're **new**. From the liveness capture we derive a privacy-preserving face representation and search it against the people who've already verified. A confident match is a **collision** — the same human has been here before — and the verification is denied as not unique.
+
+This is what lets you say "one real human, once" — no duplicate accounts, no one slipping through twice, no second submission from the same face.
+
+<Note>
+  Uniqueness is scoped to *who you compare against* — the uniqueness pool. Who a
+  person is deduped against, and how long they stay in the pool, depends on
+  whether they verified as an account or a guest. See
+  [Accounts vs guests](/v3/concepts/accounts-vs-guests).
+</Note>
+
+## What you get back
+
+A confirmation reports `verified: true` only when the person cleared **both** checks — live and unique. You confirm that result on your backend; see [Confirmations](/v3/api/confirmations).

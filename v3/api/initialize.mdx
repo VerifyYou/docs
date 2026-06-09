@@ -1,0 +1,136 @@
+---
+title: "POST /v3/initialize"
+description: "Mint a verification session and get back a hosted URL to send the user to."
+---
+
+`POST /v3/initialize` starts a verification and returns the hosted URL to redirect the user to. It's the server-side counterpart to the SDK's [`vycheck()`](/v3/sdk/vycheck) — reach for it when you want to mint the session from trusted code, for example to [link a known user](/v3/advanced/account-linking) or bind an identity before the user verifies.
+
+```http
+POST https://trust.verifyyou.com/v3/initialize
+Authorization: Bearer <key>
+Content-Type: application/json
+```
+
+```ts
+type InitializeResponse = { url: string }; // redirect the user to `url`
+```
+
+<Tip>
+  This page is the guided walkthrough. To see every endpoint and **try it out**
+  against the live API, use the [API Reference](/api-reference) — it's generated
+  from the same spec, so it never drifts.
+</Tip>
+
+## Authentication
+
+Accepts a **publishable key** (`pk_…`) or a **secret key** (`sk_…`). A handful of parameters attach an identity or target a verification directly and therefore require a secret key — they're marked **secret key only** below. Sending them with a publishable key returns `400`.
+
+<CardGroup cols={2}>
+  <Card title="Publishable key" icon="globe">
+    From the browser. The SDK uses this. Can pass `origin`, `return_path`,
+    `start_path`, `external_tracker`, `pass_params`.
+  </Card>
+  <Card title="Secret key" icon="lock">
+    From your server. Can pass everything, including the identity and
+    target parameters below.
+  </Card>
+</CardGroup>
+
+## Body parameters
+
+<ParamField body="origin" type="string" optional>
+  The domain you start the verification from (e.g. `https://yourapp.com`). Used to look up which of your verifications to run when `verification_id` isn't given.
+</ParamField>
+
+<ParamField body="return_path" type="string" optional>
+  Path on `origin` the user is redirected back to after verifying (e.g. `/verified`). We append the result as `?vyt=<token>&vyc=<0|1>`. Requires an `origin` — passed here or taken from the targeted verification.
+</ParamField>
+
+<ParamField body="start_path" type="string" optional>
+  Path on `origin` the user is coming from. Lets one domain host several verification flows. Requires an `origin`.
+</ParamField>
+
+<ParamField body="verification_id" type="string" optional>
+  **Secret key only.** Target a verification directly instead of resolving by `origin`, `start_path`, and `return_path` — those then fall back to its saved config.
+</ParamField>
+
+<ParamField body="verification_external_id" type="string" optional>
+  **Secret key only.** Target a verification by your own external id for it (set when the verification was created), as an alternative to `verification_id`. Same fallback behavior.
+</ParamField>
+
+<ParamField body="email" type="string" optional>
+  **Secret key only.** Attach a stable identity to the verification (makes them an [account](/v3/concepts/accounts-vs-guests)). Fails if that identity is already in use.
+</ParamField>
+
+<ParamField body="phone" type="string" optional>
+  **Secret key only.** Attach a stable identity to the verification. Fails if that identity is already in use.
+</ParamField>
+
+<ParamField body="external_id" type="string" optional>
+  **Secret key only.** Link this verification to your own user or record id. See [Account linking](/v3/advanced/account-linking).
+</ParamField>
+
+<ParamField body="external_tracker" type="string" optional>
+  A non-PII label echoed back in your [flow webhooks](/v3/advanced/flow-tracking) — correlate funnel events with your own analytics.
+</ParamField>
+
+<ParamField body="pass_params" type="object" optional>
+  Extra query parameters to carry through the flow and re-append to the return URL. Reserved `vy*` keys are ignored.
+</ParamField>
+
+## Response
+
+<ResponseField name="url" type="string">
+  The hosted verification link with a queued-up session. Redirect the user here.
+</ResponseField>
+
+```json
+{ "url": "https://app.verifyyou.com/v/abc123" }
+```
+
+## Examples
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://trust.verifyyou.com/v3/initialize \
+  -H "Authorization: Bearer sk_test_…" \
+  -H "Content-Type: application/json" \
+  -d '{ "origin": "https://yourapp.com", "return_path": "/verified", "external_id": "user_123" }'
+# => { "url": "https://app.verifyyou.com/v/abc123" }  ← redirect the user here
+```
+
+```ts Node
+const res = await fetch("https://trust.verifyyou.com/v3/initialize", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.VY_SK}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    origin: "https://yourapp.com",
+    return_path: "/verified",
+    external_id: "user_123", // secret-key-only — links the session to your user
+  }),
+});
+const { url } = await res.json();
+// Redirect the user to `url`.
+```
+</CodeGroup>
+
+## Client-side: `init()` + `vycheck()`
+
+You don't have to call this endpoint by hand. In the browser, configure the SDK once with `init()` and let [`vycheck()`](/v3/sdk/vycheck) call `initialize` and redirect for you:
+
+```ts
+import { init, vycheck } from "@verifyyou-sdk/client";
+
+init({ publishableKey: "pk_test_…" }); // sets the key + API base on the SDK
+await vycheck();
+```
+
+`init(config)` accepts `publishableKey` or `secretKey`, and an optional `baseUrl` (defaults to production). Use the secret key only on a server.
+
+<Note>
+  After the user returns, [confirm the token](/v3/api/confirmations) on your
+  backend. Initializing a session doesn't verify anyone on its own.
+</Note>

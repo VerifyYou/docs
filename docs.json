@@ -19,67 +19,45 @@
         "tabs": [
             {
                 "tab": "Docs",
-                "versions": [
+                "pages": [
                     {
-                        "version": "1.0.0",
-                        "groups": [
-                            {
-                                "group": "Start here",
-                                "pages": [
-                                    "v1/index",
-                                    "v1/quickstart",
-                                    "v1/webhooks"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "version": "2.1.0",
-                        "default": true,
+                        "group": "Verification processes",
                         "pages": [
-                            "v2/quickstart",
-                            {
-                                "group": "Configuration",
-                                "pages": [
-                                    "v2/authentication",
-                                    "v2/external-ids",
-                                    "v2/uniqueness-regions"
-                                ]
-                            },
-                            "v2/testing"
+                            "v3/introduction",
+                            "v3/concepts/humanness-and-uniqueness",
+                            "v3/concepts/accounts-vs-guests",
+                            "v3/concepts/returning-users"
                         ]
                     },
                     {
-                        "version": "3.0.0 (Preview)",
-                        "groups": [
-                            {
-                                "group": "Get started",
-                                "pages": [
-                                    "v3/overview",
-                                    "v3/authentication"
-                                ]
-                            },
-                            {
-                                "group": "Verification flow",
-                                "pages": [
-                                    "v3/confirmations",
-                                    "v3/uniqueness"
-                                ]
-                            },
-                            {
-                                "group": "For platforms",
-                                "pages": [
-                                    "v3/verifications",
-                                    "v3/assets"
-                                ]
-                            }
+                        "group": "SDK and API",
+                        "pages": [
+                            "v3/sdk/vyget",
+                            "v3/sdk/vycheck",
+                            "v3/api/initialize",
+                            "v3/api/confirmations"
                         ]
-                    }
+                    },
+                    {
+                        "group": "Advanced usage",
+                        "pages": [
+                            "v3/advanced/account-linking",
+                            "v3/advanced/flow-tracking",
+                            "v3/advanced/platform-api"
+                        ]
+                    },
+                    {
+                        "group": "Reference",
+                        "pages": [
+                            "v3/openapi"
+                        ]
+                    },
+                    "v3/faq"
                 ]
             },
             {
                 "tab": "API Reference",
-                "openapi": "v2/openapi.yaml"
+                "openapi": "https://trust.verifyyou.com/openapi.json"
             }
         ]
     },

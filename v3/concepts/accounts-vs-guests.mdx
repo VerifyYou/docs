@@ -1,0 +1,49 @@
+---
+title: "Accounts vs guests"
+description: "Why a stable claim to a person's uniqueness means less friction for everyone."
+---
+
+A verified human needs a way to be recognized next time. How they're recognized — by a **stable identity** or by an **anonymous browser identifier** — decides how smooth their return trip is. That's the difference between an account and a guest.
+
+## Accounts
+
+An **account** is a person bound to a stable identifier you can re-present: a **phone number or email**, optionally tied to your own user via an [external id](/v3/advanced/account-linking).
+
+Because that claim is durable, an account holder's uniqueness is **permanent and portable**. They keep their verified status across devices, across browsers, and across every product you run on VerifyYou. They clear cookies, switch laptops, come back a year later — still the same recognized human, no friction.
+
+## Guests
+
+A **guest** verifies without binding an identity. We recognize them by an **anonymous identifier stored in their browser** — no phone, no email, no account.
+
+That works, but it carries two consequences you should design around:
+
+- **The identifier is only as durable as the browser.** Clear cookies, switch to a private window, or move to another device, and the guest looks like a brand-new person. Their face, though, is still in the uniqueness pool — so on a fresh attempt they can **collide with their own earlier verification and get blocked**.
+- **Guest uniqueness is cleared periodically.** We expire guest face records on a rolling basis so the pool doesn't fill with stale identities that would block people forever. The upside: a guest who's been locked out frees up over time. The tradeoff: **guests re-verify more often than account holders.**
+
+<Warning>
+  A guest who clears their browser identifier mid-cycle can be blocked by their
+  own prior verification until that record rolls off. If your users come back
+  often, prefer accounts.
+</Warning>
+
+## Which to use
+
+<CardGroup cols={2}>
+  <Card title="Use accounts" icon="user-check">
+    Returning users, anything you'll re-verify, or when you already know the
+    user (link them with phone/email + an external id). Permanent uniqueness,
+    minimal repeat friction.
+  </Card>
+  <Card title="Use guests" icon="user">
+    One-off, anonymous, no-login flows — a single collection form, a one-time
+    gate — where you don't hold an identity and don't need the person to come
+    back.
+  </Card>
+</CardGroup>
+
+<Note>
+  This is a product decision more than a code one: the same hosted flow handles
+  both. You steer toward an account by binding a phone, email, or external id at
+  [initialize](/v3/api/initialize); with nothing bound, the person verifies as a
+  guest.
+</Note>

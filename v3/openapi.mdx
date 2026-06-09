@@ -1,0 +1,41 @@
+---
+title: "API reference & spec"
+description: "Where to find every endpoint — browse it, try it, or generate a client."
+---
+
+The pages under **SDK and API** walk through the core flow (`initialize` and `confirmations`) with full context. For the **complete** list of endpoints — verifications, confirmations, API keys, and everything else — use the reference surfaces below. They're all generated from the same live OpenAPI spec, so they never drift from the API.
+
+<CardGroup cols={2}>
+  <Card title="API Reference tab" icon="book" href="/api-reference">
+    The full, interactive endpoint reference, right here in the docs — every operation, grouped by area, generated from the live spec. Start here.
+  </Card>
+  <Card title="Swagger UI" icon="flask" href="https://trust.verifyyou.com/docs">
+    Browse every operation and **try it out** against the live API. Each endpoint deep-links, e.g. `…/docs#/Verification%20Flow/external-initialize`.
+  </Card>
+  <Card title="openapi.json" icon="file-code" href="https://trust.verifyyou.com/openapi.json">
+    The raw spec. Point your codegen at this URL to generate a client.
+  </Card>
+</CardGroup>
+
+## Environments
+
+The same paths are served per environment — point your tools at the right base:
+
+| Environment | Base URL | Spec |
+| --- | --- | --- |
+| Production | `https://trust.verifyyou.com` | `/openapi.json` |
+| Sandbox / test | _same base, test keys_ | `/openapi.json` |
+
+## Generate a client
+
+```bash
+npx @hey-api/openapi-ts \
+  -i https://trust.verifyyou.com/openapi.json \
+  -o src/verifyyou
+```
+
+<Note>
+  Prefer not to generate anything? The official SDK
+  ([`@verifyyou-sdk/client`](/v3/sdk/vyget)) already wraps these endpoints for
+  the browser and the server.
+</Note>
