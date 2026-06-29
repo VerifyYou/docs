@@ -1,0 +1,130 @@
+---
+title: "Settings explained"
+---
+
+## What this page is for
+
+A check is not one size fits all. The same face scan can be light or strict depending on what you are protecting, and you tune that with seven settings. This is the reference for each one, in plain language: what it does, the trade-off you are making, and when to reach for it.
+
+You do not start here. When you create a verification you start from a use-case preset, which sets sensible defaults, and you confirm the few settings that matter most. This page is the companion to [configuring your verification](/learn/configuring-your-verification), for when you want to know exactly what a lever does before you move it.
+
+<Note>
+  Every lever moves you along the same line: more security on one end, less friction on the other. There is no single right setting. The right point depends on what it costs you when the same person slips through twice. [Security and friction](/learn/security-and-friction) walks through how to choose.
+</Note>
+
+## The seven levers at a glance
+
+<CardGroup cols={2}>
+  <Card title="Who can verify" icon="user-gear" iconType="light" href="#who-can-verify">
+    Anonymous, or attached to your own signup with a phone or email.
+  </Card>
+  <Card title="The phone step" icon="mobile" iconType="light" href="#the-phone-step">
+    A phone code on top of the face, as a second signal.
+  </Card>
+  <Card title="Re-verification" icon="rotate" iconType="light" href="#re-verification">
+    How we make sure a returning person is the same person.
+  </Card>
+  <Card title="Networks and VPNs" icon="wifi" iconType="light" href="#networks-and-vpns">
+    Flag or block VPNs and repeat networks.
+  </Card>
+  <Card title="Regions" icon="globe" iconType="light" href="#regions">
+    Limit who can pass by where they are.
+  </Card>
+  <Card title="Age estimation" icon="cake-candles" iconType="light" href="#age-estimation">
+    Turn away anyone the check estimates is under your threshold.
+  </Card>
+  <Card title="Collision action" icon="users-slash" iconType="light" href="#collision-action">
+    What happens when the same person is seen twice.
+  </Card>
+</CardGroup>
+
+## Who can verify
+
+This is the first decision, and it shapes everything else. It is the choice between a check that floats free of your accounts and one that is wired into them.
+
+**What it does.** A check can run two ways. Anonymous, sometimes called headless, is a face scan with no phone or credential tied to the person, so all you learn is that a real, unique human passed. Attached to your own signup means you map a verified human to one of your users, by collecting a phone or an email at the same time. A phone or email becomes a stable identity, so a returning person can move through faster and you can tie the verdict to the right record on your side. See [accounts vs guests](/v3/concepts/accounts-vs-guests) for the underlying model, and [account linking](/v3/advanced/account-linking) for binding a verification to your own user or record id.
+
+**The trade-off.** Anonymous is the lightest possible touch and collects nothing about who the person is, which is ideal when you only need real-and-unique. The moment you attach it to a signup, you gain a durable handle on each verified human and the ability to recognize them quietly next time, at the cost of asking for one more thing and holding that identity yourself.
+
+**When to reach for it.** Run anonymous when there is no account to attach to, like a one-time survey response, a gated offer, or a public action where you only need to know a real person did it once. Attach to your own signup when the verification has to live alongside a user account you already keep, like a marketplace seller, a returning panelist, or a logged-in member.
+
+## The phone step
+
+**What it does.** Decides whether the check adds a phone code on top of the face. The face proves a live, unique human. A phone is a second, independent signal, and the two together are harder to get past with the same person twice. You can also let people link a phone later, without forcing them through this step at first verification.
+
+**The trade-off.** A phone is a strong second signal for catching the same person under a new guise, and it is a step. Asking for a code means some people drop, so completion dips a little. The face scan alone already gives you liveness and uniqueness, so the phone is added assurance, not the foundation.
+
+**When to reach for it.** Turn it on where a duplicate is expensive, like a survey panel paying per response, an incentive or payout, or a high-value signup. Leave it off, or make it optional, for open signups and low-stakes actions where every extra step costs you real users you wanted.
+
+## Re-verification
+
+This is the setting people understand last and care about most. It is the return moment, the part that makes the check worth keeping.
+
+**What it does.** When a verified person comes back, you decide how we make sure it is the same person. At one end, require a fresh check every time, the highest assurance, where they do a quick scan on each visit. At the other, recognize them quietly in the background via a browser identifier, with no scan at all. Note that clearing cookies or switching browsers ends device-level recognition. In between, re-verify on a cadence, say every so often or after a period of inactivity. Either way you get real assurance that the person returning is the one you verified. See [returning users](/v3/concepts/returning-users) for how recognition works.
+
+**The trade-off.** More frequent is stricter and catches more, and it asks a little more of the person each time. Less frequent is smoother and nearly invisible, and it leans on the device-level recognition rather than a fresh live scan. Stricter is not better in the abstract. It is better when the cost of a wrong person getting in is high enough to be worth the friction.
+
+**When to reach for it.** Require a fresh check every visit for the highest bar, like releasing a payout or admitting a response to a paid panel. Recognize quietly with no scan for everyday logins and repeat visits where you want assurance without friction. Pick a cadence in between when you want a periodic re-check without doing it on every single visit.
+
+## Networks and VPNs
+
+**What it does.** Lets you flag or block based on the network a person is on, including VPNs and networks you have already seen many verifications from. It is a signal that sits alongside the face, not a replacement for it.
+
+**The trade-off.** Blocking is stricter and turns away anyone behind a flagged network, which will also catch some legitimate people who use a VPN for ordinary reasons. Flagging is softer. It lets the person through and marks the verification for you to review, so you can watch the pattern without turning anyone away.
+
+**When to reach for it.** Block when network abuse is a known vector and a false denial is cheaper than a duplicate getting in, like a tightly controlled incentive. Flag when you want visibility first, when you are unsure of your traffic, or when many of your real users legitimately use VPNs and you do not want to lose them.
+
+## Regions
+
+**What it does.** Limits who can pass by where they are, when you need to. You can narrow a check to a single country, or to a set of regions, so people outside them do not pass.
+
+**The trade-off.** A region limit is a hard gate. It is exactly right when your offer or study genuinely only applies somewhere, and it will turn away real, unique humans who happen to be elsewhere. There is no softness to it, so reach for it only when the requirement is real.
+
+**When to reach for it.** Use it when there is a true geographic constraint, like a survey scoped to one country, an offer valid in certain markets, or a regulatory line you have to hold. Leave it open otherwise, since every region you exclude is real users you are choosing to lose.
+
+## Age estimation
+
+**What it does.** Turns away a person the check estimates is under your threshold. This is an on-device estimate from the same face scan, with no ID and no document, so it costs nothing extra to add. It is an estimate, not a proof of age.
+
+**The trade-off.** It gives you a lightweight age gate without asking for a government ID, which keeps the check fast and document-free. Because it is an estimate, it adds one more reason a real user might not pass, so it can deny someone who is genuinely over your threshold but reads younger. That is a real cost to weigh.
+
+**When to reach for it.** Turn it on only when you have an actual age requirement, like an age-restricted offer or platform. Leave it off everywhere else, because an estimate that can deny real users is not worth adding where you do not need an age gate at all.
+
+## Collision action
+
+This is the lever that delivers the core promise, so it is worth getting right.
+
+**What it does.** Decides what happens when the same person is seen twice, a collision. You can block them, which stops the duplicate, or let them in and flag it, which completes the action and marks it for you. Blocking is the default, and it is the heart of uniqueness: block someone once and it makes it very hard for them to quietly come back as fifteen people, or return under a new name after you remove them.
+
+**The trade-off.** Blocking enforces one human, one account, at the cost of stopping the action when a real person is wrongly matched. Flagging never stops the action, so nothing legitimate is blocked, but a duplicate does get through, recorded for you to handle after the fact. If a real person is ever wrongly blocked, a human on your team can clear them with an override, scoped to your own account.
+
+**When to reach for it.** Block when a duplicate is the thing you are actually trying to prevent, which is most uniqueness use cases, from survey panels to payouts to gated offers. Flag when completing the action matters more than stopping it in the moment, and you would rather review duplicates than ever turn a real person away.
+
+## Reading what the settings do
+
+Configuration is a loop. You set the levers, then watch what they do in the dashboard. A blocked verification is one the check turned away. A flagged one is one it let through but marked for you to review, like a collision you chose to flag rather than block. If a real person is wrongly denied, a human on your team can clear them with an override, scoped to your own account. Tighten or loosen from there. Any lever you change takes effect immediately, so you can start safe and adjust as you learn your traffic.
+
+A note that holds for every lever: none of this changes what the company receives. Whatever you set, your systems only ever get a verdict, verified or failed, and a stable id, never a face, a name, or an image. We turn the scan into a face vector, a numerical representation of the face's geometry, not a saved image, and we do not store images. See [what we store](/learn/what-we-store).
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Configure your verification" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Start from a preset, confirm the three that matter most, and find a starting point for your use case.
+  </Card>
+  <Card title="Security and friction" icon="scale-balanced" iconType="light" href="/learn/security-and-friction">
+    How to choose the right strictness for what is at stake.
+  </Card>
+  <Card title="Cross-network verification" icon="share-nodes" iconType="light" href="/learn/cross-network-verification">
+    Recognize someone verified with HumanCheck elsewhere, on your own terms.
+  </Card>
+  <Card title="What we store" icon="shield-halved" iconType="light" href="/learn/what-we-store">
+    What we keep, what your business receives, and what we never collect.
+  </Card>
+  <Card title="Why HumanCheck" icon="circle-question" iconType="light" href="/learn/why-humancheck">
+    The trust layer between nothing and KYC, and where it fits.
+  </Card>
+  <Card title="Add it to your product" icon="code" iconType="light" href="/v3/introduction">
+    The quickstart, the SDK, and the API, from your first call to production.
+  </Card>
+</CardGroup>

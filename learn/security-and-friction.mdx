@@ -1,0 +1,129 @@
+---
+title: "The security and friction balance"
+---
+
+Every setting in [HumanCheck](/learn/why-humancheck) moves along one line: more security on one end, less friction on the other. A stricter check stops more bots, more bulk buyers, and more of the people trying to come back after you blocked them, and it asks a little more of your real users. A lighter check is smoother and lets a little more through. Neither end is right or wrong. The right point depends on what is at stake when someone games you, and that is a decision only you can make.
+
+This page is about how to make that decision well, so you set the bar on purpose instead of by accident.
+
+## Start with what is at stake
+
+Before you touch a single setting, ask one question: what does it cost you when the wrong person gets through? The answer tells you which way to lean.
+
+<CardGroup cols={2}>
+  <Card title="High stakes, lean toward security" icon="lock" iconType="light">
+    A payout, a gated offer, a limited release, a labeling task you pay for. When one person signing up fifteen times costs you real money, a little friction is cheap. Here you want a fresh check and a high bar.
+  </Card>
+  <Card title="Low stakes, lean toward less friction" icon="feather" iconType="light">
+    A newsletter signup, a free trial, a community where the cost of one bad account is small. Completion matters most, so keep it light and let a returning person through with no scan at all.
+  </Card>
+</CardGroup>
+
+A useful way to think about it: imagine the person you most want to keep out, then imagine the real user you most want to keep. The right setting is the one that turns the first away while barely slowing the second. Most flows land somewhere in the middle, and the balanced default is a sensible place to start before you tune.
+
+<Note>
+  Stakes are not the same as scale. A small platform handing out a high-value reward can be more at risk than a large one running a low-value signup. Set the bar by what a bad account costs you, not by how big you are.
+</Note>
+
+## What moves when you turn it up
+
+Turning up security is not one switch. It is a few settings, each of which catches more abuse and asks a little more of your users. Here is what actually changes as you raise the bar.
+
+<Steps>
+  <Step title="The phone step comes in">
+    Attaching a phone or email to a verified human raises the cost of running many accounts, because each one now needs a real contact. It is one of the strongest single moves you can make, and it adds a step real users have to complete.
+  </Step>
+  <Step title="People re-verify more often">
+    You can recognize a returning person quietly in the background via a browser identifier with no scan, or you can require a fresh check every time. Note that clearing cookies or switching browsers ends that recognition. A fresh check is the highest assurance that it is the same person you verified, and it is the most friction. Most teams require a fresh check only at the high-stakes moment, like a payout, and recognize people quietly the rest of the time.
+  </Step>
+  <Step title="Networks and VPNs get stricter">
+    Blocking VPNs and repeat networks closes a common way people hide that several accounts trace back to one place. It catches more, and it occasionally catches a real user on a corporate VPN, so it is a setting you turn up when the stakes justify it.
+  </Step>
+  <Step title="Extra signals get added">
+    Age estimation, region rules, and a collision action let you act on more than just real-and-unique. They cost nothing extra to add, and each one is a place a real user could be slowed if the rule is too tight, so add the ones your use case needs and leave the rest off.
+  </Step>
+</Steps>
+
+Turning it down relaxes each of these. You are never locked in, and you can change any setting on its own. The dial is not all-or-nothing, it is seven separate levers you set one at a time.
+
+## What does not move
+
+It is worth being clear about what stays the same no matter where you set the dial, because it takes some worries off the table.
+
+<CardGroup cols={2}>
+  <Card title="The check is always quick" icon="bolt" iconType="light">
+    Even at the strictest setting, a face scan is a few seconds on a phone. No documents, no government ID. Stricter means it happens more often or asks for a phone, not that the scan itself gets longer or harder.
+  </Card>
+  <Card title="The data handling never changes" icon="shield-halved" iconType="light">
+    At every setting, the face scan becomes a face vector, a numerical representation of the face's geometry, not a saved image. We do not store images, and your business only ever sees the result, a verified or failed verdict and a stable id. See [what we store](/learn/what-we-store).
+  </Card>
+</CardGroup>
+
+## Be honest about the trade-off
+
+We do not hide that a stricter check adds a step. If you turn on the phone requirement, a real user has to give a phone. If you require a fresh check at a payout, a returning person scans again. That is the cost of the assurance, and pretending otherwise would just surprise you later.
+
+What we do is make the effect of each setting clear before you turn it on, and leave the choice with you. The goal is not the strictest possible check. It is the lightest check that still protects what is at stake, so your real users barely notice and the people gaming you do not get through.
+
+A check turns some traffic away, and most of what it turns away is the traffic you did not want. Real users clear it in seconds, a returning person is recognized without doing it again, and you set how strict it is by use case. That is the whole balance in one sentence.
+
+## How the trade-off lands by use case
+
+The same dial sits in a different place for different jobs. Here is roughly where teams tend to set it, and why.
+
+<AccordionGroup>
+  <Accordion title="Loyalty, gated offers, and limited releases">
+    High stakes, lean toward security. Fraudulent redemption and gated-offer manipulation cost you real money per fake account, and bulk buyers will run as many as you let them. Attach a phone, require a fresh check at the moment of reward, and block VPNs. A little friction here pays for itself.
+  </Accordion>
+  <Accordion title="Marketplaces and communities">
+    Medium to high, depending on what changes hands. You are building trust between strangers, so uniqueness matters: when you remove a bad actor, they should not come back under a new name. Attach the verification to your signup so a real human maps to a user, and keep the bar firm without making every visit a scan.
+  </Accordion>
+  <Accordion title="Market research and survey panels">
+    Medium, with data quality as the real prize. Fake respondents and one person taking a survey fifteen times wreck your data and inflate your CAC. You often want an anonymous, headless check rather than a phone step, so completion stays high while every response still comes from a real, unique human.
+  </Accordion>
+  <Accordion title="AI data labeling">
+    Medium to high. You are paying per task, so you want every task done by a verified unique human, not one person behind many accounts. Require uniqueness firmly, and consider a fresh check periodically rather than on every task so labelers are not slowed on each item.
+  </Accordion>
+  <Accordion title="Newsletter signups and free trials">
+    Low stakes, lean toward less friction. The cost of one extra account is small and completion matters most. Keep it light: liveness and uniqueness, no phone step, and recognize returning people with no scan. You can always tighten later if abuse shows up.
+  </Accordion>
+  <Accordion title="Polling and civic platforms">
+    Medium to high. The damage is bot scripts gaming the outcome, so a real, unique human per vote is the whole point. Lean toward a fresh check and firm uniqueness, since the result has to be trustworthy even if that asks a little more of each voter.
+  </Accordion>
+</AccordionGroup>
+
+## A simple way to choose
+
+If you only remember one method, use this.
+
+<Steps>
+  <Step title="Name the thing being gamed">
+    Write down what a bad account actually gets: a payout, a duplicate survey response, a stolen offer, a fake vote. Be specific, because that is what you are protecting.
+  </Step>
+  <Step title="Put a cost on one bad account">
+    Roughly, what does it cost you when one slips through? High cost pushes you toward security. Low cost pushes you toward less friction.
+  </Step>
+  <Step title="Start from the preset, then confirm a few">
+    Pick the use-case preset closest to your job, then confirm only the levers that matter for your stakes: the phone step, the re-verification cadence, and the network rules. Leave the rest at the preset.
+  </Step>
+  <Step title="Watch real completion, then adjust">
+    Once it is live, watch how many real users clear the check. If completion is healthy and abuse is gone, you are done. If completion drops more than you expected, relax one lever at a time. The dial is meant to be tuned.
+  </Step>
+</Steps>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Settings explained" icon="list-check" iconType="light" href="/learn/settings-explained">
+    Exactly what each of the seven levers does, in plain terms, so you know what every setting changes before you touch it.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    The seven levers with a starting point for signups, surveys, and payouts, so you tune from a sensible preset instead of from scratch.
+  </Card>
+  <Card title="Returning users" icon="rotate" iconType="light" href="/learn/cross-network-verification">
+    How a returning person is recognized, and how you set your own re-verification bar across the HumanCheck network.
+  </Card>
+  <Card title="Why HumanCheck" icon="circle-question" iconType="light" href="/learn/why-humancheck">
+    The bigger picture: the trust layer between nothing and KYC, and where this balance fits in it.
+  </Card>
+</CardGroup>

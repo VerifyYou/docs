@@ -1,0 +1,152 @@
+---
+title: "Configuring your verification"
+---
+
+A human check is not one size fits all. The same scan can be light or strict depending on what you are protecting, a low-stakes signup is not a survey panel paying real money for clean data. This page makes you able to set it up: where to start, how a verification attaches to your platform, the seven levers and which direction each one moves you, the choice you make when a person returns, and how to read what the check did in the dashboard.
+
+If you have not yet, [what HumanCheck is](/learn/what-humancheck-is) covers the product in a minute and [how it works](/learn/how-it-works) covers the flow. This page is the operator's manual on top of both.
+
+## First decision: anonymous or attached to your signup
+
+Before any lever, decide how a verified human connects to your world. There are two ways to run a check, and most platforms use both in different places.
+
+<CardGroup cols={2}>
+  <Card title="Anonymous" icon="user-secret" iconType="light">
+    A face scan with no phone or credential tied to the person. You learn that a real, unique human passed, with no account behind it. Good for one-time gates: a survey response, a gated offer, a public poll, anywhere you care that the respondent is real and only here once but do not run user accounts.
+  </Card>
+  <Card title="Attached to your signup" icon="user-gear" iconType="light">
+    A phone or email maps a verified human to your own user. The verdict binds to the account in your system, so a real, unique person is now the person behind that login. Good for marketplaces, communities, loyalty, anywhere you have accounts and want them to be one human each.
+  </Card>
+</CardGroup>
+
+Either way the company only ever receives a verdict, verified or failed, and a stable id, never a face, a name, or an image. Attaching to your signup does not send us more about the person, it just ties the result we already give you to your own user or record. See [accounts versus guests](/v3/concepts/accounts-vs-guests) for how this maps in the API, and [account linking](/v3/advanced/account-linking) to bind a verification to your own user id.
+
+<Note>
+  Anonymous and attached are not mutually exclusive across your product. You might run an anonymous check on a public survey and an attached check at account creation. Each verification is configured on its own.
+</Note>
+
+## Start from a use-case preset
+
+When you create a verification you start from a preset built for a use case, like a signup, a survey panel, an incentive or payout, or a marketplace. The preset sets sensible defaults so you are not staring at a blank form, then you confirm or change the few settings that matter most for you.
+
+These are good starting points, not rules. You can change any lever after launch and it takes effect immediately, so it is fine to start in the right neighborhood and tune from real traffic.
+
+| Use case | Attach to signup | Phone step | Re-verify | Networks | Collision action |
+|---|---|---|---|---|---|
+| Open signup | Optional | Off | Once | Flag | Block |
+| Survey or research panel | Anonymous | On | Every time | Block | Block |
+| AI data labeling | Attach | On | Every time | Block | Block |
+| Loyalty or gated offer | Attach | On | Every time | Block | Block |
+| Marketplace or community | Attach | Optional | Periodically | Flag | Block |
+| Ticketing or limited release | Optional | On | Every time | Block | Block |
+| Polling or civic | Anonymous | Optional | Once | Block | Block |
+
+The pattern underneath: the more it costs you when the same person slips through twice, fake respondents poisoning your data, one labeler farming a hundred accounts, a bot buying out a release, the more you lean toward attaching to your signup, adding the phone step, re-verifying every time, and blocking on a repeat. Where a return just being the same real person is enough, you can loosen all of those for a smoother experience.
+
+## The seven levers in context
+
+Every check is built from the same seven levers. Here is the full surface with the direction each one moves you. [Settings explained](/learn/settings-explained) covers each one in plain language if you want the longer version.
+
+<Steps>
+  <Step title="Who can verify">
+    Anonymous, attached to your signup, or both, and whether you collect an email or phone as a stable identity. This is the first decision above, surfaced as a lever so you can change it later.
+  </Step>
+  <Step title="The phone step">
+    A phone code on top of the face scan. Stronger at catching the same person trying again, and one more step for the user. Worth it when a duplicate is expensive, skippable when it is not.
+  </Step>
+  <Step title="Re-verification cadence">
+    How a returning person proves themselves again, from a fresh check every visit to once and done. This is the return moment, covered on its own below because it is the choice that shapes the experience most.
+  </Step>
+  <Step title="Networks and VPNs">
+    Flag or block VPNs and repeat networks. Blocking is stricter and turns away more, flagging lets the person through but marks the verification so you can watch the pattern.
+  </Step>
+  <Step title="Regions">
+    Limit who can pass by region when you have a reason to, for example a release or offer that is only valid in certain markets. Off by default.
+  </Step>
+  <Step title="Age estimation">
+    Turn away a user estimated under your threshold, with no document and no ID. Use it only when you have a real age requirement, since it adds nothing for platforms that do not. Age, gender, and geo cost nothing extra when you turn them on.
+  </Step>
+  <Step title="Collision action">
+    When the same person is seen twice, block them or let them in and flag it. Blocking is what lets you stop someone once and keep them from coming back under a new name. Flagging is for when you would rather watch than turn away.
+  </Step>
+</Steps>
+
+## The return moment: how you re-verify
+
+This is the choice that clicks once you see it. When a person you already verified comes back, you decide how we make sure it is the same person.
+
+<Columns cols={2}>
+  <Card title="A fresh check every time" icon="shield-check" iconType="light">
+    The person does a new face scan on each visit. Highest assurance, since you re-prove a live, present human at the moment that matters. Right for high-stakes returns: a payout, a sensitive action, a survey where every response must be a fresh real human.
+  </Card>
+  <Card title="Recognized quietly in the background" icon="bolt" iconType="light">
+    We recognize the person via a browser identifier, with no scan at all. Lowest friction, the person just continues. Note that clearing cookies or switching browsers ends this recognition. Right when the return is routine and you mainly need to know it is still the same real human you verified.
+  </Card>
+</Columns>
+
+Either way you get a real level of assurance that the person returning is the one you verified. The difference is how much you ask of them to get it. You can set this per verification and change it whenever the stakes change. See [returning users](/v3/concepts/returning-users) for how this works in the integration.
+
+## Cross-network: verified once, recognized everywhere
+
+[HumanCheck](/learn/why-humancheck) is one network. Someone who verified with HumanCheck on another platform can be recognized on yours without scanning again, which is the least friction a real returning human can have. You still set your own bar: accept the prior verification as enough, or require a fresh check before you trust it on your platform.
+
+Your rules do not change what other platforms do, and theirs do not change yours. You decide what counts as verified for you. [Cross-network verification](/learn/cross-network-verification) walks through the whole thing, including when to accept a network verification and when to ask for a fresh one.
+
+## Reading the results in the dashboard
+
+Configuration is a loop: set the levers, then watch what they did. The dashboard is where you read that.
+
+<AccordionGroup>
+  <Accordion title="Verified and failed">
+    Every verification lands as verified or failed, the same verdict your server receives. A run of failures right after a change usually means a lever is tighter than your real traffic, and you can loosen it on the spot.
+  </Accordion>
+  <Accordion title="Blocked versus flagged">
+    A blocked verification is one the check turned away. A flagged one is one it let through but marked for you to review, for example a collision or a VPN you chose to flag rather than block. Flag is how you watch a pattern before you decide to start blocking it.
+  </Accordion>
+  <Accordion title="Collisions">
+    A collision is the same human seen twice. With collision action set to block, the repeat is stopped, which is exactly what keeps one person from quietly becoming fifteen. Set to flag, it comes in marked so you can look before you act.
+  </Accordion>
+  <Accordion title="Overrides">
+    If a real person is wrongly denied, someone on your team can clear them with an override, scoped to your own account. Overrides are how you handle the edge cases a strict setting catches without loosening the setting for everyone.
+  </Accordion>
+  <Accordion title="Age, gender, and geo signals">
+    If you turned these on, they appear alongside the verdict. They cost nothing extra and are there to act on, for example an age estimate under your threshold or a region you do not serve.
+  </Accordion>
+</AccordionGroup>
+
+What you never see in the dashboard is a face, a name, or an image. The scan is turned into a face vector, a numerical representation of the face's geometry, not a saved image, and we do not store images. You read results and patterns, never people. See [what we store](/learn/what-we-store) for exactly what is kept and why.
+
+## What it costs to run this
+
+The configuration does not change the price. A verification is about one to two cents, all inclusive, and turning on age, gender, or geo costs nothing extra. You are billed monthly on actual usage and charged once per human, so returning people never count again no matter how often they come back. That is often fifty to a hundred times less than a full KYC check. [Pricing](/learn/pricing) has the detail.
+
+## The balance to get right
+
+Every lever moves you along one line: more security on one end, less friction on the other. The right point depends on what is at stake, and it is different for a public poll than for a payout. The good news is none of it is permanent, change a lever and it takes effect immediately, so you can start from the preset and tune from what you see in the dashboard.
+
+<Note>
+  Want to see it before you commit? You can run a branded check yourself with no integration and watch the verdict land in the dashboard. [Book a demo](https://verifyyou.com/demo) and we will set you up.
+</Note>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Cross-network verification" icon="share-nodes" iconType="light" href="/learn/cross-network-verification">
+    How someone verified elsewhere is recognized on your platform, and how you set your own bar.
+  </Card>
+  <Card title="Security and friction" icon="sliders" iconType="light" href="/learn/security-and-friction">
+    How to choose the strictness point for your use case, lever by lever.
+  </Card>
+  <Card title="Settings explained" icon="list-check" iconType="light" href="/learn/settings-explained">
+    The full list of settings in plain language, one by one.
+  </Card>
+  <Card title="What we store" icon="shield-halved" iconType="light" href="/learn/what-we-store">
+    What we keep to recognize a unique person, and what your business receives.
+  </Card>
+  <Card title="Add it to your product" icon="code" iconType="light" href="/v3/introduction">
+    The quickstart, the SDK, and the API, from your first call to production.
+  </Card>
+  <Card title="Why HumanCheck" icon="circle-question" iconType="light" href="/learn/why-humancheck">
+    The hub: the problem, the two things a scan proves, and where it all fits.
+  </Card>
+</CardGroup>
