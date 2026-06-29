@@ -1,0 +1,112 @@
+---
+title: "What we store"
+---
+
+The first question most people ask about a face check is the same one: is there a photo of me sitting in a database somewhere? The short answer is no, and it is the whole point of how [HumanCheck](/learn/why-humancheck) is built. The face scan is turned into a face vector, a numerical representation of the face's geometry, not a saved image. We do not store images. That single fact shapes everything on this page, so it is worth walking through what the record actually is, what your business receives, what you can choose to turn on, and where the binding line is drawn.
+
+## What the record is
+
+When a person completes a check, the model first confirms a real, present human, then turns the face scan into a face vector, a numerical representation of the face's geometry, not a saved image. That vector is what lets us recognize a unique person. New checks are compared against the vectors we already hold, which is how we tell a first-time human from someone coming back under a new name.
+
+<CardGroup cols={2}>
+  <Card title="A face vector" icon="shield-halved" iconType="light">
+    A numerical representation of the face's geometry, not a saved image. It is stored encrypted, treated as sensitive biometric data, and the face vector persists so we can recognize a unique person and recognize returns.
+  </Card>
+  <Card title="A stable id" icon="hashtag" iconType="light">
+    A reference that lets your platform recognize the same human across visits. It carries no name, no address, and no photo, just enough to say this is the same verified person.
+  </Card>
+</CardGroup>
+
+<Note>
+  The face vector persists. That is what makes uniqueness work: if we did not keep it, we could not tell a returning person from a brand new one, and someone you blocked could come straight back. Persistence is the feature, not a side effect.
+</Note>
+
+## What your business receives by default
+
+By default, the company running the check only sees the result, a simple verified or failed that says this is a real, unique human, along with the stable id for that person. It does not receive a face, a name, or an image.
+
+<CardGroup cols={2}>
+  <Card title="A verdict" icon="circle-check" iconType="light">
+    Verified or failed. Your server gates access on that, and from then on you decide how returning people are recognized.
+  </Card>
+  <Card title="A stable id" icon="fingerprint" iconType="light">
+    So you can tie the same verified human to your own user, without ever holding their face.
+  </Card>
+</CardGroup>
+
+Here is what the business never receives from the check:
+
+- **No government ID.** No passport, no driver's license, no documents to upload.
+- **No photo or video.** The business never receives an image from the check.
+- **No name, address, or profile.** The business gets a result, not a file on the person.
+
+That means there is less for your side to store, less to secure, and less to expose if something ever goes wrong. The company only sees the result.
+
+## What you can choose to turn on
+
+Some use cases need a little more than a bare verdict, and those are settings you control on the check rather than things we collect by default. They sit among the seven levers you tune for your platform, and each one only adds an identifier when you ask for it.
+
+<AccordionGroup>
+  <Accordion title="The phone step" icon="phone">
+    Adds a phone code on top of the face scan. If you turn it on, that phone number is held so the same person can be recognized again. It is how you attach a verified human to your own signup rather than running fully anonymous.
+  </Accordion>
+  <Accordion title="An email" icon="envelope">
+    Gives a returning person a stable identity tied to your account, when you collect one. Like the phone step, it maps a verified human to your user.
+  </Accordion>
+  <Accordion title="Age estimation" icon="user-clock">
+    Can turn away a person the check estimates is under your threshold, with no ID and no document. Adding age, gender, or geo costs nothing extra.
+  </Accordion>
+</AccordionGroup>
+
+If you enable any of these, that identifier is held so it can do its job. See the [privacy policy](https://verifyyou.com/privacy) for the exact categories and how long each one is kept, and [configuring your verification](/learn/configuring-your-verification) for how these levers fit the rest of your setup.
+
+## How the record is used when someone returns
+
+The face vector is not only about who passes the first time. It is what makes the return moment work, and the return moment is where most of the value sits.
+
+<Steps>
+  <Step title="A verified person comes back">
+    They land on your platform again, days or months later.
+  </Step>
+  <Step title="You decide how we confirm it is them">
+    Require a fresh face check every time for the highest assurance, or recognize them quietly in the background via a browser identifier, with no scan at all.
+  </Step>
+  <Step title="You get real assurance it is the same person">
+    Either way, you know the person returning is the one you verified, because the face vector we hold is what we match against.
+  </Step>
+</Steps>
+
+Because this is one network, someone verified with HumanCheck elsewhere can be recognized on your platform without scanning again, and you set your own re-verification bar. The record that makes that possible is the same face vector, never an image. See [cross-network verification](/learn/cross-network-verification) for how that works and where your rules end.
+
+## The honest boundary
+
+A human check involves a camera and a live person, so there is real data handling behind it, and we would rather be plain about that than wave it away. The shape of it is simple: what we keep is a face vector, a numerical representation of the face's geometry, not a saved image, treated as sensitive biometric data, and the company only sees the result.
+
+For the precise terms, the categories of data, the retention periods, and your rights, the [privacy policy](https://verifyyou.com/privacy) is the binding source. This page explains the design in plain language. The privacy policy is the one that governs.
+
+<Note>
+  If you ever see a claim about our data handling that this page or the privacy policy does not support, trust the privacy policy. It is written to be exact, and it is the document we are held to.
+</Note>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="How returning users are recognized" icon="users" iconType="light" href="/v3/concepts/returning-users">
+    The same face vector is what lets a returning person move through quickly, on your terms.
+  </Card>
+  <Card title="Security and friction" icon="lock" iconType="light" href="/learn/security-and-friction">
+    How strict to set the check, and what that trades against conversion.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    The seven levers, including the phone step, email, and age estimation.
+  </Card>
+  <Card title="Security overview" icon="shield-halved" iconType="light" href="/security">
+    How the face vector is stored and protected, in one place.
+  </Card>
+  <Card title="Why HumanCheck" icon="circle-question" iconType="light" href="/learn/why-humancheck">
+    The trust layer between nothing and KYC, and where this all started.
+  </Card>
+  <Card title="Privacy policy" icon="file-shield" iconType="light" href="https://verifyyou.com/privacy">
+    The binding source for collection, retention, and your rights.
+  </Card>
+</CardGroup>

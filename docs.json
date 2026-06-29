@@ -1,82 +1,125 @@
 {
-    "$schema": "https://mintlify.com/docs.json",
-    "theme": "mint",
-    "name": "VerifyYou",
-    "colors": {
-        "primary": "#16A34A",
-        "light": "#FFFFFF",
-        "dark": "#000000"
-    },
-    "fonts": {
-        "family": "Inter"
-    },
-    "favicon": "/favicon.svg",
-    "logo": {
-        "light": "/logo/light.svg",
-        "dark": "/logo/dark.svg"
-    },
-    "navigation": {
-        "tabs": [
-            {
-                "tab": "Docs",
-                "pages": [
-                    {
-                        "group": "Verification processes",
-                        "pages": [
-                            "v3/introduction",
-                            "v3/concepts/humanness-and-uniqueness",
-                            "v3/concepts/accounts-vs-guests",
-                            "v3/concepts/returning-users"
-                        ]
-                    },
-                    {
-                        "group": "SDK and API",
-                        "pages": [
-                            "v3/sdk/vyget",
-                            "v3/sdk/vycheck",
-                            "v3/api/initialize",
-                            "v3/api/confirmations"
-                        ]
-                    },
-                    {
-                        "group": "Advanced usage",
-                        "pages": [
-                            "v3/advanced/account-linking",
-                            "v3/advanced/flow-tracking",
-                            "v3/advanced/platform-api"
-                        ]
-                    },
-                    {
-                        "group": "Reference",
-                        "pages": [
-                            "v3/openapi"
-                        ]
-                    },
-                    "v3/faq"
-                ]
-            },
-            {
-                "tab": "API Reference",
-                "openapi": "https://trust.verifyyou.com/openapi.json"
-            }
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "VerifyYou",
+  "colors": {
+    "primary": "#16A34A",
+    "light": "#FFFFFF",
+    "dark": "#000000"
+  },
+  "fonts": {
+    "family": "Inter"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Home",
+        "pages": [
+          "home"
         ]
-    },
-    "navbar": {
-        "links": [
-            {
-                "label": "Website",
-                "href": "https://verifyyou.com/"
-            }
+      },
+      {
+        "tab": "Docs",
+        "pages": [
+          {
+            "group": "Verification processes",
+            "pages": [
+              "v3/introduction",
+              "v3/concepts/humanness-and-uniqueness",
+              "v3/concepts/accounts-vs-guests",
+              "v3/concepts/returning-users"
+            ]
+          },
+          {
+            "group": "SDK and API",
+            "pages": [
+              "v3/sdk/vyget",
+              "v3/sdk/vycheck",
+              "v3/api/initialize",
+              "v3/api/confirmations"
+            ]
+          },
+          {
+            "group": "Advanced usage",
+            "pages": [
+              "v3/advanced/account-linking",
+              "v3/advanced/flow-tracking",
+              "v3/advanced/platform-api"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "v3/openapi"
+            ]
+          },
+          "v3/faq"
         ]
-    },
-    "contextual": {
-        "options": [
-            "copy"
+      },
+      {
+        "tab": "API Reference",
+        "openapi": "https://trust.verifyyou.com/openapi.json"
+      },
+      {
+        "tab": "Learn",
+        "pages": [
+          "learn/index",
+          {
+            "group": "Understand",
+            "pages": [
+              "learn/why-humancheck",
+              "learn/what-humancheck-is",
+              "learn/how-it-works",
+              "learn/what-we-store"
+            ]
+          },
+          {
+            "group": "Decide",
+            "pages": [
+              "learn/where-humancheck-fits",
+              "learn/pricing"
+            ]
+          },
+          {
+            "group": "Configure",
+            "pages": [
+              "learn/configuring-your-verification",
+              "learn/cross-network-verification",
+              "learn/security-and-friction",
+              "learn/settings-explained"
+            ]
+          }
         ]
-    },
-    "footer": {
-        "socials": {
-            "linkedin": "https://www.linkedin.com/search/results/all/?keywords=verifyyou&origin=RICH_QUERY_SUGGESTION&heroEntityKey=urn%3Ali%3Aorganization%3A105571405&position=0"
-        }
+      },
+      {
+        "tab": "Security",
+        "pages": [
+          "security/index"
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://verifyyou.com/"
+      }
+    ]
+  },
+  "contextual": {
+    "options": [
+      "copy"
+    ]
+  },
+  "footer": {
+    "socials": {
+      "linkedin": "https://www.linkedin.com/search/results/all/?keywords=verifyyou&origin=RICH_QUERY_SUGGESTION&heroEntityKey=urn%3Ali%3Aorganization%3A105571405&position=0"
     }
+  }
 }

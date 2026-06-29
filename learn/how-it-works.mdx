@@ -1,0 +1,44 @@
+---
+title: "How the check works"
+---
+
+A check is a short, hosted flow. Your app hands the person off, they do a quick face scan, and they come back with a result your server can trust. The face never touches your systems.
+
+## The flow, end to end
+
+<Steps>
+  <Step title="Start the check">
+    From the browser with `vycheck()`, or from your server with `POST /v3/initialize`. Either way you get a hosted URL and send the person to it. No code is needed if you start from a branded link in the dashboard.
+  </Step>
+  <Step title="The person does a face scan">
+    On our hosted page, a quick scan confirms a live, present human, and checks whether we have seen them before. On a desktop we hand off to their phone for the camera and bring them back automatically.
+  </Step>
+  <Step title="They return to your app">
+    The person comes back to your page with the result on the URL, `?vyt=<token>&vyc=<0 or 1>`. The `vyc` value is only a hint for your UI, not something to trust on its own.
+  </Step>
+  <Step title="You confirm on your server">
+    Your server exchanges the token at `GET /v3/confirmations/{token}` for the authoritative verdict, verified or failed, and you gate access on that.
+  </Step>
+</Steps>
+
+## What each side ends up with
+
+<CardGroup cols={2}>
+  <Card title="The person" icon="user" iconType="light">
+    A few seconds, a face scan, no documents and no government ID. If they come back later, they are recognized without doing it again.
+  </Card>
+  <Card title="Your business" icon="circle-check" iconType="light">
+    A clear verdict that this is a real, unique human, and a stable id to store. Never a face, a name, or an image. See [what we store](/learn/what-we-store).
+  </Card>
+</CardGroup>
+
+## Two ways to add it
+
+<CardGroup cols={2}>
+  <Card title="No code" icon="wand-magic-sparkles" iconType="light" href="https://platform.verifyyou.com/dashboard">
+    Create a check in the dashboard, get a branded link or QR code, and drop it into a signup, an email, or a survey.
+  </Card>
+  <Card title="Code" icon="code" iconType="light" href="/v3/introduction">
+    Wire it in with the SDK or the REST API. The quickstart walks the whole flow from first call to confirm.
+  </Card>
+</CardGroup>
