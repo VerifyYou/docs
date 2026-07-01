@@ -88,6 +88,22 @@ Accepts a **publishable key** (`pk_…`) or a **secret key** (`sk_…`). A handf
 { "url": "https://app.verifyyou.com/v/abc123" }
 ```
 
+## Errors
+
+All error responses have the shape `{ "detail": "<string>" }`, except `422` which
+returns `{ "detail": [{ "type": "...", "loc": [...], "msg": "..." }] }`.
+
+| Status | `detail` | When |
+|--------|----------|------|
+| `400` | `identifiers_require_secret_key` | `email`, `phone`, `external_id`, `verification_id`, or `verification_external_id` sent with a publishable key. |
+| `400` | `origin_required` | No `origin` in the request and the matched verification has none configured. |
+| `401` | `invalid key type` | Bearer token is not a `pk_*` or `sk_*` key. |
+| `401` | `invalid or revoked key` | Key not found or has been revoked. |
+| `401` | `Not authenticated` | `Authorization` header missing entirely. |
+| `404` | `no_matching_verification` | No verification matches the `origin` / `start_path` / `return_path` for your account. |
+| `422` | _(array)_ | Request body failed validation. |
+| `503` | `upstream_unavailable` | VerifyYou's backend or AWS is temporarily unavailable. Retry with exponential back-off. |
+
 ## Examples
 
 <CodeGroup>

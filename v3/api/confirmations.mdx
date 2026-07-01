@@ -64,6 +64,18 @@ Authorization: Bearer sk_…
 }
 ```
 
+## Errors
+
+All error responses have the shape `{ "detail": "<string>" }`.
+
+| Status | `detail` | When |
+|--------|----------|------|
+| `401` | `invalid key type` | Bearer token is not a secret key (`sk_*`). |
+| `401` | `invalid or revoked key` | Secret key not found or has been revoked. |
+| `401` | `invalid_confirmation_token` | Token is malformed, expired, or was not issued for your key. |
+| `401` | `Not authenticated` | `Authorization` header missing entirely. |
+| `404` | `not found` | Confirmation not found — check that the token came from a session your key initialized, and that test/live scopes match. |
+
 ## Example
 
 <CodeGroup>
@@ -101,6 +113,16 @@ Authorization: Bearer sk_…
 ```json Response
 { "locked": true }
 ```
+
+### Lock errors
+
+| Status | `detail` | When |
+|--------|----------|------|
+| `401` | `invalid key type` | Bearer token is not a secret key (`sk_*`). |
+| `401` | `invalid or revoked key` | Secret key not found or has been revoked. |
+| `401` | `invalid_confirmation_token` | Token is malformed or can't be decoded. |
+| `401` | `Not authenticated` | `Authorization` header missing entirely. |
+| `404` | `not found` | Confirmation not found for your key / test-live scope. |
 
 <Note>
   Locking is single-use enforcement at the confirmation level. To bar the same
