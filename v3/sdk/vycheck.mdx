@@ -1,83 +1,98 @@
 ---
 title: "vycheck()"
-description: "Start a verification from the browser — it builds the link and redirects for you."
+description: "Start a verification from the browser, as a redirect or an embedded flow."
 ---
 
-`vycheck()` kicks off a verification for the current page. It mints a session, redirects the user to the hosted flow, and brings them back to where they started. It's the simplest way to add verification: one call, no backend round-trip to start.
+`vycheck()` starts a verification. In the default redirect mode it mints a session and sends the user to the hosted flow. In the iframe modes it opens the flow over or inside your page and resolves with the result when the user finishes.
 
 ```ts
 import { init, vycheck } from "@verifyyou-sdk/client";
 
 init({ publishableKey: "pk_test_…" }); // once, at app startup
 
-await vycheck();
+verifyButton.addEventListener("click", () => vycheck());
 ```
+
+Wire it to a user action like a button click. Don't auto-open the flow on page load.
 
 ## What it does
 
-`vycheck()` is the client-side counterpart to the server's [`POST /v3/initialize`](/v3/api/initialize). Under the hood it calls that same endpoint with your publishable key, then sends the browser to the returned URL.
-
-It's **always safe to call** — it checks for an existing result first:
+`vycheck()` is the client-side counterpart to the server's [`POST /v3/initialize`](/v3/api/initialize). Under the hood it calls that endpoint with your publishable key, then either navigates to the returned URL (redirect mode) or mounts it in an iframe (drawer and inline modes). The mode comes from [`init()`](/v3/sdk/init).
 
 <Steps>
-  <Step title="Already came back? Return the token.">
-    If the URL already has a `vyt` token (the user just verified), `vycheck()` returns it immediately and does **not** redirect.
+  <Step title="Redirect mode: the page navigates away.">
+    The returned promise never resolves because the browser leaves the page.
+    When the user comes back, the result is on the URL. Read it with
+    [`vyget()`](/v3/sdk/vyget) on page load.
   </Step>
-  <Step title="Otherwise, start the flow.">
-    It calls `POST /v3/initialize` for the current page and redirects the browser to the hosted verification URL.
+  <Step title="Iframe modes: the promise resolves in place.">
+    The flow opens as a drawer or inside your container. When it finishes,
+    `vycheck()` resolves with the result and your `onComplete` callback fires.
+    If the user dismisses the flow, it resolves with an empty result and
+    `onClose` fires.
   </Step>
-  <Step title="The user comes back.">
-    After verifying, they land back on the same page with `?vyt=<token>&vyc=<0|1>` — read it with [`vyget()`](/v3/sdk/vyget).
+  <Step title="Either way, confirm on your backend.">
+    Send the token to your server and exchange it with
+    [`GET /v3/confirmations/{token}`](/v3/api/confirmations) before granting
+    anything.
   </Step>
 </Steps>
 
 ## Signature
 
 ```ts
-function vycheck(opts?: { externalTracker?: string }): Promise<string | undefined>;
-```
+function vycheck(overrides?: VyCheckOptions): Promise<VyResult>;
 
-<ParamField path="opts.externalTracker" type="string">
-  A non-PII label that rides along with this session and is echoed back in your
-  [flow webhooks](/v3/advanced/flow-tracking) — use it to correlate funnel
-  events with your own analytics.
-</ParamField>
-
-**Returns** the existing token (a `string`) if the user already came back; otherwise `undefined` after kicking off the redirect.
-
-## How the session is built
-
-When it starts a flow, `vycheck()` derives everything from the current page:
-
-- **`origin`** — `window.location.origin`. Used to look up which of your verifications to run.
-- **`start_path`** — `window.location.pathname`. The page the user started from, so you can run different flows on different paths.
-- **`pass_params`** — every current query parameter **except** the reserved `vy*` ones is carried through the round-trip and re-appended when the user returns. Your own `?ref=…` or `?plan=…` survives the trip.
-- **`external_tracker`** — whatever you passed in `opts`.
-
-<Note>
-  Call [`init()`](/v3/api/initialize) with your publishable key before
-  `vycheck()`. If the SDK isn't initialized and there's no token to return,
-  `vycheck()` throws.
-</Note>
-
-## Typical usage
-
-```ts
-import { init, vyget, vycheck } from "@verifyyou-sdk/client";
-
-init({ publishableKey: "pk_test_…" });
-
-// On a "Verify" button, or on load behind a gate:
-const { token } = vyget();
-if (!token) {
-  await vycheck(); // redirects to the hosted flow, then back here
+interface VyResult {
+  token: string | null;    // the vyt confirmation token; confirm it server-side
+  verified: boolean;       // UI hint from vyc; never gate access on this
+  vyc: string | null;      // raw verdict code: "1", "0", or null
 }
 ```
 
-Because `vycheck()` short-circuits when a token is already present, you can wire it to a button and a page-load gate without double-starting the flow.
+<ParamField path="overrides" type="VyCheckOptions">
+  Optional per-call overrides for anything you set in `init()`, except the
+  publishable key and the mode. Useful for a one-off container or a different
+  `onComplete` for a specific call.
+</ParamField>
+
+In iframe modes the promise resolves with the result. On dismiss it resolves with `{ token: null, verified: false, vyc: null }` rather than rejecting, so you don't need a try/catch around the await.
+
+## Typical usage, drawer mode
+
+```ts
+import { init, vycheck } from "@verifyyou-sdk/client";
+
+init({ publishableKey: "pk_test_…", mode: "iframe" });
+
+verifyButton.addEventListener("click", async () => {
+  const { token } = await vycheck();
+  if (!token) return; // dismissed without finishing
+
+  // Confirm on your backend, then unlock the UI on its answer.
+  const res = await fetch("/api/verify/confirm", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+  const { verified } = await res.json();
+  if (verified) showGatedContent();
+});
+```
+
+## Returning users
+
+If the person already passed this verification, the flow can complete almost instantly and hand back a fresh token. That is the skip window on your verification's configuration doing its job, not a bug. Each pass still gets its own token and needs its own backend confirmation.
 
 <Warning>
   `vycheck()` only starts verification. The result still has to be
-  [confirmed server-side](/v3/api/confirmations) — don't grant access on the
-  redirect alone.
+  [confirmed server-side](/v3/api/confirmations). Never grant access from the
+  client-side result alone.
 </Warning>
+
+<Note>
+  Need to attach your own user id or bind an email or phone the user cannot
+  change? Start the session from your server instead with
+  [`POST /v3/initialize`](/v3/api/initialize) and a secret key. Parameters like
+  `external_id` and `pass_params` live there.
+</Note>

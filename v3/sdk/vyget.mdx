@@ -1,9 +1,9 @@
 ---
 title: "vyget()"
-description: "Read the verification result the hosted flow appended to your return URL."
+description: "Read the verification result, from the return URL or the last embedded flow."
 ---
 
-`vyget()` reads the result of a verification straight off the current URL. When the hosted flow sends a user back to your page, it appends the outcome as query parameters; `vyget()` parses them for you so you don't have to touch the URL yourself.
+`vyget()` reads the result of a verification. In redirect mode it parses the parameters the hosted flow appended to your return URL. In the iframe modes it returns the last completed result, the same one `onComplete` received.
 
 ```bash
 npm install @verifyyou-sdk/client
@@ -12,12 +12,12 @@ npm install @verifyyou-sdk/client
 ```ts
 import { vyget } from "@verifyyou-sdk/client";
 
-const { verified, token } = vyget();
+const { token, verified } = vyget();
 ```
 
 ## What it does
 
-When a user returns from verification, the URL looks like this:
+When a user returns from a redirect flow, the URL looks like this:
 
 ```
 https://yourapp.com/verified?vyt=<token>&vyc=1
@@ -25,31 +25,33 @@ https://yourapp.com/verified?vyt=<token>&vyc=1
 
 `vyget()` reads the two reserved parameters and returns them as a typed object:
 
-- **`vyt`** — the confirmation **token**. This is the proof you exchange on your backend for the authoritative result.
-- **`vyc`** — the client-side **verdict** hint: `1` (passed) or `0` (failed).
+- **`vyt`** is the confirmation **token**. This is the proof you exchange on your backend for the authoritative result.
+- **`vyc`** is the client-side **verdict** hint: `1` (passed) or `0` (failed).
 
 ```ts
 interface VyResult {
-  verified: boolean | undefined; // from vyc: "1" → true, "0" → false, absent → undefined
-  token: string | undefined; // from vyt: the confirmation token, or undefined
+  token: string | null;    // from vyt, or null if absent
+  verified: boolean;       // true only when vyc is "1"
+  vyc: string | null;      // the raw verdict code
 }
 ```
 
 ## How it works
 
-`vyget()` is fully synchronous and makes no network calls. It reads `window.location.search`, looks for `vyc` and `vyt`, and maps them:
+`vyget()` is synchronous and makes no network calls. It checks the URL first; if there are no `vy` parameters and an embedded flow completed earlier on this page, it returns that result instead.
 
-| URL | Returns |
+| Situation | Returns |
 | --- | --- |
-| `?vyt=tok_123&vyc=1` | `{ verified: true, token: "tok_123" }` |
-| `?vyc=0` | `{ verified: false, token: undefined }` |
-| _(no vy params)_ | `{ verified: undefined, token: undefined }` |
+| URL has `?vyt=tok_123&vyc=1` | `{ token: "tok_123", verified: true, vyc: "1" }` |
+| URL has `?vyc=0` | `{ token: null, verified: false, vyc: "0" }` |
+| A drawer or inline flow just completed | that flow's result |
+| Nothing to read | `{ token: null, verified: false, vyc: null }` |
 
-It's **safe to call anywhere, on every page load** — if there's nothing to read, you get `undefined`s. Outside a browser (SSR) it also returns `undefined`s rather than throwing.
+It is safe to call anywhere, on every page load. If there is nothing to read you get the empty result rather than an error.
 
 ## Use it on page load
 
-Call `vyget()` when your page mounts. A token present means the user just came back from verifying — hand it to your backend to [confirm](/v3/api/confirmations), then clean the parameters off the URL so a refresh can't replay them.
+Call `vyget()` when your page mounts. A token means the user just came back from verifying. Hand it to your backend to [confirm](/v3/api/confirmations), then clean the parameters off the URL so a refresh can't replay them.
 
 ```ts
 import { vyget } from "@verifyyou-sdk/client";
@@ -62,17 +64,22 @@ if (token) {
     body: JSON.stringify({ token }),
   });
   // Then strip ?vyt / ?vyc from the URL:
-  window.history.replaceState({}, "", window.location.pathname);
+  const url = new URL(window.location.href);
+  url.searchParams.delete("vyt");
+  url.searchParams.delete("vyc");
+  window.history.replaceState({}, "", url);
 }
 ```
 
+Confirm each token exactly once and guard against duplicate calls. Development tooling like React StrictMode runs effects twice, and a second confirmation of a token you already accepted and locked reads as a rejection.
+
 <Warning>
-  `verified` is a convenience for your UI — anyone can edit a URL. For anything
+  `verified` is a convenience for your UI. Anyone can edit a URL. For anything
   that matters, send the `token` to your backend and
   [confirm](/v3/api/confirmations) it with your secret key.
 </Warning>
 
 <Note>
-  No token on the URL? Start a verification with
+  No result to read? Start a verification with
   [`vycheck()`](/v3/sdk/vycheck).
 </Note>

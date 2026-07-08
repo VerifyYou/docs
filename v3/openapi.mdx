@@ -1,30 +1,32 @@
 ---
 title: "API reference & spec"
-description: "Where to find every endpoint — browse it, try it, or generate a client."
+description: "Where to find every endpoint. Browse it, try it, or generate a client."
 ---
 
-The pages under **SDK and API** walk through the core flow (`initialize` and `confirmations`) with full context. For the **complete** list of endpoints — verifications, confirmations, API keys, and everything else — use the reference surfaces below. They're all generated from the same live OpenAPI spec, so they never drift from the API.
+The pages under **SDK and API** walk through the core flow (`initialize` and `confirmations`) with full context. For the **complete** list of endpoints, use the reference surfaces below.
 
 <CardGroup cols={2}>
   <Card title="API Reference tab" icon="book" href="/api-reference">
-    The full, interactive endpoint reference, right here in the docs — every operation, grouped by area, generated from the live spec. Start here.
+    The full, interactive endpoint reference, right here in the docs. Every operation with request and response shapes. Start here.
   </Card>
   <Card title="Swagger UI" icon="flask" href="https://trust.verifyyou.com/docs">
     Browse every operation and **try it out** against the live API. Each endpoint deep-links, e.g. `…/docs#/Verification%20Flow/external-initialize`.
   </Card>
   <Card title="openapi.json" icon="file-code" href="https://trust.verifyyou.com/openapi.json">
-    The raw spec. Point your codegen at this URL to generate a client.
+    The raw spec, served by the live API. Point your codegen at this URL to generate a client.
   </Card>
 </CardGroup>
 
 ## Environments
 
-The same paths are served per environment — point your tools at the right base:
+The same paths are served everywhere. Test and live are not separate hosts; the mode comes from the key you authenticate with:
 
-| Environment | Base URL | Spec |
+| Mode | Base URL | Keys |
 | --- | --- | --- |
-| Production | `https://trust.verifyyou.com` | `/openapi.json` |
-| Sandbox / test | _same base, test keys_ | `/openapi.json` |
+| Production | `https://trust.verifyyou.com` | `pk_live_…` / `sk_live_…` |
+| Sandbox / test | `https://trust.verifyyou.com` | `pk_test_…` / `sk_test_…` |
+
+Not sure a key is wired correctly? `POST /v3/keys/test` with any key returns `{ valid, key_type, is_test }` and is safe to use as a setup check or healthcheck.
 
 ## Generate a client
 
@@ -36,6 +38,7 @@ npx @hey-api/openapi-ts \
 
 <Note>
   Prefer not to generate anything? The official SDK
-  ([`@verifyyou-sdk/client`](/v3/sdk/vyget)) already wraps these endpoints for
-  the browser and the server.
+  ([`@verifyyou-sdk/client`](/v3/sdk/init)) already wraps the browser side of
+  these endpoints. Your backend only needs two plain HTTP calls: confirm and,
+  optionally, lock.
 </Note>

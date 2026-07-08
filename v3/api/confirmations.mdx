@@ -3,7 +3,7 @@ title: "GET /v3/confirmations/{token}"
 description: "Exchange a return token for the authoritative verification result."
 ---
 
-When a user returns from the hosted flow, they carry a `vyt` **token** on the URL. `GET /v3/confirmations/{token}` exchanges that token for the **authoritative** result. This is the check that matters — run it on your backend with your secret key before you grant access. The `vyc` value on the URL is only a UI hint.
+When a user returns from the hosted flow, they carry a `vyt` **token**. `GET /v3/confirmations/{token}` exchanges that token for the **authoritative** result. This is the check that matters: run it on your backend with your secret key before you grant access. The `vyc` value the client sees is only a UI hint.
 
 ```http
 GET https://trust.verifyyou.com/v3/confirmations/{token}
@@ -11,13 +11,14 @@ Authorization: Bearer sk_…
 ```
 
 <Warning>
-  **Secret key only.** Never confirm from the browser — that would expose your
-  secret key.
+  **Secret key only.** Never confirm from the browser, that would expose your
+  secret key. Use the secret key from the same pair as the publishable key that
+  started the flow: test with test, live with live.
 </Warning>
 
 <Tip>
   This page is the guided walkthrough. To see every endpoint and **try it out**
-  against the live API, use the [API Reference](/api-reference) — it's generated
+  against the live API, use the [API Reference](/api-reference). It is generated
   from the same spec, so it never drifts.
 </Tip>
 
@@ -25,15 +26,48 @@ Authorization: Bearer sk_…
 
 <ParamField path="token" type="string" required>
   The `vyt` confirmation token the user returned with after verifying. Read it
-  off the URL with [`vyget()`](/v3/sdk/vyget).
+  off the URL or the embedded flow's result with [`vyget()`](/v3/sdk/vyget).
 </ParamField>
 
 ## Response
 
 <ResponseField name="verified" type="boolean">
-  Authoritative result — `true` only if the person passed the
+  Authoritative result. `true` only if the person passed the
   [liveness and uniqueness](/v3/concepts/humanness-and-uniqueness) checks and the
   confirmation isn't locked. **Gate access on this field.**
+</ResponseField>
+
+<ResponseField name="id" type="string | null">
+  The confirmation id for this person's pass through the verification.
+</ResponseField>
+
+<ResponseField name="status" type="string | null">
+  Verdict detail: `pending`, `approved`, `flagged`, or `denied`. `flagged`
+  means the check passed but carries findings for you to review.
+</ResponseField>
+
+<ResponseField name="reasons" type="string[]">
+  The rule findings behind the status, for example `collision` when the same
+  face was seen under someone else, or `identity_mismatch`. Empty on a clean
+  pass.
+</ResponseField>
+
+<ResponseField name="confirmed_at" type="string | null">
+  When the latest settled verdict landed, as an ISO timestamp.
+</ResponseField>
+
+<ResponseField name="identity" type="object | null">
+  The email or phone the flow verified, present only when the verification's
+  identity configuration has sharing enabled in the dashboard.
+
+  <Expandable title="identity">
+    <ResponseField name="email" type="string | null">
+      The verified email, if one was collected.
+    </ResponseField>
+    <ResponseField name="phone" type="string | null">
+      The verified phone, if one was collected.
+    </ResponseField>
+  </Expandable>
 </ResponseField>
 
 <ResponseField name="external_id" type="string | null">
@@ -56,6 +90,11 @@ Authorization: Bearer sk_…
 ```json Response
 {
   "verified": true,
+  "id": "cnf_9f3eb5",
+  "status": "approved",
+  "reasons": [],
+  "confirmed_at": "2026-07-07T22:32:12Z",
+  "identity": null,
   "external_id": "user_123",
   "verification": {
     "external_id": "signup-flow",
@@ -70,7 +109,7 @@ Authorization: Bearer sk_…
 ```bash cURL
 curl https://trust.verifyyou.com/v3/confirmations/<token> \
   -H "Authorization: Bearer sk_test_…"
-# => { "verified": true, "external_id": null, "verification": { ... } }
+# => { "verified": true, "status": "approved", ... }
 ```
 
 ```ts Node
@@ -78,16 +117,18 @@ const res = await fetch(
   `https://trust.verifyyou.com/v3/confirmations/${token}`,
   { headers: { Authorization: `Bearer ${process.env.VY_SK}` } },
 );
-const { verified, external_id } = await res.json();
+const { verified } = await res.json();
 if (verified) {
   // grant access
 }
 ```
 </CodeGroup>
 
+Confirm each token exactly once. If your framework can double-fire the confirming code (React StrictMode does this in development), add a guard so the same token isn't confirmed twice.
+
 ## Lock a confirmation (optional)
 
-For one-time flows where the user won't return — a single collection form, a one-time gate, where you're not tracking identities and don't want a second submission — **lock** the confirmation once you've accepted it. The token then becomes invalid for that verification: a subsequent `GET /v3/confirmations/{token}` returns `verified: false`.
+For true one-shot flows, where each person should pass exactly once and never again, **lock** the confirmation once you've accepted it. After locking, `GET /v3/confirmations/{token}` returns `verified: false` for that confirmation.
 
 ```http
 POST https://trust.verifyyou.com/v3/confirmations/{token}/lock
@@ -95,15 +136,19 @@ Authorization: Bearer sk_…
 ```
 
 <ResponseField name="locked" type="boolean">
-  `true` once the confirmation is locked. A locked confirmation can't be confirmed again.
+  `true` once the confirmation is locked. A locked confirmation can't be
+  confirmed again.
 </ResponseField>
 
 ```json Response
 { "locked": true }
 ```
 
-<Note>
-  Locking is single-use enforcement at the confirmation level. To bar the same
-  *human* across devices and accounts, rely on
-  [uniqueness](/v3/concepts/humanness-and-uniqueness) instead.
-</Note>
+<Warning>
+  Locking applies to the **person's confirmation** on this verification, not
+  just the token in your hand. Once locked, that person's future passes come
+  back denied too. Use it only when one pass per person, ever, is exactly what
+  you want. For caps like once per week or once per event, configure a
+  verification limit in the dashboard instead. And don't lock while you're
+  testing, or you will deny your own test user on every retry.
+</Warning>

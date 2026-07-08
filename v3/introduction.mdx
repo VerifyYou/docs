@@ -1,37 +1,37 @@
 ---
 title: "Introduction"
-description: "Verify a real, unique human in two calls — from the browser or your server."
+description: "Verify a real, unique human in two calls, from the browser or your server."
 ---
 
-VerifyYou confirms that the person on the other end of your app is a **real, live, unique human** — not a bot, a deepfake, or someone who already came through. You send them through a hosted verification flow; they come back with a result you confirm on your server.
+VerifyYou confirms that the person on the other end of your app is a **real, live, unique human**, not a bot, a deepfake, or someone who already came through. You send them through a hosted verification flow; they come back with a result you confirm on your server.
 
 ## The whole flow in one picture
 
 <Steps>
   <Step title="Start a verification">
-    From the browser with the SDK's [`vycheck()`](/v3/sdk/vycheck), or from your server with [`POST /v3/initialize`](/v3/api/initialize). Both return a hosted URL and send the user to it.
+    From the browser with the SDK's [`vycheck()`](/v3/sdk/vycheck), or from your server with [`POST /v3/initialize`](/v3/api/initialize). The flow can run as a full-page redirect, a drawer that slides over your page, or an inline embed. Pick the presentation in [`init()`](/v3/sdk/init).
   </Step>
   <Step title="We verify the human">
-    The hosted flow runs a liveness check and a uniqueness check. If they're on a desktop, we hand them off to their phone for the camera step and bring them back automatically. See [Humanness and uniqueness](/v3/concepts/humanness-and-uniqueness).
+    The hosted flow runs a short face check for liveness, then a uniqueness check against people who already verified. It works in place on phones and desktops alike, and a desktop user can move the session to their phone with a QR code and be returned automatically. See [Humanness and uniqueness](/v3/concepts/humanness-and-uniqueness).
   </Step>
-  <Step title="The user returns to your app">
-    We redirect back to your page with the result on the URL: `?vyt=<token>&vyc=<0|1>`. Read it with [`vyget()`](/v3/sdk/vyget).
+  <Step title="The result comes back to your app">
+    Redirect mode returns the user to your page with `?vyt=<token>&vyc=<0|1>` on the URL. The embedded modes hand the same result to your `onComplete` callback with no redirect. Either way, read it with [`vyget()`](/v3/sdk/vyget).
   </Step>
   <Step title="Confirm on your backend">
-    Exchange the token for the authoritative result with [`GET /v3/confirmations/{token}`](/v3/api/confirmations). Gate access on that — never on the URL alone.
+    Exchange the token for the authoritative result with [`GET /v3/confirmations/{token}`](/v3/api/confirmations). Gate access on that, never on the URL alone.
   </Step>
 </Steps>
 
 ## Where to go next
 
 <CardGroup cols={2}>
+  <Card title="init(): setup and display modes" icon="sliders" href="/v3/sdk/init">
+    One-time SDK setup, and choosing redirect, drawer, or inline.
+  </Card>
   <Card title="Humanness and uniqueness" icon="fingerprint" href="/v3/concepts/humanness-and-uniqueness">
     How we prove someone is live, then prove they're unique.
   </Card>
-  <Card title="Accounts vs guests" icon="user" href="/v3/concepts/accounts-vs-guests">
-    Why a stable identity means less friction for returning users.
-  </Card>
-  <Card title="vyget() and vycheck()" icon="code" href="/v3/sdk/vyget">
+  <Card title="vycheck() and vyget()" icon="code" href="/v3/sdk/vycheck">
     The two browser calls that drive the whole flow.
   </Card>
   <Card title="POST /v3/initialize" icon="server" href="/v3/api/initialize">
@@ -43,10 +43,13 @@ VerifyYou confirms that the person on the other end of your app is a **real, liv
 
 You get two keys, in test and live flavors:
 
-- **Publishable key** (`pk_test_…` / `pk_live_…`) — safe to ship in the browser. Used by the SDK.
-- **Secret key** (`sk_test_…` / `sk_live_…`) — backend only. Used to confirm tokens and to initialize server-side.
+- **Publishable key** (`pk_test_…` / `pk_live_…`) is safe to ship in the browser. Used by the SDK.
+- **Secret key** (`sk_test_…` / `sk_live_…`) is backend only. Used to confirm tokens and to initialize server-side.
+
+The pairs are matched: a flow started with a test publishable key mints tokens only the test secret key can confirm, and the same goes for live. Build with the test pair, then swap both keys when you ship.
 
 <Warning>
   Never put a secret key in client-side code. Confirm verification results on
-  your server with the secret key — the `vyc` value on the URL is only a UI hint.
+  your server with the secret key. The `vyc` value the client sees is only a UI
+  hint.
 </Warning>

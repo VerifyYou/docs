@@ -25,15 +25,16 @@
                         "pages": [
                             "v3/introduction",
                             "v3/concepts/humanness-and-uniqueness",
-                            "v3/concepts/accounts-vs-guests",
+                            "v3/concepts/members-vs-guests",
                             "v3/concepts/returning-users"
                         ]
                     },
                     {
                         "group": "SDK and API",
                         "pages": [
-                            "v3/sdk/vyget",
+                            "v3/sdk/init",
                             "v3/sdk/vycheck",
+                            "v3/sdk/vyget",
                             "v3/api/initialize",
                             "v3/api/confirmations"
                         ]
@@ -41,9 +42,7 @@
                     {
                         "group": "Advanced usage",
                         "pages": [
-                            "v3/advanced/account-linking",
-                            "v3/advanced/flow-tracking",
-                            "v3/advanced/platform-api"
+                            "v3/advanced/account-linking"
                         ]
                     },
                     {
@@ -57,10 +56,16 @@
             },
             {
                 "tab": "API Reference",
-                "openapi": "https://trust.verifyyou.com/openapi.json"
+                "openapi": "v3/openapi.json"
             }
         ]
     },
+    "redirects": [
+        {
+            "source": "/v3/concepts/accounts-vs-guests",
+            "destination": "/v3/concepts/members-vs-guests"
+        }
+    ],
     "navbar": {
         "links": [
             {
