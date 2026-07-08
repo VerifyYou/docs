@@ -51,7 +51,8 @@
                             "v3/openapi"
                         ]
                     },
-                    "v3/faq"
+                    "v3/faq",
+                    "v3/changelog"
                 ]
             },
             {
