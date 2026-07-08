@@ -3,45 +3,41 @@ title: "Humanness and uniqueness"
 description: "How we prove someone is a live human, then prove they're the only one."
 ---
 
-Every verification answers two questions in order: **is this a live human?** and **is this human new?** The first is the humanness check; the second is the uniqueness check. A person has to pass both.
+Every verification answers two questions in order: **is this a live human?** and **is this human new here?** The first is the humanness check; the second is the uniqueness check. A person has to pass both.
 
 ## Humanness
 
-The hosted flow runs a **liveness** check using the device camera — a short, guided capture that confirms a real, present person, not a photo, a video replay, a mask, or a generated face. We score the capture for confidence; below the threshold, the verification doesn't pass.
+Humanness is a short, guided **face check** using the device camera. The person centers their face in an oval, holds steady for a few seconds, and a brief sequence of colors plays. That is the whole thing: about ten seconds, no documents, no license or passport uploads.
 
-Because liveness needs a real camera in good conditions, the best place to run it is a phone — so the flow is camera-first and mobile-first.
+The capture is scored for confidence that a real, present person is in front of the camera, not a photo, a video replay, a mask, or a generated face. Below the threshold, the verification doesn't pass.
 
-### Desktop to mobile handoff
+The capture itself doesn't stick around as a picture. It becomes a **face code**, a numeric representation used for the uniqueness check below. That's the promise the flow makes on its consent screen: your selfie becomes a code, not a photo.
 
-If someone starts on a desktop, we don't dead-end them at a weak webcam. We hand the session off to their phone and bring them back automatically:
+### Any device, including desktop
 
-<Steps>
-  <Step title="Desktop opens a session">
-    The desktop page starts a verification session and shows a QR code.
-  </Step>
-  <Step title="Phone claims it">
-    The user scans the code and continues the camera step on their phone. The two devices are bound to the **same session**.
-  </Step>
-  <Step title="Realtime sync brings the desktop along">
-    The desktop listens on a realtime channel for that session. The moment the phone claims it — and again when it finishes — the desktop reacts instantly and redirects on its own.
-  </Step>
-</Steps>
+The flow runs wherever the person is:
 
-The user never copies a code back, refreshes, or wonders if it worked. The session is the thread tying the two devices together, so the experience stays one continuous flow across both screens — friction stays as low as possible while keeping the camera step on the better device.
+- **On a phone**, the face check runs right there.
+- **On a desktop with a webcam**, the flow runs in place too. No phone required.
+- **On a desktop, continuing on a phone** is one click away: the page shows a QR code, the person scans it, and the same session continues in their phone's browser. The desktop follows along over a realtime channel, so the moment the phone finishes, the desktop returns to your site on its own. Nobody copies codes or refreshes.
 
 ## Uniqueness
 
-Once we know the person is live, we check that they're **new**. From the liveness capture we derive a privacy-preserving face representation and search it against the people who've already verified. A confident match is a **collision** — the same human has been here before — and the verification is denied as not unique.
+Once we know the person is live, we check that they're new. The face code from the capture is searched against the faces of people who have already verified.
 
-This is what lets you say "one real human, once" — no duplicate accounts, no one slipping through twice, no second submission from the same face.
+A match to **this same person's own record** is recognition, not a problem. That's how returning users get through quickly and how a [member](/v3/concepts/members-vs-guests) is recognized on a new device.
 
-<Note>
-  Uniqueness is scoped to *who you compare against* — the uniqueness pool. Who a
-  person is deduped against, and how long they stay in the pool, depends on
-  whether they verified as an account or a guest. See
-  [Accounts vs guests](/v3/concepts/accounts-vs-guests).
-</Note>
+A match to **someone else's record** is a **collision**: the same face already verified under a different person. What happens next is up to two settings on your verification:
+
+| Setting | Options | What it means |
+| --- | --- | --- |
+| **Check group** | `company` or `network` | Who the face is compared against. Company scope only checks people verified through your own verifications. Network scope checks everyone who has verified anywhere on VerifyYou. |
+| **Collision action** | `block` or `flag` | What a finding does. Block denies the verification outright. Flag lets it pass as `flagged` so you can review it, and the finding shows up in the confirmation's `reasons`. |
+
+One more face rule applies to signed-in members: if someone signs in with their identity and the new capture doesn't match the face on their record, that's a **self mismatch** and it's reported the same way.
+
+This combination is what lets you say "one real human, once": no duplicates, no second submission from the same face, scoped as tightly or as widely as your product needs.
 
 ## What you get back
 
-A confirmation reports `verified: true` only when the person cleared **both** checks — live and unique. You confirm that result on your backend; see [Confirmations](/v3/api/confirmations).
+A confirmation reports `verified: true` only when the person cleared **both** checks. The confirmation also carries a `status` (`approved`, `flagged`, or `denied`) and the `reasons` behind it, such as `collision`. You confirm that result on your backend; see [Confirmations](/v3/api/confirmations).

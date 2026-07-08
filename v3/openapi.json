@@ -1,0 +1,600 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "VerifyYou API",
+    "description": "The VerifyYou developer API. Start a verification from the browser with your publishable key, then confirm the result server-side with your secret key. Authenticate every request with `Authorization: Bearer <key>`.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/v3/initialize": {
+      "post": {
+        "tags": [
+          "Verification Flow"
+        ],
+        "summary": "Initialize a verification session",
+        "description": "Initialize a session before the user verifies and get back a hosted verification link with a queued-up session. Redirect the user to the returned `url`; they come back to the redirect URL configured on the verification with `?vyt=<token>&vyc=<0|1>`, which you confirm server-side at `GET /v3/confirmations/{token}`.\n\nAccepts a **publishable key** (browser) or a **secret key** (server). `email`, `phone`, `external_id`, `verification_id`, and `verification_external_id` require a secret key. See each parameter below for what it does and when it's required.",
+        "operationId": "external-initialize",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitializeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitializeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v3/confirmations/{token}": {
+      "get": {
+        "tags": [
+          "Confirmations"
+        ],
+        "summary": "Confirm a verification token",
+        "description": "Exchange the `vyt` token the user returned with for the authoritative verification result. **Secret key only.** Call this from your backend before granting access.",
+        "operationId": "external-get_confirmation",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The `vyt` confirmation token the user returned with after verifying.",
+              "title": "Token"
+            },
+            "description": "The `vyt` confirmation token the user returned with after verifying."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/confirmations/{token}/lock": {
+      "post": {
+        "tags": [
+          "Confirmations"
+        ],
+        "summary": "Lock a confirmation",
+        "description": "Mark a confirmation as used so the same `vyt` token can't be confirmed again: single-use enforcement. **Secret key only.** After locking, `GET /v3/confirmations/{token}` returns `verified: false`.",
+        "operationId": "external-lock_confirmation",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The `vyt` confirmation token the user returned with after verifying.",
+              "title": "Token"
+            },
+            "description": "The `vyt` confirmation token the user returned with after verifying."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LockResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v3/keys/test": {
+      "post": {
+        "tags": [
+          "API Keys"
+        ],
+        "summary": "Test an API key",
+        "description": "Check that an API key works and see what it is: publishable or secret, test or live, and which company it belongs to. Send the key as the bearer token, like any other call. Always returns `200`: a bad key comes back as `valid: false` rather than an error, so it's safe to wire into a healthcheck or setup step.",
+        "operationId": "external-test_key",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeyTestResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CollectedIdentityRef": {
+        "properties": {
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone",
+            "description": "The phone the flow collected/verified, if any."
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email",
+            "description": "The email the flow collected/verified, if any."
+          }
+        },
+        "type": "object",
+        "title": "CollectedIdentityRef"
+      },
+      "ConfirmationResponse": {
+        "properties": {
+          "verified": {
+            "type": "boolean",
+            "title": "Verified",
+            "description": "Authoritative result: true only if the verification passed and the confirmation is unlocked. Gate access on this, not on the client-side `vyc` hint."
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id",
+            "description": "The confirmation id for this person's pass through the verification."
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status",
+            "description": "Verdict detail: pending, approved, flagged (passed with findings), denied."
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons",
+            "description": "Rule findings behind the status (e.g. collision, identity_mismatch)."
+          },
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At",
+            "description": "When the latest settled verdict landed."
+          },
+          "identity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CollectedIdentityRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The identity collected during the flow, present only when the verification's identity config has sharing enabled. Secret-key responses only."
+          },
+          "external_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Id",
+            "description": "The `external_id` attached to the session at initialize, if any."
+          },
+          "verification": {
+            "$ref": "#/components/schemas/VerificationRef"
+          }
+        },
+        "type": "object",
+        "required": [
+          "verified",
+          "external_id",
+          "verification"
+        ],
+        "title": "ConfirmationResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InitializeRequest": {
+        "properties": {
+          "verification_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification Id",
+            "description": "Secret key only. Target a verification directly instead of running the company's default verification."
+          },
+          "verification_external_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification External Id",
+            "description": "Secret key only. Target a verification by your own external id for it (set when the verification was created), as an alternative to `verification_id`.",
+            "examples": [
+              "signup-flow"
+            ]
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email",
+            "description": "Secret key only. Attach a stable identity to the verification. Fails if that identity is already in use.",
+            "examples": [
+              "user@example.com"
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone",
+            "description": "Secret key only. Attach a stable identity to the verification. Fails if that identity is already in use."
+          },
+          "external_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Id",
+            "description": "Secret key only. Link this verification to your own user or record id.",
+            "examples": [
+              "user_123"
+            ]
+          },
+          "external_tracker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Tracker",
+            "description": "Non-PII label echoed back in the flow webhook payload. Use it to correlate funnel events with your own analytics."
+          },
+          "pass_params": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pass Params",
+            "description": "Extra query params to carry through the flow and append to the return URL. Reserved `vy*` keys are ignored."
+          }
+        },
+        "type": "object",
+        "title": "InitializeRequest"
+      },
+      "InitializeResponse": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "Hosted verification link with a queued-up session. Redirect the user here.",
+            "examples": [
+              "https://app.verifyyou.com/v/abc123"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "InitializeResponse"
+      },
+      "KeyTestResponse": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid",
+            "description": "Whether the key resolved to an active account. An unknown or revoked key comes back as `false`, not an error."
+          },
+          "key_type": {
+            "type": "string",
+            "title": "Key Type",
+            "description": "Prefix of the key you sent: `pk_live`, `pk_test`, `sk_live`, `sk_test`, or `unknown` if it matched none of them.",
+            "examples": [
+              "sk_test"
+            ]
+          },
+          "is_test": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Test",
+            "description": "Whether the key is a test key. `null` when the key didn't resolve."
+          },
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id",
+            "description": "The company the key belongs to. `null` when the key didn't resolve."
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid",
+          "key_type"
+        ],
+        "title": "KeyTestResponse"
+      },
+      "LockResponse": {
+        "properties": {
+          "locked": {
+            "type": "boolean",
+            "title": "Locked",
+            "description": "True once the confirmation is locked. A locked confirmation can't be confirmed again; `GET /v3/confirmations/{token}` then returns `verified: false`."
+          }
+        },
+        "type": "object",
+        "required": [
+          "locked"
+        ],
+        "title": "LockResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VerificationRef": {
+        "properties": {
+          "external_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Id",
+            "description": "Your `external_id` for the verification, if one was set at initialize."
+          },
+          "external_tenant_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Tenant Id",
+            "description": "Your `external_tenant_id` for the verification, if one was set."
+          }
+        },
+        "type": "object",
+        "required": [
+          "external_id",
+          "external_tenant_id"
+        ],
+        "title": "VerificationRef"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Verification Flow",
+      "description": "Start a hosted verification and get the URL to redirect the user to."
+    },
+    {
+      "name": "Confirmations",
+      "description": "Confirm a verification token, and lock it against replay (secret key)."
+    },
+    {
+      "name": "API Keys",
+      "description": "Check whether a publishable or secret key is valid."
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://trust.verifyyou.com",
+      "description": "Production"
+    }
+  ]
+}
