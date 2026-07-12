@@ -1,0 +1,107 @@
+---
+title: "Security and privacy"
+description: "How HumanCheck proves a real, unique, live human without collecting who they are. The data flow, what your systems receive, what we keep, and how to request our security documentation."
+---
+
+We answer one question, is there a real, unique, live human on the other end, while holding as little about that person as possible. This page is the reviewer's view: the data flow, what your systems receive, what we keep, and how to get our documentation.
+
+## Security reviews and documentation
+
+If you are running a security review, we would rather walk you through the detail than have you piece it together from a summary page. Our current security documentation is available on request, and we are happy to work through your vendor questionnaire with you.
+
+Tell us what your review needs at [security@verifyyou.com](mailto:security@verifyyou.com) and we will get you the right material.
+
+## Privacy by design
+
+<CardGroup cols={3}>
+  <Card title="Your systems get a verdict, never a face" icon="shield-check" iconType="light">
+    When a check finishes, you receive a verdict and a token. The API does not return a photo, face image, name, or ID document, so your systems have no reason to hold any of them.
+  </Card>
+  <Card title="The selfie becomes a code, not an image" icon="image-slash" iconType="light">
+    The camera runs on our hosted check, not your product. We do not store images. What recognizes a returning person is a face vector, a numerical representation of the face's geometry, not a photo, treated as sensitive biometric data.
+  </Card>
+  <Card title="Not KYC, by choice" icon="id-badge" iconType="light">
+    We do not need to know who someone is, only that they are a real, unique human. So you carry far less personal data than a government-ID check would leave you holding, and none of the documents or ID images that come with it.
+  </Card>
+</CardGroup>
+
+## How the check works
+
+<Steps>
+  <Step title="Start the check">
+    From the browser with `vycheck()`, or from your server with `POST /v3/initialize`, which returns the hosted check URL you send the person to.
+  </Step>
+  <Step title="The person verifies">
+    On our hosted page, a short check confirms a live, present human. A short, active check is what resists injected video, replays, and deepfakes, and it is a far harder bar to fool than a passive photo check.
+  </Step>
+  <Step title="Read the verdict server side">
+    In the default redirect flow the person returns with `vyt` and `vyc` on the URL, where `vyc` is only a UI hint; embedded flows hand the token to your callback instead. Either way, your server exchanges the token at `GET /v3/confirmations/{token}` for the authoritative verdict, and you gate on that. The face is never sent to your systems; on our hosted check it becomes a face vector, a numerical representation of the face's geometry, and no raw photo is stored.
+  </Step>
+</Steps>
+
+## What we keep
+
+We keep what it takes to return a verdict and to recognize a unique human, and not more. Retention differs by data type.
+
+<Note>
+  The [privacy policy](https://verifyyou.com/privacy) is the binding source for exact categories, retention, and regions. Request the current detail at [security@verifyyou.com](mailto:security@verifyyou.com), and people can request deletion at [app.verifyyou.com/delete](https://app.verifyyou.com/delete).
+</Note>
+
+## Keys and result integrity
+
+<CardGroup cols={2}>
+  <Card title="Two key types" icon="key" iconType="light">
+    Publishable keys (`pk_`) are safe in the browser and only start a check. Secret keys (`sk_`) stay on your server and read verdicts. Each comes as a paired test and live key (`pk_test_` with `sk_test_`, `pk_live_` with `sk_live_`), and the pairs cannot be mixed. Test keys run against a simulator, so you can rehearse end to end without creating live records. Live keys are the same pair for production traffic: real people, real verifications.
+  </Card>
+  <Card title="Encrypted in transit, confirmed server side" icon="lock-keyhole" iconType="light">
+    All traffic runs over HTTPS with TLS. The authoritative verdict moves server to server only: your backend exchanges the token at `GET /v3/confirmations/{token}` with a secret key. The values a browser carries back are hints; only the server-side confirmation decides.
+  </Card>
+</CardGroup>
+
+## Access and overrides
+
+<CardGroup cols={2}>
+  <Card title="Named seats" icon="users" iconType="light">
+    Teammates join by email invite, each with their own login as a Member or Admin, and can be removed just as easily. There are no shared logins, so access is granted and taken away per person, not per password.
+  </Card>
+  <Card title="Human only overrides" icon="user-shield" iconType="light">
+    A real person who is wrongly denied can be cleared by a human on your team, with the override scoped to your workspace. There is no automatic admit on a failed check.
+  </Card>
+</CardGroup>
+
+## Shared responsibility
+
+<Columns cols={2}>
+  <div>
+    **We take care of**
+    - Running and securing the hosted check and our API
+    - The liveness and uniqueness model, kept current as attacks change
+    - Protecting the face vector and verification record on our infrastructure
+    - Securing data in transit
+  </div>
+  <div>
+    **You take care of**
+    - Keeping secret keys server side, out of client code
+    - Confirming results server side and gating on the verdict, not the browser hint
+    - Deciding what access a verified or failed result grants
+    - Anything your own systems collect outside the check
+  </div>
+</Columns>
+
+## Get our documentation
+
+For our current security documentation, help with a vendor questionnaire, or the detail behind anything on this page, reach the security team at [security@verifyyou.com](mailto:security@verifyyou.com). To report a vulnerability, use the same address and please give us a reasonable window to fix it before any public disclosure.
+
+## Where to go next
+
+<CardGroup cols={3}>
+  <Card title="What we store" icon="database" iconType="light" href="/learn/what-we-store">
+    The full data story in plain language: what exists, what your systems receive, and what never leaves the check.
+  </Card>
+  <Card title="Security and friction" icon="lock" iconType="light" href="/learn/security-and-friction">
+    How strict to set the check, and what that trades against conversion.
+  </Card>
+  <Card title="Developer docs" icon="code" iconType="light" href="/v3/introduction">
+    The full reference for keys, the SDK, and the confirmation API.
+  </Card>
+</CardGroup>

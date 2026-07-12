@@ -1,0 +1,147 @@
+---
+title: "Glossary"
+description: "The terms HumanCheck uses, defined in plain language: members and guests, liveness and uniqueness, collisions, threat scores, confirmation tokens, and more, with pointers to the pages that go deeper."
+---
+
+Every product picks up its own vocabulary, and the rest of these docs read more easily once the words are pinned down. Here are the terms HumanCheck uses, in plain language, grouped by where you will meet them. Each definition stands on its own, and the links point to the pages that go deeper.
+
+<Note>
+  These are the words the dashboard and the developer docs use, so what you read here lines up with what you will see on screen and in the API.
+</Note>
+
+## The product
+
+### HumanCheck
+
+The VerifyYou product: a short camera check that confirms a real, live, unique human, without ID documents. Companies place it in front of signups, surveys, and communities, anywhere that needs real people. [What a human check is](/learn/what-humancheck-is) has the full picture.
+
+### Verification
+
+A configured check in your dashboard. Each verification carries its own configuration, branding, and integration, and has its own link, insights, and activity, so you can run one for signups and another for a survey, each set up its own way. [Reading your dashboard](/learn/reading-your-dashboard) shows the whole surface.
+
+### Session
+
+One run of a check by one person, from the moment it starts to a result or a walk-away. Insights counts every session that was started, whatever the outcome. [How it works](/learn/how-it-works) follows one from start to finish.
+
+### Redirect URL
+
+Where a person lands after they finish the check. It is saved on your verification, and in redirect mode it is also where the confirmation token arrives, so set it before you go live. The [quickstart](/learn/quickstart) shows where it fits.
+
+## Members and guests
+
+### Member
+
+A person whose verified phone number or email is bound to their face record. Ownership is always proven with a one-time code during the flow, which is what makes membership travel with the person across devices and browsers. [Members vs guests](/v3/concepts/members-vs-guests) goes deeper.
+
+### Guest
+
+A person recognized by their device ID and nothing else: no phone, no email, no name. Guest records expire over time, so a long-absent guest may be asked to verify again. [Members vs guests](/v3/concepts/members-vs-guests) has the full comparison.
+
+### Device ID
+
+The identifier that lets HumanCheck recognize a guest's device when it returns. A new device generally means a new device ID, which is why repeat visitors are better registered as members. [What a human check is](/learn/what-humancheck-is) covers the return moment.
+
+### Skip re-verify
+
+The setting that lets a returning guest through without repeating the scan, recognized by their device instead. It can be off, expire after a window you choose, or never expire. A returning guest who skips the scan still counts as a verification. [Configuring your verification](/learn/configuring-your-verification) covers the options.
+
+## What the check proves
+
+### Liveness
+
+The part of the check that confirms a real, present human is in front of the camera, not a photo, a replay, or a deepfake. [How it works](/learn/how-it-works) walks through the whole flow.
+
+### Uniqueness
+
+The part of the check that confirms this human has not already passed under a different identity. New checks are compared against the face vectors already held, which is how a first-timer is told apart from someone coming back under a new name.
+
+### Face vector
+
+A numerical representation of the face's geometry, not a saved image. It is treated as sensitive biometric data, and verification images themselves are not stored. [What we store](/learn/what-we-store) covers this honestly and in full.
+
+## Matching and identity
+
+### Collision
+
+A new check whose face matches a face record that already exists, meaning the same person is trying to pass again where your rules say they should not. Depending on your configuration, a collision is blocked outright or flagged as suspicious.
+
+### Collision scope
+
+The setting that decides where HumanCheck looks for a matching face: across the whole VerifyYou network, or only within your own verifications. [Cross-network verification](/learn/cross-network-verification) explains the trade.
+
+### Identity lock
+
+A configuration mode for checks that collect an email or phone: if the same face comes back with a different identity, the check fails with the reason identity_mismatch. [Configuring your verification](/learn/configuring-your-verification) covers when to use it.
+
+### Identity sharing
+
+A setting that returns the verified email or phone to your server on the confirmation, in the identity field. Leave it off and you get the result without the contact details.
+
+### identity_mismatch
+
+A reason code on a confirmation: the face and the identity presented did not line up. You will see it when identity lock catches a swap.
+
+## Reading results
+
+### Threat score
+
+A number out of 100 attached to a scored session, built from the signals that fired while the person moved through the flow. Higher means riskier, and it is informational: the score never blocks anyone on its own. [Reading your dashboard](/learn/reading-your-dashboard) explains how to read it.
+
+### Threat level
+
+The banding the dashboard uses to group sessions by threat: No threat, Low threat, Moderate threat, Elevated threat, High threat. You will see it in the Insights charts and as an Activity filter; [reading your dashboard](/learn/reading-your-dashboard) shows both.
+
+### Signal families
+
+The five groups that threat signals roll up into: Network, Velocity, Automation, Liveness, and Identity. Each family is capped, so no single kind of signal can dominate the score by itself. [Reading your dashboard](/learn/reading-your-dashboard) shows where they surface.
+
+### Sessions by outcome
+
+The Insights view of how checks resolved. Verified means the person passed; Blocked (collision) means a matching face was stopped; Liveness failed means the camera check did not confirm a live person; Abandoned means the session started but never finished. [Reading your dashboard](/learn/reading-your-dashboard) walks the chart.
+
+### Override
+
+A dashboard action on a guest's verification history that lets you correct the result when a real person was wrongly turned away. [Reading your dashboard](/learn/reading-your-dashboard) covers where to find it.
+
+### Decline
+
+A graceful exit from the check, available when your verification has allow decline switched on. A person who declines is not verified, and the decline banner lets you choose the message they see. [Branding your check](/learn/branding-your-check) covers it.
+
+## Keys, tokens, and testing
+
+### Test keys and live keys
+
+Every workspace has paired key sets: pk_test_ and sk_test_ for trying things out, pk_live_ and sk_live_ for production. Publishable keys (pk) are safe in the browser; secret keys (sk) stay on your server. Test and live never mix, so a session minted with a test key confirms only with the test secret key. The [quickstart](/learn/quickstart) puts them to work.
+
+### Simulator and test sessions
+
+Test keys run against a simulator, so the code path works end to end without involving a real person. There are no-code test sessions too, so you can rehearse before anything goes live. The [quickstart](/learn/quickstart) uses them.
+
+### external_id
+
+Your own identifier for the person being checked, passed when your server initializes a session with a secret key and echoed back on the confirmation. It lets you tie a result to your user without handing us their identity. [Account linking](/v3/advanced/account-linking) goes deeper.
+
+### Confirmation token (vyt)
+
+The token that travels back with a person after a check, as the vyt query parameter in redirect mode or through the onComplete callback in embedded modes. Your server exchanges it for the authoritative result. Confirm each token once, and lock it afterwards if the flow should be one shot. The [quickstart](/learn/quickstart) shows the exchange in code.
+
+### vyc
+
+A one-character hint that arrives next to the token: 1 suggests the check passed, 0 suggests it did not. It is only a hint for what to show on screen first. The token, confirmed from your server, is the truth. The [quickstart](/learn/quickstart) shows the two arriving together.
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" iconType="light" href="/learn/quickstart">
+    Run your first verification end to end, with or without code.
+  </Card>
+  <Card title="Reading your dashboard" icon="chart-line" iconType="light" href="/learn/reading-your-dashboard">
+    Where these terms show up on screen, and how to read them.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Identity modes, collision scope, repeat limits, and the rest of the model.
+  </Card>
+  <Card title="Developer docs" icon="code" iconType="light" href="/v3/introduction">
+    The full technical reference for the SDK and API.
+  </Card>
+</CardGroup>

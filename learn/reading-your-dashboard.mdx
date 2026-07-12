@@ -1,0 +1,151 @@
+---
+title: "Reading your dashboard"
+description: "A plain-language tour of the HumanCheck dashboard: the Verifications list, per-verification Insights and Activity, threat levels and signals, guest profiles, and the Team page, so you always know what you are looking at and what to do next."
+---
+
+Your dashboard at [platform.verifyyou.com/dashboard](https://platform.verifyyou.com/dashboard) is where every check you run reports back. It is built to answer three questions at a glance: is my check healthy, who is coming through it, and is anything trying to game it. This page walks through each screen in plain language, so the first time you open it, nothing is a mystery. If you do not have a workspace yet, [getting access](/learn/getting-access) explains how our team sets one up for you.
+
+## The shape of the dashboard
+
+The sidebar has four places to be, plus a **Get help** link when you want a human.
+
+<CardGroup cols={2}>
+  <Card title="Verifications" icon="list-check" iconType="light">
+    Your home screen. Every check you run, one row each, with its health at a glance. Most days start and end here.
+  </Card>
+  <Card title="Activity" icon="wave-pulse" iconType="light">
+    The people. Every session that came through, searchable and filterable, with a profile behind each row.
+  </Card>
+  <Card title="Insights" icon="chart-column" iconType="light">
+    The patterns. Threat levels, outcomes, and where your traffic comes from, charted over time.
+  </Card>
+  <Card title="Team" icon="users" iconType="light">
+    Who is in your workspace. Invite teammates by email and manage their roles.
+  </Card>
+</CardGroup>
+
+**Activity** and **Insights** in the sidebar cover your workspace as a whole. Each verification also carries its own Activity and Insights tabs scoped to just that check, and those per-verification views are where you will spend most of your time, so that is what this page walks through.
+
+## Your verifications list
+
+The **Verifications** page introduces itself honestly: "Every verification you run, with its config, branding, and integration." Each row is one verification, which is our word for a configured check (a signup gate, a survey screen, a community door).
+
+The columns tell you how each one is doing:
+
+- **Name**, plus a **Status** pill. A running check shows **LIVE**.
+- **Volume 30D** and **Trend**. The Trend column shows "Gathering data..." until there is enough history to chart.
+- **Pass Rate** and **Last Activity**, your two fastest health signals. A pass rate that suddenly moves, or a check that goes quiet, is worth a look.
+
+Each row's menu gives you **View details**, **Rename**, **Copy link**, and **Delete**. The **Integration** tab's no-code path gives you a shareable link: share it, or place it behind whatever you gate, and people can complete the check with no integration work at all. The [quickstart](/learn/quickstart) walks that path end to end.
+
+The **New verification** button asks for three things: a label, your company name (optional), and a redirect URL, which is where people land after they finish. The company name is optional only at this step; every live check carries one, because it is what introduces the check to the person verifying, and [branding your check](/learn/branding-your-check) covers it. Everything deeper, like identity modes and repeat limits, is [configuration](/learn/configuring-your-verification), and your VerifyYou contact tunes it with you today.
+
+## Inside a verification
+
+Open a verification and you get a tab bar: **Insights**, **Activity**, **Integration**, and **Invites**. You will also see **Configuration** taking its place in the tab bar, tagged **Soon**; it is rolling out, and until it arrives your VerifyYou contact applies configuration changes for you. **Integration** is where the check meets your product, with a no-code path and a code path. The two tabs you will read every week are Insights and Activity, so here is how to read them.
+
+## Reading Insights
+
+Insights describes itself as "Threat activity and verification outcomes," and a picker in the corner switches the period between **Week** and **Month**. Four metric cards sit at the top:
+
+- **Total Sessions**: every check that was started.
+- **Verified Humans**: the people who successfully passed the check.
+- **Threats Detected**: sessions that raised at least one threat signal.
+- **Avg Threat Score**: out of 100. In the product's own words, "Higher means riskier. Never blocks." It is a reading, not a verdict.
+
+<Note>
+  A brand new check shows "No insights yet" with a friendly explanation: "Charts populate once your integration is live and verifications start coming in." Nothing is wrong. Send some traffic through and the charts wake up.
+</Note>
+
+Below the cards, four sections turn the numbers into a story:
+
+<AccordionGroup>
+  <Accordion title="Threat levels over time" icon="chart-area">
+    Scored sessions stacked by threat level, from **No threat** through **Low threat**, **Moderate threat**, and **Elevated threat** to **High threat**. The chart's own guidance is the right way to read it: "Green is clean traffic; warm colors are worth a look."
+  </Accordion>
+  <Accordion title="Top threat signals" icon="signal">
+    "What's firing across scored sessions, most common first." Each signal carries a family tag, so you can see the kind of pressure at a glance: an IP abuser signal tagged **Network**, guest churn from one IP tagged **Velocity**, liveness retries tagged **Liveness**, a face collision tagged **Identity**.
+  </Accordion>
+  <Accordion title="Sessions by outcome" icon="chart-simple">
+    "How checks resolved across the selected period," in four buckets: **Verified**, **Blocked (collision)**, **Liveness failed**, and **Abandoned**. Abandoned sessions are people who started and wandered off, which is normal traffic behavior, not an alarm.
+  </Accordion>
+  <Accordion title="Session attributes" icon="globe">
+    "Where and how sessions arrive, top five each": countries, platforms, device types, and browsers. Useful for sanity checks, like a survey aimed at one country suddenly drawing traffic from another.
+  </Accordion>
+</AccordionGroup>
+
+## Reading Activity
+
+Activity is the people view: one row per session, newest first, with columns for **Date verified**, **Identity**, **Location**, **External ID**, and **Status** (a passed check shows a green **Approved** pill). The **Identity** column fills in when your check collects an email or phone, which is what turns a guest into a member; for anonymous checks it simply stays empty.
+
+Three tools make this list genuinely useful:
+
+<Steps>
+  <Step title="Search">
+    The search box takes an email or phone, so when someone writes in saying "your check blocked me," you can find their session in seconds.
+  </Step>
+  <Step title="Filter and save">
+    Filter by **Threat level**, **Country**, **Region**, **City**, **Platform**, **Device type**, **Browser**, **Gender**, or **VPN**, and save the views you keep coming back to.
+  </Step>
+  <Step title="Export">
+    The **Export** button hands you a CSV of the list, ready for your own analysis or your team's reporting.
+  </Step>
+</Steps>
+
+## Guest profiles: one person, in full
+
+Every row in Activity links to a profile. A quick word on the two kinds of people you will see: a **guest** is recognized by their device only, with no phone, email, or name attached, while a **member** has a verified phone or email bound to their face record. Read more in the [glossary](/learn/glossary).
+
+A profile has three tabs:
+
+- **Signals** shows what the check observed: an estimated age as a range (a lower bound, an upper bound, and an estimate between them), a gender read, liveness confidence, and network checks such as whether the IP is a VPN, a Tor exit, a datacenter, or a known abuser.
+- **History** lists each check this person has completed, with its result and an **Override** action on every row.
+- **Devices** lists the devices this person has verified from.
+
+Alongside the tabs sits the **Trust Snapshot**: a score out of 100 where, in the product's words, "Signals collected while this person moved through the flow deduct points from a spotless 100." A clean pass sits at 100; the breakdown shows where any missing points went. The snapshot also shows how many partner companies have seen this person, which is the [network](/learn/cross-network-verification) quietly at work.
+
+## How threat scoring thinks
+
+You do not need to know the detection internals to read the dashboard well. What helps is the shape: every scored session is read across five signal families, **Network**, **Velocity**, **Automation**, **Liveness**, and **Identity**, and each family is capped, so no single family can dominate the score on its own. The score describes pressure across the whole session rather than any single reading.
+
+And the score informs rather than decides. As the Avg Threat Score card says itself: "Never blocks." Whether a session passes is settled by the check and your configuration; the score is there so you can audit with confidence.
+
+## The Team page
+
+**Team** is the simplest page in the building: type a teammate's email into **Invite by email**, pick **Member** or **Admin**, and press **Invite**. The members list below shows everyone in your workspace with their role, and a **Remove** action next to each. That is the whole surface, and it is usually all you need.
+
+## When a real person gets caught
+
+It will happen occasionally, and the dashboard is built for exactly this moment:
+
+<Steps>
+  <Step title="Find the session">
+    Search Activity by the person's email or phone, or filter down by location.
+  </Step>
+  <Step title="Read the profile">
+    Open their profile and look at the Trust Snapshot breakdown. It shows you precisely which family cost the points, so you are never guessing.
+  </Step>
+  <Step title="Override where it is right">
+    If a real person was wrongly turned away, the **Override** action on their History row puts it right for them.
+  </Step>
+  <Step title="Tune the check if it keeps happening">
+    One override is noise; a pattern is a setting. Talk to your VerifyYou contact about tightening or loosening the check, and read [security and friction](/learn/security-and-friction) for how to think about where the bar should sit.
+  </Step>
+</Steps>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" iconType="light" href="/learn/quickstart">
+    Run your first verification end to end and watch the result land in this dashboard.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Identity modes, repeat limits, age gating: the settings behind everything this page reads.
+  </Card>
+  <Card title="Security and friction" icon="lock" iconType="light" href="/learn/security-and-friction">
+    How strict to set the check, and what that trades against conversion.
+  </Card>
+  <Card title="Glossary" icon="book" iconType="light" href="/learn/glossary">
+    Members, guests, collisions, threat levels: every term on this page, defined.
+  </Card>
+</CardGroup>

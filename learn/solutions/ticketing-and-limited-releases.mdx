@@ -1,0 +1,72 @@
+---
+title: "Ticketing and limited releases"
+description: "Scalpers and bots buy out limited releases under many identities, so real fans lose out and prices balloon on resale. How HumanCheck caps entries to one real, unique, live human per release, a recommended starting configuration, and how to add it to your drop or checkout."
+---
+
+When you put a limited number of tickets, units, or spots on sale, the people trying hardest to get in are often not fans. [HumanCheck](/learn/what-humancheck-is) puts a quick face scan at the entry to a release so each allocation goes to a real, unique human, and one person or bot cannot claim ten.
+
+## The problem
+
+A limited release is a magnet for automated buyers. Bots run hundreds of parallel checkout sessions and sweep an allocation in seconds. Scalpers spread their buying across a pile of fresh emails and profiles so your one-per-customer rule looks like many different customers. Presales, waitlists, and drops all face the same pressure: the moment demand outruns supply, someone builds a way to game the queue.
+
+The cost is not one lost sale. One scalper operation can capture a whole drop and push it onto a secondary market where the same inventory resells at a multiple of face value. Real fans refresh an empty page, the resale price becomes the story, and the goodwill you were trying to build with the release turns into frustration aimed at you. Every unit that lands in a reseller's basket is a unit you sold to the wrong person.
+
+## How HumanCheck helps
+
+A limited release needs two things to be true at the entry: the buyer is a live person, not a script, and they are only claiming one allocation. HumanCheck proves both.
+
+<CardGroup cols={2}>
+  <Card title="Liveness stops the bots" icon="bolt" iconType="light">
+    The check confirms a live human is present for the scan, so a script running hundreds of sessions cannot pass it. Recordings and AI generated faces are refused by design.
+  </Card>
+  <Card title="Uniqueness stops the pile-up" icon="user-check" iconType="light">
+    One face maps to one human. A scalper cannot turn one person into ten buyers by spreading across fresh emails, because the face is the same each time.
+  </Card>
+</CardGroup>
+
+If your release runs on an open page with no login, an anonymous check proves a real, unique person at the entry without asking who they are. If buyers sign in with you, the check ties each verified human to their member record, so the one-per-person cap holds across their whole history with you, not just this session.
+
+## A configuration that fits
+
+Here is a starting point for a limited release. Treat it as a first setting to tune with your VerifyYou contact once you see real traffic, not a fixed recipe.
+
+| Setting | Starting point | Why |
+|---|---|---|
+| Identity mode | Anonymous for an open drop, or signup / provided if buyers sign in with you | Each entry is one verified human, tied to their member record when you run logins |
+| Collision scope | Network | A buyer already flagged elsewhere on the VerifyYou network is known on their first attempt with you, not only after they repeat inside your own store |
+| Collision action | Block | A second allocation attempt from the same human is turned away outright |
+| Repeat limits | Once per event | One entry or purchase per human per release, and the count resets cleanly when the next drop opens |
+| Allow decline | On | A shopper who will not verify exits gracefully instead of hitting a dead end at checkout |
+
+The pairing that does the heavy lifting is network scope with block and a once-per-event limit: one human, one allocation, and a buyer known across the network rather than starting fresh with every new email. When the next release opens, the per-event count resets so returning fans are welcome again. If a release is high stakes enough that you want to stop one person switching identities entirely, identity lock is worth talking through, since it fails a check where the same face shows up under a new email or phone. [Configuring your verification](/learn/configuring-your-verification) walks through every setting in full.
+
+## Adding it to your flow
+
+You place the check at the point that matters: the entry to the drop, the front of the queue, or the checkout step before an allocation is confirmed.
+
+- **No-code, hosted link.** Put a HumanCheck link at the start of your release flow. A buyer verifies, comes back cleared, and only then reaches the purchase. Nothing to build.
+- **In your own app.** If the drop runs inside your storefront or app, the SDK runs the check in place with the webcam and hands your server a verdict to gate on before you release the unit.
+
+Either way, your systems receive a result and a token, never a face or an image. [Get started](/learn/quickstart) walks through both paths from nothing to your first confirmed verification.
+
+## Book a demo
+
+If limited releases keep landing in the wrong hands, let's set up a check for your next drop. Pricing depends on your volume and what you are running, so tell us about the release and we will size it with you.
+
+<Card title="Book a demo" icon="calendar-check" iconType="light" href="https://sales.verifyyou.com">
+  Tell us about your release and we will set up a check tuned to it, create your workspace, and get you keys.
+</Card>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Where it fits" icon="compass" iconType="light" href="/learn/where-humancheck-fits">
+    Where a human check sits next to bot checks, two factor, and full KYC, and the honest split on buying versus building.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Identity modes, collision handling, repeat limits, and the other settings that tune a check to its job.
+  </Card>
+  <Card title="Communities and marketplaces" icon="users" iconType="light" href="/learn/solutions/communities-and-marketplaces">
+    The sibling case where a real, unique human behind each profile is the product, and a banned face returns under a new email.
+  </Card>
+</CardGroup>
