@@ -1,0 +1,91 @@
+---
+title: "What we store"
+description: "What HumanCheck keeps after a face check: a face vector, never an image. What your business receives by default, which identifiers you can choose to collect, and why the privacy policy is the binding source for retention."
+---
+
+[HumanCheck](/learn/why-humancheck) never stores a photo of your face. The scan becomes a face vector, a numerical representation of the face's geometry, and the image itself is discarded. That one fact shapes everything on this page: what the record actually is, what your business receives, what you can choose to turn on, and where the binding line is drawn.
+
+## What the record is
+
+When a person completes a check, the model first confirms a real, present human, then turns the face scan into a face vector. That vector is what lets us recognize a unique person. New checks are compared against the vectors we already hold, which is how we tell a first-time human from someone coming back under a new name.
+
+<CardGroup cols={2}>
+  <Card title="A face vector" icon="shield-halved" iconType="light">
+    A numerical representation of the face's geometry, not a saved image. Treated as sensitive biometric data, it persists so we can recognize a unique person across checks. See the [security overview](/learn/security-and-privacy) and the [privacy policy](https://verifyyou.com/privacy).
+  </Card>
+  <Card title="A reference you supply" icon="hashtag" iconType="light">
+    Each check can carry your own `external_id`, set when the check starts. No name, no address, no photo, just your pointer to the person.
+  </Card>
+</CardGroup>
+
+<Note>
+  The face vector persists. That is what makes uniqueness work: if we did not keep it, we could not tell a returning person from a brand new one, and someone you blocked could come straight back. We keep it on purpose. There are two kinds of record here: a guest is recognized by their device alone and their record expires over time, while a member has proven a phone or email during the check, so they stay recognizable across devices.
+</Note>
+
+## What your business receives
+
+Think of it as three links: your own reference for the person links to the face record we hold, which you never receive, and a verdict is tied to that record. So the answer you get back is bound to one real, unique human.
+
+<CardGroup cols={2}>
+  <Card title="A verdict, tied to one human" icon="circle-check" iconType="light">
+    Verified or failed, bound to the person's face record. Your server gates on it.
+  </Card>
+  <Card title="A reference you link" icon="link" iconType="light">
+    Pass your own `external_id`, and any identifier you turn on links to the same record. You hold the pointer; we hold the face.
+  </Card>
+</CardGroup>
+
+Your dashboard also shows the session signals behind each check: an estimated age range, location, and device. The one thing it never shows is the face.
+
+The business never receives a face, a government ID, a photo or video, a name, or a home address. You get a verdict and your own reference, never the biometric. Less to store, less to secure, less to expose.
+
+## What you can choose to turn on
+
+Some use cases need a little more than a bare verdict, and those are settings on your check rather than things we collect by default; your VerifyYou contact can tune them for you today. The phone step and email each add an identifier only when you ask for one, and that identifier is held so it can do its job. Age gating adds nothing to the record: it works from an estimate made during the face scan.
+
+<AccordionGroup>
+  <Accordion title="The phone step" icon="phone">
+    Adds a one-time phone code on top of the face scan. If you turn it on, that phone number is held so the same person can be recognized again. It is what turns a guest into a member, a verified human you can attach to your own signup rather than running fully anonymous.
+  </Accordion>
+  <Accordion title="An email" icon="envelope">
+    Gives a returning person a stable identity tied to your own user record, when you collect one. Like the phone step, it makes them a member, and it maps a verified human to your user.
+  </Accordion>
+  <Accordion title="Age estimation" icon="user-clock">
+    Can turn away a person the check estimates is outside the age band you set, with no ID and no document.
+  </Accordion>
+</AccordionGroup>
+
+See the [privacy policy](https://verifyyou.com/privacy) for the exact categories and how long each one is kept, and [configuring your verification](/learn/configuring-your-verification) for how these settings fit the rest of your setup.
+
+## How the record is used when someone returns
+
+The face vector is not only about who passes the first time. Because it persists, a person who comes back days or months later can be confirmed as the same verified human. You choose how: require a fresh face check every time for the highest assurance, or recognize them quietly in the background by their device, with no scan at all. A quiet return still counts as a verification, the check just skips the camera. The billing detail lives in [configuring your verification](/learn/configuring-your-verification).
+
+Because this is one network, someone verified with HumanCheck elsewhere can be recognized on your platform without scanning again, and you set your own re-verification bar. The record behind that is the person's verified record, built on a face vector, never a saved image. See [cross-network verification](/learn/cross-network-verification) for the full return walk and where your rules end.
+
+## The honest boundary
+
+A human check involves a camera and a live person, so there is real data handling behind it, and we would rather be plain about that than wave it away. What we keep is a face vector, treated as sensitive biometric data. What the company receives is the outcome and session signals, never a face or an image.
+
+For the precise terms, the categories of data, the retention periods, and your rights, the [privacy policy](https://verifyyou.com/privacy) is the binding source. This page explains the design in plain language. The privacy policy is the one that governs.
+
+<Note>
+  If you ever see a claim about our data handling that this page or the privacy policy does not support, trust the privacy policy. It is written to be exact, and it is the document we are held to.
+</Note>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="How returning users are recognized" icon="users" iconType="light" href="/v3/concepts/returning-users">
+    The same face vector is what lets a returning person move through quickly, on your terms.
+  </Card>
+  <Card title="Security and friction" icon="lock" iconType="light" href="/learn/security-and-friction">
+    How strict to set the check, and what that trades against conversion.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    The settings on your check, including the phone step, email, and age estimation.
+  </Card>
+  <Card title="Security overview" icon="shield-halved" iconType="light" href="/learn/security-and-privacy">
+    How the face vector is stored and protected, in one place.
+  </Card>
+</CardGroup>

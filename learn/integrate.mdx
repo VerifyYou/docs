@@ -1,0 +1,111 @@
+---
+title: "Integrate HumanCheck"
+description: "Add HumanCheck to your app in one page: install the SDK, start a check, and confirm the result on your server. The full integration a coding agent can follow end to end."
+---
+
+One page, one flow. The browser starts a check with a publishable key; your server confirms the result with a secret key. Follow it top to bottom and HumanCheck is wired in.
+
+<Note>
+  **Keys.** You get two matched pairs from your VerifyYou workspace: publishable keys (`pk_test_`, `pk_live_`) run in the browser, secret keys (`sk_test_`, `sk_live_`) stay on your server. Test and live never mix, so a session started with a test publishable key confirms only with the test secret key. Your VerifyYou contact provisions your workspace and hands you the keys.
+</Note>
+
+<Steps>
+  <Step title="Install the SDK">
+    ```bash
+    npm install @verifyyou-sdk/client
+    ```
+
+    The package exports three functions: `init()`, `vycheck()`, and `vyget()`. That is the whole browser surface.
+  </Step>
+
+  <Step title="Initialize once, then start the check">
+    ```ts
+    import { init, vycheck } from "@verifyyou-sdk/client";
+
+    // Once, at app startup
+    init({ publishableKey: "pk_test_your_key" });
+
+    // When the person clicks your verify button
+    await vycheck();
+    ```
+
+    Redirect is the default: the page navigates to the hosted flow, so the `vycheck()` promise never resolves. `init()` also accepts embedded modes, a drawer overlay or an inline embed, where `vycheck()` resolves with the result in place instead. Start with redirect; it is the least to wire up.
+  </Step>
+
+  <Step title="Read the result when they return">
+    The person lands back on the redirect URL saved on your verification, with `?vyt=<token>&vyc=<0|1>` appended. Read it with `vyget()`, then send the token to your server.
+
+    ```ts
+    import { vyget } from "@verifyyou-sdk/client";
+
+    // On the return page. Synchronous, no network, safe on every load.
+    const { token, verified, vyc } = vyget();
+
+    if (token) {
+      // vyc, and the verified flag derived from it, is only a UI hint.
+      // The token is the truth; confirm it server side.
+      await fetch("/api/confirm-human", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+    }
+
+    // Tidy the URL: remove just vyt and vyc, keep every other param.
+    const url = new URL(window.location.href);
+    url.searchParams.delete("vyt");
+    url.searchParams.delete("vyc");
+    window.history.replaceState({}, "", url);
+    ```
+
+    `verified` is true only when `vyc === "1"`, and both are hints. Fine for showing a cheerful message, never for granting access. In embedded modes nothing appears on the URL, and the same `vyget()` call returns the last completed embedded result.
+  </Step>
+
+  <Step title="Confirm on your server">
+    Exchange the token for the authoritative result. This call uses the secret key and must never run in a browser.
+
+    <CodeGroup>
+
+    ```ts Node
+    // Server only. The secret key never goes near a browser.
+    export async function confirmHuman(token: string) {
+      const res = await fetch(
+        `https://trust.verifyyou.com/v3/confirmations/${token}`,
+        { headers: { Authorization: `Bearer ${process.env.VERIFYYOU_SECRET_KEY}` } }
+      );
+      const confirmation = await res.json();
+
+      // Gate on verified. Everything else is context.
+      return confirmation.verified === true;
+    }
+    ```
+
+    ```bash curl
+    curl "https://trust.verifyyou.com/v3/confirmations/$VYT_TOKEN" \
+      -H "Authorization: Bearer sk_test_your_key"
+    ```
+
+    </CodeGroup>
+
+    Gate on `verified`. The response also carries `status` (`pending`, `approved`, `flagged`, `denied`), `reasons` (values like `collision` or `identity_mismatch`), `confirmed_at`, `identity` (verified email or phone when sharing is enabled on your check), and `external_id` (the id your server attached, so you can join the result to your own user). All of it is context; the gate stays `verified`.
+  </Step>
+
+  <Step title="Lock one-shot tokens (optional)">
+    Confirm each token exactly once. For a flow that must not be replayed, a registration or a single form submission, lock it right after confirming:
+
+    ```bash
+    curl -X POST "https://trust.verifyyou.com/v3/confirmations/$VYT_TOKEN/lock" \
+      -H "Authorization: Bearer sk_test_your_key"
+    ```
+
+    The token is invalidated for that verification, and any later confirm returns `verified: false`.
+  </Step>
+</Steps>
+
+## Members and guests
+
+Two kinds of people pass a check. A **guest** is recognized by device ID and nothing else: no phone, email, or name, and guest records expire over time, so a cleared browser or a new phone can make a familiar person look brand new. A **member** has a verified phone number or email bound to their face record, proven with a one-time code during the flow, and stays portable across devices. For audiences that come back, register people as members so returning humans stay recognized. Your VerifyYou contact sets the identity mode on your verification.
+
+## Next
+
+The full reference, every call, option, and response field, lives at [/v3/introduction](/v3/introduction). For a guided version with a no-code path alongside this one, see [/learn/quickstart](/learn/quickstart).

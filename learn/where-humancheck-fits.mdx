@@ -1,0 +1,138 @@
+---
+title: "Where it fits"
+description: "Where HumanCheck sits next to bot checks, two factor, and full KYC, when a real, unique human is the thing you need to prove, and the honest split on buying a human check versus building your own."
+---
+
+By the time you are comparing verification tools you already know the problem: something you offer is worth gaming, and bots, fake accounts, and one person running many identities are getting through. [Why HumanCheck](/learn/why-humancheck) lays out that problem and the economics behind it. The open question here is which tool to reach for, because inserting a full identity check is heavier than most teams need. HumanCheck is the trust layer between nothing and KYC: a real, unique, live human, without the cost, the PII liability, or the friction of an ID check.
+
+This page is for the person deciding where a human check belongs in their stack, and whether to buy it or build it. It sets HumanCheck next to the tools you already run, shows where it belongs in your flow, and gives you the honest split on buy versus build.
+
+## The layer between nothing and KYC
+
+At one end you have no checks, where anyone can sign up as many times as they like. At the other you have full KYC, where everyone scans a government ID and hands over a pile of personal data. HumanCheck is the step in the middle, and for most platforms it is the step that was missing.
+
+<div className="vy-spectrum">
+  <div className="vy-sp-item"><span className="vy-sp-label">No checks</span><span className="vy-sp-sub">anyone, any number of times</span></div>
+  <div className="vy-sp-item"><span className="vy-sp-label">Bot check</span><span className="vy-sp-sub">probably not a script</span></div>
+  <div className="vy-sp-item vy-sp-on"><span className="vy-sp-label">HumanCheck</span><span className="vy-sp-sub">a real, unique, live human</span></div>
+  <div className="vy-sp-item"><span className="vy-sp-label">Full KYC</span><span className="vy-sp-sub">a named legal identity</span></div>
+</div>
+
+| | No checks | Bot check | HumanCheck | Full KYC |
+|---|---|---|---|---|
+| What it proves | nothing | probably not a bot | a real, unique, live human | a named legal identity |
+| Stops one person making many accounts | no | no | yes | yes |
+| Resists bots, recordings, and AI generated faces | no | weakly | yes, by design | varies |
+| Government ID or documents | none | none | none | required |
+| Personal data you hold | none | none | none by default | a lot |
+| Friction for a real person | none | low | a few seconds | high |
+| Cost per check | none | low | low | the highest of the four |
+
+_Note: optional phone or email steps, if enabled, mean VerifyYou holds those identifiers. Your systems receive a verdict and a token by default; the verified email or phone reaches your server only if you turn on identity sharing._
+
+The two ends are not really competitors. No checks is fine until something is worth gaming. Full KYC is the right call when the law makes you confirm a legal identity. The gap between them is where most abuse actually lives, and that gap is the part HumanCheck fills.
+
+<Note>
+  HumanCheck does not replace your bot check or your KYC step. It sits between them, for the abuse that gets past a bot check but does not need a full identity to stop.
+</Note>
+
+## It is not KYC, and that is the point
+
+KYC is the heavy option. It asks for a government ID, holds a lot of personal data, costs real money, and makes the user stop to pull out their wallet and scan a document. HumanCheck gives you a real layer of trust without any of that, because we do not need to know who someone is. We only need to confirm they are a real, unique human.
+
+One more thing is shifting under KYC worth naming. A document check leans on the document being real, and AI is making a convincing fake ID, or a real face on a screen, cheaper to produce over time, so that signal is getting weaker rather than stronger. A live, present, unique human is the harder thing to fake, and that is what HumanCheck confirms. Where the law requires a legal identity, KYC is still the answer. But for the many places that reach for it only to keep fakes out, the document is doing less of the work than it used to.
+
+<CardGroup cols={2}>
+  <Card title="What KYC gives you" icon="id-card" iconType="light">
+    A named legal identity, the personal data that comes with it, and the cost and friction of a document scan. The right tool when the law or the risk demands a real name.
+  </Card>
+  <Card title="What HumanCheck gives you" icon="user-check" iconType="light">
+    A real, unique, live human, proven from a quick face scan in seconds. No documents, no government ID, and no PII on your side.
+  </Card>
+</CardGroup>
+
+The thing most teams are actually after is uniqueness. They do not want their users' identities, and they do not want PII on their side. They want to know that when they block someone, it makes it very hard for that person to come back under a new account. That is what a human check gives you, and for most platforms it is most of the value.
+
+## It is not a bot check either
+
+A bot check is cheap and near zero friction, and it still does real work against scripts and bulk sign-ups. But passive signals are easy to fake, and AI is now better at looking human than many people are. A face check is a much stronger signal, which is why teams come to us after the passive approach stops holding up. HumanCheck sits behind your bot check, for the abuse that now looks human.
+
+## Two factor, and more
+
+HumanCheck can include a second factor: an optional phone or email step, proven with a one-time code during the check. The difference is what it is built around. Two factor on its own only proves someone holds a credential, like a phone or a passkey, and one person can hold ten, so it says nothing about whether a real, unique human is there or whether the same person is already behind ten accounts. HumanCheck proves the human first, and adds the phone or email step as a second factor when you want it. A good pattern is to keep two factor on login and add HumanCheck at signup.
+
+<AccordionGroup>
+  <Accordion title="So what does each one actually prove?">
+    A bot check proves the traffic is probably not a script. Two factor proves whoever is signing in holds the right credential. KYC proves a named legal identity. HumanCheck proves a real, unique, live human is present right now, and that this human has not already been here under another name. They stack, they do not substitute.
+  </Accordion>
+  <Accordion title="Where does the human check sit in the flow?">
+    Usually right at the point of value: the signup, the first survey response, the payout, the gated offer. Your bot check runs first and clears the easy traffic, then HumanCheck handles what gets past it. See [how the check works](/learn/how-it-works) for the full flow.
+  </Accordion>
+</AccordionGroup>
+
+## Where to put it in your flow
+
+The harder question is usually not whether to use a human check, but where to put it. It goes at the moments that are worth gaming, right before the thing of value. You can run it in more than one place, and tune each spot to its own bar.
+
+<CardGroup cols={2}>
+  <Card title="At signup or account creation" icon="user-plus" iconType="light">
+    The most common spot. One verified human per account stops mass fake signups and one person quietly running many accounts.
+  </Card>
+  <Card title="At the point of value" icon="bullseye" iconType="light">
+    The first survey response, the payout or withdrawal, the redemption, the checkout on a limited release. Put the check where the money or the data is.
+  </Card>
+  <Card title="On a sensitive action" icon="shield-halved" iconType="light">
+    Re-verify before a high-value or high-risk action, even for an existing user, when you want fresh assurance that the real human is present.
+  </Card>
+  <Card title="Behind your bot check" icon="filter" iconType="light">
+    Let your bot check clear the easy traffic first, then run a human check on what gets past it, for the abuse that now looks human.
+  </Card>
+</CardGroup>
+
+Not sure where it fits your product? That is a good thing to bring to a demo. Tell us the moment you are trying to protect and we will point to where the check belongs. If what you actually need is a named legal identity for a regulated reason, that is KYC, and we are happy to tell you so.
+
+## Buy versus build
+
+Calling a face match is the easy part. What is hard, and never finished, is keeping uniqueness working around it: holding a store of faces, tying each one to an identifier, and recognizing the right person every time they come back. Here is the honest split.
+
+| | If you build it yourself | With HumanCheck |
+|---|---|---|
+| Keeping uniqueness working | You maintain the store of faces, map each one to an identifier, and keep recognizing the right person as they return across devices, forever | Handled. Recognition holds across devices and time, and you set the rules |
+| Session and return handling | You build the plumbing that tracks who is arriving and ties each visit back to the right person | Built in. Require a fresh check, or recognize a returning person quietly, your choice |
+| The signal layer | You gather and maintain the passive and active signals that make a verdict trustworthy, from device and location to liveness | Included. Every check carries the signals behind it |
+| Uniqueness across customers | Only the people you have seen yourself, so a fresh account always looks new | One cross-customer network, so someone flagged elsewhere can be known on day one |
+| Biometric data liability | You hold and secure sensitive biometric data, with the regulatory exposure that brings | We hold the face record; your systems see a verdict and the fields you enable, never a face |
+| Time and cost | Weeks to build, then endless upkeep of the binding, the signals, and the security burden | A call from the browser or your server, and a cost that scales with your volume |
+
+The pattern is the same as anywhere else in your stack. You could build your own payments, your own email delivery, your own auth. You buy them because the maintenance is endless and the liability is real. Keeping a face bound to an identifier, working across devices and over time, is that shape of decision, with the added weight that the data involved is biometric.
+
+<Note>
+  The real advantage of buying over building is the cross-customer network. On your own, every new account starts as a stranger. On the network, someone already verified with HumanCheck can be recognized on your platform without scanning again, and you still set your own re-verification bar. See [cross-network verification](/learn/cross-network-verification).
+</Note>
+
+## The return moment
+
+The decision that is easy to overlook is what happens when a verified person comes back, and it is worth getting right before you build anything yourself. You either require a fresh check for the highest assurance or recognize a returning guest quietly from their device, with members portable across devices where guests are tied to the one they scanned on. This is the part that is genuinely hard to build well, and it is built in.
+
+[What a human check is](/learn/what-humancheck-is) walks the return moment step by step, including how members and guests are recognized differently.
+
+## What this costs you to run
+
+Pricing scales with your volume and your use case, so there is no single number to put on this page. What matters for where it fits is that the check is light on the person, a few seconds and no document, so it can sit on everyday traffic that a full identity check would only slow down. For a quote sized to your volume, talk to us. See [pricing](/learn/pricing).
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Pricing" icon="coins" iconType="light" href="/learn/pricing">
+    How pricing works, sized to your volume and use case.
+  </Card>
+  <Card title="Cross-network verification" icon="share-nodes" iconType="light" href="/learn/cross-network-verification">
+    How someone verified elsewhere is recognized on your platform, and how you set your own bar.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Identity modes, collision handling, repeat limits, and the other settings that tune a check to its job.
+  </Card>
+  <Card title="Add it to your product" icon="code" iconType="light" href="/learn/quickstart">
+    From nothing to your first confirmed verification, with a no-code path and a code path.
+  </Card>
+</CardGroup>

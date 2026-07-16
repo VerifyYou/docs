@@ -1,0 +1,56 @@
+---
+title: "Cross-network verification"
+description: "How the shared HumanCheck network recognizes people who verified on other platforms so they can pass on yours without a fresh scan, and how collision scope and re-verification settings keep the bar yours."
+---
+
+Every [HumanCheck](/learn/why-humancheck), the quick camera check that proves someone is a real, unique human, runs on one shared network. When a person passes a check on any platform that uses HumanCheck, the network keeps their verified record (built on a face vector, a numerical representation of the face's geometry, never a saved image), so when the next platform recognizes them, by their device or their verified contact details, it already knows they are real and unique. That is what cross-network verification means: a person verified anywhere on VerifyYou can be recognized on your platform without scanning again. It is the least friction for them, and you stay in full control of the bar.
+
+## Verified once, recognized everywhere
+
+The lightest path is there for a real person: if they verified with HumanCheck on another platform in the network, your check can let them through without making them repeat the scan. Your platform still gets the same verdict: a real, unique human.
+
+How dependably a returning person is recognized comes down to what kind of record they have. A **guest** is recognized by their device ID and nothing else, no phone, no email, no name, and guest records expire over time. A **member** has a verified phone number or email bound to their face record, proven with a one-time code during the check, so recognition follows them across devices and browsers. If repeat visitors matter on your platform, members are the reliable path.
+
+## You set your own rules
+
+Cross-network recognition never lowers your bar, because your check decides how much to ask of a returning person. The setting behind this is called skip re-verify: in plain language, whether someone who has already proven they are a real, unique human walks straight through, scans again after a while, or scans every single time. Your check arrives configured for your use case, and your VerifyYou contact tunes it with you as your needs change.
+
+<CardGroup cols={3}>
+  <Card title="Frictionless" icon="bolt" iconType="light">
+    Recognize a returning or network-verified person with no scan at all. Best for low-stakes flows where completion matters most.
+  </Card>
+  <Card title="Re-verify on a cadence" icon="clock-rotate-left" iconType="light">
+    Ask for a fresh check every so often, monthly or yearly, to keep your population current without asking every time.
+  </Card>
+  <Card title="Re-verify every time" icon="shield-halved" iconType="light">
+    Run a full liveness and uniqueness check on every visit, the highest bar, for payouts, labeling, or anything you cannot let slip.
+  </Card>
+</CardGroup>
+
+<Note>
+  Skipping the scan saves friction, not verifications: a returning guest who skips still counts as a verification.
+</Note>
+
+Your rules are yours alone. A stricter setting on your platform does not change what any other platform does, and theirs does not change yours.
+
+## Uniqueness across the network
+
+The network works in the other direction too. HumanCheck's uniqueness check catches a collision, the same face turning up where your rules say it should not, and you choose how wide that net reaches. That choice is called collision scope. With **network** scope, a new face is checked against everyone verified anywhere on VerifyYou. With **company** scope, it is checked only against your own verifications, so what a person does elsewhere never counts against them with you. Either way, you also choose what a collision does: block the check outright, or let it through flagged as suspicious so your team can review it.
+
+## Why a network is worth more than a list
+
+On your own you can only recognize the people you have already seen. On the network, a person verified elsewhere can be known to you on day one, and the value compounds as more platforms join. See [configuring your verification](/learn/configuring-your-verification) for the full configuration model, and [what we store](/learn/what-we-store) for how we keep this private.
+
+## Where to go next
+
+<CardGroup cols={3}>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Every setting on a check, including collision scope, collision action, and skip re-verify.
+  </Card>
+  <Card title="What we store" icon="shield-halved" iconType="light" href="/learn/what-we-store">
+    The verified record behind network recognition, and what your business never receives.
+  </Card>
+  <Card title="Glossary" icon="book" iconType="light" href="/learn/glossary">
+    Members, guests, collisions, and the other key terms on this page, defined in plain language.
+  </Card>
+</CardGroup>

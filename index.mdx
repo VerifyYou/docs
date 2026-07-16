@@ -1,0 +1,420 @@
+---
+title: "VerifyYou Docs"
+description: "Prove a real, unique, live human on any platform, without the cost, the PII, or the friction of an ID check."
+mode: "custom"
+---
+
+<div className="vy-hero max-w-7xl mx-auto px-6">
+  <div className="grid lg:grid-cols-2 gap-10 items-start">
+    <div>
+
+      <p className="vy-kicker">HumanCheck Platform</p>
+
+      <h1 className="mt-3 text-gray-900 dark:text-zinc-50">Start verifying with HumanCheck</h1>
+
+      <p className="mt-4 text-lg text-gray-500 dark:text-zinc-400">Make trust on your platform simple. Verify that every user is a live, unique human with a camera check that takes seconds.</p>
+
+      <div className="mt-6 vy-ask" onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true, bubbles: true }))}>
+        <span className="vy-ask-icon"><Icon icon="magnifying-glass" iconType="light" size={17} /></span>
+        <span className="vy-ask-text">Ask anything about HumanCheck</span>
+        <span className="vy-ask-kbd">⌘K</span>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-3">
+        <a href="/learn/quickstart" className="vy-btn vy-btn-primary"><Icon icon="rocket" iconType="light" size={15} />Quickstart</a>
+        <a href="/learn/why-humancheck" className="vy-btn vy-btn-secondary"><Icon icon="circle-question" iconType="light" size={15} />Why HumanCheck?</a>
+        <a href="https://app.verifyyou.com/verification/PsvfRgX5SEGeVMB_Prv2Aw" target="_blank" rel="noopener" className="vy-btn vy-btn-secondary"><Icon icon="camera" iconType="light" size={15} />HumanCheck Demo</a>
+      </div>
+
+    </div>
+    <div className="relative">
+
+<svg className="vy-hero-mark" viewBox="13.5 9 22 31.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path className="vy-mark-body" fillRule="evenodd" clipRule="evenodd" d="M17.5951 39.4589C15.3571 39.4589 14.1941 38.2659 14.1941 35.8529V25.4269C14.1941 23.2919 15.1211 22.1149 16.8881 21.8789H32.1131C33.8791 22.1149 34.7921 23.2919 34.7921 25.4269V35.8509C34.7921 38.2659 33.6291 39.4589 31.3901 39.4589H17.5951ZM18.0211 36.8239H30.9781C31.5971 36.8239 31.9361 36.4559 31.9361 35.7479V25.5299C31.9361 24.8239 31.5971 24.4709 30.9781 24.4709H18.0221C17.4191 24.4709 17.0501 24.8229 17.0501 25.5299V35.7479C17.0501 36.4559 17.4181 36.8239 18.0221 36.8239H18.0211Z" fill="currentColor"/><path className="vy-mark-person" d="M24.5001 30.7099C23.5631 30.7099 22.7691 29.8739 22.7691 28.8079C22.7691 27.7599 23.5671 26.9399 24.5001 26.9399C25.4321 26.9399 26.2301 27.7439 26.2301 28.7989C26.2301 29.8739 25.4411 30.7099 24.5001 30.7099ZM21.6401 34.7009C21.1591 34.7009 20.8711 34.4729 20.8711 34.0949C20.8711 32.9909 22.2711 31.4709 24.5001 31.4709C26.7231 31.4709 28.1281 32.9909 28.1281 34.0949C28.1281 34.4719 27.8371 34.7009 27.3551 34.7009H21.6401Z" fill="currentColor"/><path className="vy-shackle" d="M16.8881 21.8789V18.3749C16.8881 12.9419 20.4811 10.1289 24.5001 10.1289C28.5211 10.1289 32.1131 12.9419 32.1131 18.3749V21.8799H29.3591V18.1099C29.3591 14.6649 27.1211 12.7799 24.5001 12.7799C21.8641 12.7799 19.6421 14.6649 19.6421 18.1099V21.8349H16.8881Z" fill="currentColor"/></svg>
+
+<div className="vy-hero-code">
+
+<CodeGroup>
+
+```bash cURL wrap
+# 1. Start a check, then redirect the person to the returned url.
+curl -X POST https://trust.verifyyou.com/v3/initialize \
+  -H "Authorization: Bearer $VY_SK" \
+  -H "Content-Type: application/json" \
+  -d '{"origin":"https://yourapp.com","return_path":"/verified"}'
+# => { "url": "https://app.verifyyou.com/v/..." }
+
+# 2. When they come back, confirm the token and gate on "verified".
+curl https://trust.verifyyou.com/v3/confirmations/$TOKEN \
+  -H "Authorization: Bearer $VY_SK"
+# => { "verified": true }
+```
+
+```ts Node wrap
+// 1. Start a check, then send the person to `url`.
+const { url } = await fetch("https://trust.verifyyou.com/v3/initialize", {
+  method: "POST",
+  headers: { Authorization: `Bearer ${process.env.VY_SK}`, "Content-Type": "application/json" },
+  body: JSON.stringify({ origin: "https://yourapp.com", return_path: "/verified" }),
+}).then((r) => r.json());
+
+// 2. When they return, confirm the token and gate on `verified`.
+const { verified } = await fetch(`https://trust.verifyyou.com/v3/confirmations/${token}`, {
+  headers: { Authorization: `Bearer ${process.env.VY_SK}` },
+}).then((r) => r.json());
+```
+
+```python Python wrap
+import os, requests
+
+# 1. Start a check, then send the person to the returned url.
+r = requests.post("https://trust.verifyyou.com/v3/initialize",
+    headers={"Authorization": f"Bearer {os.environ['VY_SK']}"},
+    json={"origin": "https://yourapp.com", "return_path": "/verified"})
+url = r.json()["url"]
+
+# 2. When they return, confirm the token and gate on "verified".
+res = requests.get(f"https://trust.verifyyou.com/v3/confirmations/{token}",
+    headers={"Authorization": f"Bearer {os.environ['VY_SK']}"})
+verified = res.json()["verified"]
+```
+
+</CodeGroup>
+
+</div>
+
+    </div>
+  </div>
+</div>
+
+<div className="max-w-7xl mx-auto px-6 mt-20">
+
+  <p className="vy-kicker">Start here</p>
+
+  <h2 className="mt-2 text-2xl font-semibold text-gray-900 dark:text-zinc-50">The trust layer between nothing and KYC</h2>
+
+  <p className="mt-2 text-gray-500 dark:text-zinc-400">A real, unique, live human, without the cost, the PII, or the friction of an ID check. Start with the pitch, learn how it works, or see how we keep data safe.</p>
+
+  <div className="grid md:grid-cols-3 gap-5 mt-6">
+
+    <a href="/learn/why-humancheck" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <svg className="vy-mark-wm" viewBox="13.5 9 22 31.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.5951 39.4589C15.3571 39.4589 14.1941 38.2659 14.1941 35.8529V25.4269C14.1941 23.2919 15.1211 22.1149 16.8881 21.8789V18.3749C16.8881 12.9419 20.4811 10.1289 24.5001 10.1289C28.5211 10.1289 32.1131 12.9419 32.1131 18.3749V21.8799C33.8791 22.1149 34.7921 23.2919 34.7921 25.4269V35.8509C34.7921 38.2659 33.6291 39.4589 31.3901 39.4589H17.5951ZM19.6421 18.1099V21.8349H29.3591V18.1099C29.3591 14.6649 27.1211 12.7799 24.5001 12.7799C21.8641 12.7799 19.6421 14.6649 19.6421 18.1099ZM18.0211 36.8239H30.9781C31.5971 36.8239 31.9361 36.4559 31.9361 35.7479V25.5299C31.9361 24.8239 31.5971 24.4709 30.9781 24.4709H18.0221C17.4191 24.4709 17.0501 24.8229 17.0501 25.5299V35.7479C17.0501 36.4559 17.4181 36.8239 18.0221 36.8239H18.0211Z" fill="currentColor"/><path d="M24.5001 30.7099C23.5631 30.7099 22.7691 29.8739 22.7691 28.8079C22.7691 27.7599 23.5671 26.9399 24.5001 26.9399C25.4321 26.9399 26.2301 27.7439 26.2301 28.7989C26.2301 29.8739 25.4411 30.7099 24.5001 30.7099ZM21.6401 34.7009C21.1591 34.7009 20.8711 34.4729 20.8711 34.0949C20.8711 32.9909 22.2711 31.4709 24.5001 31.4709C26.7231 31.4709 28.1281 32.9909 28.1281 34.0949C28.1281 34.4719 27.8371 34.7009 27.3551 34.7009H21.6401Z" fill="currentColor"/></svg>
+      <svg className="vy-mark-icon" viewBox="13.5 9 22 31.5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.5951 39.4589C15.3571 39.4589 14.1941 38.2659 14.1941 35.8529V25.4269C14.1941 23.2919 15.1211 22.1149 16.8881 21.8789V18.3749C16.8881 12.9419 20.4811 10.1289 24.5001 10.1289C28.5211 10.1289 32.1131 12.9419 32.1131 18.3749V21.8799C33.8791 22.1149 34.7921 23.2919 34.7921 25.4269V35.8509C34.7921 38.2659 33.6291 39.4589 31.3901 39.4589H17.5951ZM19.6421 18.1099V21.8349H29.3591V18.1099C29.3591 14.6649 27.1211 12.7799 24.5001 12.7799C21.8641 12.7799 19.6421 14.6649 19.6421 18.1099ZM18.0211 36.8239H30.9781C31.5971 36.8239 31.9361 36.4559 31.9361 35.7479V25.5299C31.9361 24.8239 31.5971 24.4709 30.9781 24.4709H18.0221C17.4191 24.4709 17.0501 24.8229 17.0501 25.5299V35.7479C17.0501 36.4559 17.4181 36.8239 18.0221 36.8239H18.0211Z" fill="currentColor"/><path d="M24.5001 30.7099C23.5631 30.7099 22.7691 29.8739 22.7691 28.8079C22.7691 27.7599 23.5671 26.9399 24.5001 26.9399C25.4321 26.9399 26.2301 27.7439 26.2301 28.7989C26.2301 29.8739 25.4411 30.7099 24.5001 30.7099ZM21.6401 34.7009C21.1591 34.7009 20.8711 34.4729 20.8711 34.0949C20.8711 32.9909 22.2711 31.4709 24.5001 31.4709C26.7231 31.4709 28.1281 32.9909 28.1281 34.0949C28.1281 34.4719 27.8371 34.7009 27.3551 34.7009H21.6401Z" fill="currentColor"/></svg>
+      <span className="vy-card-title">Why HumanCheck</span>
+    </a>
+
+    <a href="/learn" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="book-open" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="book-open" iconType="light" size={22} /></span>
+      <span className="vy-card-title">Learn more</span>
+    </a>
+
+    <a href="/learn/security-and-privacy" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="shield-halved" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="shield-halved" iconType="light" size={22} /></span>
+      <span className="vy-card-title">Security</span>
+    </a>
+
+  </div>
+
+</div>
+
+<div className="max-w-7xl mx-auto px-6 mt-20">
+
+  <p className="vy-kicker">Get started</p>
+
+  <h2 className="mt-2 text-2xl font-semibold text-gray-900 dark:text-zinc-50">From first call to production</h2>
+
+  <p className="mt-2 text-gray-500 dark:text-zinc-400">When you are ready to build, pick the path that fits. No code if you share your check's hosted link, code if you are wiring it into your product.</p>
+
+  <div className="mt-6">
+
+<Tabs>
+  <Tab title="No code">
+
+    <div className="vy-journey">
+
+      <div className="vy-jstage">
+        <div className="vy-jnum bg-white dark:bg-black">1</div>
+        <div className="vy-jbody">
+          <div className="vy-jtitle text-gray-900 dark:text-zinc-50">Get started</div>
+          <div className="vy-jgrid">
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/getting-access"><span className="vy-jbox-ico"><Icon icon="user-plus" iconType="light" size={15} /></span>Get access</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/reading-your-dashboard"><span className="vy-jbox-ico"><Icon icon="gauge" iconType="light" size={15} /></span>Meet your dashboard</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/quickstart"><span className="vy-jbox-ico"><Icon icon="rocket" iconType="light" size={15} /></span>Quickstart</a>
+          </div>
+        </div>
+      </div>
+
+      <div className="vy-jstage">
+        <div className="vy-jnum bg-white dark:bg-black">2</div>
+        <div className="vy-jbody">
+          <div className="vy-jtitle text-gray-900 dark:text-zinc-50">Configure</div>
+          <div className="vy-jgrid">
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/configuring-your-verification"><span className="vy-jbox-ico"><Icon icon="sliders" iconType="light" size={15} /></span>Configure your check</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/branding-your-check"><span className="vy-jbox-ico"><Icon icon="palette" iconType="light" size={15} /></span>Branding</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/security-and-friction"><span className="vy-jbox-ico"><Icon icon="scale-balanced" iconType="light" size={15} /></span>Security and friction</a>
+          </div>
+        </div>
+      </div>
+
+      <div className="vy-jstage">
+        <div className="vy-jnum bg-white dark:bg-black">3</div>
+        <div className="vy-jbody">
+          <div className="vy-jtitle text-gray-900 dark:text-zinc-50">Share and go live</div>
+          <div className="vy-jgrid">
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/quickstart"><span className="vy-jbox-ico"><Icon icon="share-nodes" iconType="light" size={15} /></span>Share your check link</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/quickstart"><span className="vy-jbox-ico"><Icon icon="flask" iconType="light" size={15} /></span>Test it</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/reading-your-dashboard"><span className="vy-jbox-ico"><Icon icon="chart-line" iconType="light" size={15} /></span>Watch results</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </Tab>
+  <Tab title="Code">
+
+    <div className="vy-journey">
+
+      <div className="vy-jstage">
+        <div className="vy-jnum bg-white dark:bg-black">1</div>
+        <div className="vy-jbody">
+          <div className="vy-jtitle text-gray-900 dark:text-zinc-50">Get started</div>
+          <div className="vy-jgrid">
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/v3/introduction"><span className="vy-jbox-ico"><Icon icon="rocket" iconType="light" size={15} /></span>Quickstart</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/getting-access"><span className="vy-jbox-ico"><Icon icon="key" iconType="light" size={15} /></span>Get API keys</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/v3/sdk/init"><span className="vy-jbox-ico"><Icon icon="box" iconType="light" size={15} /></span>Set up the SDK</a>
+          </div>
+        </div>
+      </div>
+
+      <div className="vy-jstage">
+        <div className="vy-jnum bg-white dark:bg-black">2</div>
+        <div className="vy-jbody">
+          <div className="vy-jtitle text-gray-900 dark:text-zinc-50">Build</div>
+          <div className="vy-jgrid">
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/v3/sdk/vycheck"><span className="vy-jbox-ico"><Icon icon="fingerprint" iconType="light" size={15} /></span>Start a check</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/v3/api/initialize"><span className="vy-jbox-ico"><Icon icon="server" iconType="light" size={15} /></span>Initialize server side</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/v3/api/confirmations"><span className="vy-jbox-ico"><Icon icon="circle-check" iconType="light" size={15} /></span>Confirm the result</a>
+          </div>
+        </div>
+      </div>
+
+      <div className="vy-jstage">
+        <div className="vy-jnum bg-white dark:bg-black">3</div>
+        <div className="vy-jbody">
+          <div className="vy-jtitle text-gray-900 dark:text-zinc-50">Configure</div>
+          <div className="vy-jgrid">
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/configuring-your-verification"><span className="vy-jbox-ico"><Icon icon="sliders" iconType="light" size={15} /></span>Choose your settings</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/v3/concepts/members-vs-guests"><span className="vy-jbox-ico"><Icon icon="users" iconType="light" size={15} /></span>Members vs guests</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/v3/advanced/account-linking"><span className="vy-jbox-ico"><Icon icon="link" iconType="light" size={15} /></span>Link to your users</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/glossary"><span className="vy-jbox-ico"><Icon icon="book" iconType="light" size={15} /></span>Glossary</a>
+          </div>
+        </div>
+      </div>
+
+      <div className="vy-jstage">
+        <div className="vy-jnum bg-white dark:bg-black">4</div>
+        <div className="vy-jbody">
+          <div className="vy-jtitle text-gray-900 dark:text-zinc-50">Go live and operate</div>
+          <div className="vy-jgrid">
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/learn/quickstart"><span className="vy-jbox-ico"><Icon icon="toggle-on" iconType="light" size={15} /></span>Test to live</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/v3/changelog"><span className="vy-jbox-ico"><Icon icon="sparkles" iconType="light" size={15} /></span>Changelog</a>
+            <a className="vy-jbox text-gray-900 dark:text-zinc-50" href="/v3/faq"><span className="vy-jbox-ico"><Icon icon="circle-question" iconType="light" size={15} /></span>FAQ</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </Tab>
+</Tabs>
+
+  </div>
+
+</div>
+
+<div className="max-w-7xl mx-auto px-6 mt-20">
+
+  <p className="vy-kicker">What you get</p>
+
+  <h2 className="mt-2 text-2xl font-semibold text-gray-900 dark:text-zinc-50">A real, unique human, and none of the weight</h2>
+
+  <p className="mt-2 text-gray-500 dark:text-zinc-400">You hold a verdict, not a pile of personal data. We run the hard parts, and the awkward edges are already handled.</p>
+
+  <div className="grid md:grid-cols-3 gap-5 mt-6">
+
+    <a href="/learn/what-we-store" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="lock" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="lock" iconType="light" size={22} /></span>
+      <span className="vy-card-title">No PII unless you want it</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Hold a verdict, nothing about the person.</span>
+    </a>
+
+    <a href="/learn/why-humancheck" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="wand-magic-sparkles" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="wand-magic-sparkles" iconType="light" size={22} /></span>
+      <span className="vy-card-title">The hard parts are done</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">We run the liveness model and the network.</span>
+    </a>
+
+    <a href="/learn/configuring-your-verification" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="list-check" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="list-check" iconType="light" size={22} /></span>
+      <span className="vy-card-title">The edge cases are handled</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Returning users, collisions, guests or members.</span>
+    </a>
+
+  </div>
+
+</div>
+
+<div className="max-w-7xl mx-auto px-6 mt-20">
+
+  <p className="vy-kicker">Solutions</p>
+
+  <h2 className="mt-2 text-2xl font-semibold text-gray-900 dark:text-zinc-50">Find your use case</h2>
+
+  <p className="mt-2 text-gray-500 dark:text-zinc-400">The specific way each kind of team gets gamed, and the check that stops it.</p>
+
+  <div className="grid md:grid-cols-2 gap-5 mt-6">
+
+    <a href="/learn/solutions/market-research-and-survey-panels" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="clipboard-question" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="clipboard-question" iconType="light" size={22} /></span>
+      <span className="vy-card-title">Market research and survey panels</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Screen out bots and duplicate respondents before they reach your data.</span>
+    </a>
+
+    <a href="/learn/solutions/ai-data-labeling" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="tags" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="tags" iconType="light" size={22} /></span>
+      <span className="vy-card-title">AI data labeling</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Keep one real human behind every labeler account, so no one farms duplicates.</span>
+    </a>
+
+    <a href="/learn/solutions/ticketing-and-limited-releases" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="ticket" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="ticket" iconType="light" size={22} /></span>
+      <span className="vy-card-title">Ticketing and limited releases</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Cap entries to one per real human, so scalpers and bots cannot buy out a release.</span>
+    </a>
+
+    <a href="/learn/solutions/communities-and-marketplaces" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="users" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="users" iconType="light" size={22} /></span>
+      <span className="vy-card-title">Communities and marketplaces</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Bind each member to one real human, and catch a banned face returning under a new name.</span>
+    </a>
+
+  </div>
+
+</div>
+
+<div className="max-w-7xl mx-auto px-6 mt-20">
+
+  <p className="vy-kicker">Common questions</p>
+
+  <h2 className="mt-2 text-2xl font-semibold text-gray-900 dark:text-zinc-50">The questions teams ask first</h2>
+
+  <p className="mt-2 text-gray-500 dark:text-zinc-400">The three that come up in almost every conversation, answered.</p>
+
+  <div className="grid md:grid-cols-3 gap-5 mt-6">
+    <a href="/learn/security-and-friction" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="scale-balanced" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="scale-balanced" iconType="light" size={22} /></span>
+      <span className="vy-card-title">Will it hurt my conversion?</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Real people clear it in seconds.</span>
+    </a>
+    <a href="/learn/where-humancheck-fits" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="layer-group" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="layer-group" iconType="light" size={22} /></span>
+      <span className="vy-card-title">Isn't this just KYC?</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">A real human, without the ID or the PII.</span>
+    </a>
+    <a href="/learn/quickstart" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+      <span className="vy-card-wm"><Icon icon="sliders" iconType="light" size={250} /></span>
+      <span className="vy-card-icon"><Icon icon="sliders" iconType="light" size={22} /></span>
+      <span className="vy-card-title">How do we set it up?</span>
+      <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Share a hosted link, or wire in the API.</span>
+    </a>
+  </div>
+
+</div>
+
+<div className="max-w-7xl mx-auto px-6 mt-20">
+
+  <div className="vy-cta bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl px-8 py-12 text-center">
+    <h2 className="text-2xl font-semibold text-gray-900 dark:text-zinc-50">See it on your use case</h2>
+    <p className="mt-2 text-gray-500 dark:text-zinc-400">Tell us what you are gating and we will set up a workspace and walk you through a live check.</p>
+    <div className="mt-6 flex flex-wrap gap-3 justify-center">
+      <a href="https://sales.verifyyou.com" className="vy-btn vy-btn-primary"><Icon icon="calendar-check" iconType="light" size={15} />Book a demo</a>
+      <a href="https://app.verifyyou.com/verification/PsvfRgX5SEGeVMB_Prv2Aw" target="_blank" rel="noopener" className="vy-btn vy-btn-secondary"><Icon icon="camera" iconType="light" size={15} />HumanCheck Demo</a>
+      <a href="/learn/getting-access" className="vy-btn vy-btn-secondary"><Icon icon="door-open" iconType="light" size={15} />How access works</a>
+    </div>
+  </div>
+
+</div>
+
+<div className="max-w-7xl mx-auto px-6 mt-24 pt-12 pb-10 border-t border-gray-200 dark:border-zinc-800">
+
+  <div className="grid grid-cols-2 gap-8 md:grid-cols-5 md:gap-10">
+
+    <div className="col-span-2 md:col-span-1 flex flex-col">
+      <img src="/logo/light.svg" alt="VerifyYou Docs" className="w-auto dark:hidden" style={{height: "36px", maxWidth: "12rem"}} />
+      <img src="/logo/dark.svg" alt="VerifyYou Docs" className="w-auto hidden dark:block" style={{height: "36px", maxWidth: "12rem"}} />
+      <div className="mt-auto pt-8 pl-1 flex items-center gap-4">
+        <a href="https://www.linkedin.com/company/verifyyou" target="_blank" rel="noopener" aria-label="LinkedIn" className="text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"><Icon icon="linkedin" iconType="brands" size={20} /></a>
+        <a href="https://www.instagram.com/verifyyouapp" target="_blank" rel="noopener" aria-label="Instagram" className="text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"><Icon icon="instagram" iconType="brands" size={20} /></a>
+      </div>
+    </div>
+
+    <div>
+      <div className="text-sm font-semibold text-gray-900 dark:text-zinc-100">Product</div>
+      <ul className="mt-1 space-y-2 list-none pl-0">
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/humancheck">HumanCheck</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/pricing">Pricing</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://sales.verifyyou.com">Book a demo</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://platform.verifyyou.com/dashboard">Dashboard</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div className="text-sm font-semibold text-gray-900 dark:text-zinc-100">Solutions</div>
+      <ul className="mt-1 space-y-2 list-none pl-0">
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/solutions/market-research">Market research</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/solutions/ai-data-labeling">AI data labeling</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/solutions/ticketing">Ticketing</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/solutions/communities">Communities</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div className="text-sm font-semibold text-gray-900 dark:text-zinc-100">Developers</div>
+      <ul className="mt-1 space-y-2 list-none pl-0">
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="/learn/why-humancheck">Why HumanCheck</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://docs.verifyyou.com/api-reference">API reference</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="/learn">Learn</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="/learn/security-and-privacy">Security</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div className="text-sm font-semibold text-gray-900 dark:text-zinc-100">Company</div>
+      <ul className="mt-1 space-y-2 list-none pl-0">
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/about">About</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/blog">Blog</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/contact">Contact</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/support">Support</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/privacy">Privacy</a></li>
+        <li className="pl-0"><a className="text-sm text-gray-500 dark:text-zinc-400 no-underline hover:text-gray-900 dark:hover:text-zinc-100" href="https://verifyyou.com/terms">Terms</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div className="mt-12 pt-6 border-t border-gray-200 dark:border-zinc-800">
+    <span className="text-sm text-gray-400 dark:text-zinc-500">Powered by Mintlify</span>
+  </div>
+
+</div>
