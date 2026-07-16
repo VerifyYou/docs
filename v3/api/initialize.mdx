@@ -12,7 +12,10 @@ Content-Type: application/json
 ```
 
 ```ts
-type InitializeResponse = { url: string }; // redirect the user to `url`
+type InitializeResponse = {
+  url: string;        // redirect the user here, or
+  session_id: string; // hand to the SDK's vycheck({ session }) to embed the flow
+};
 ```
 
 <Tip>
@@ -86,8 +89,16 @@ Keys come in matched test and live pairs. A session started with a test key mint
   The hosted verification link with a queued-up session. Redirect the user here.
 </ResponseField>
 
+<ResponseField name="session_id" type="string | null">
+  The minted session id. Pass it to the SDK's [`vycheck({ session })`](/v3/sdk/vycheck)
+  to run the flow in a drawer or inline embed instead of redirecting to `url`.
+</ResponseField>
+
 ```json
-{ "url": "https://app.verifyyou.com/v/abc123" }
+{
+  "url": "https://app.verifyyou.com/v/abc123",
+  "session_id": "sess_abc123"
+}
 ```
 
 ## Examples
