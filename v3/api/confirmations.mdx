@@ -126,6 +126,23 @@ if (verified) {
 
 Confirm each token exactly once. If your framework can double-fire the confirming code (React StrictMode does this in development), add a guard so the same token isn't confirmed twice.
 
+## Errors
+
+Errors return the matching HTTP status and a JSON body with a `detail` code:
+
+```json
+{ "detail": "invalid_confirmation_token" }
+```
+
+| Status | `detail` | Cause |
+| --- | --- | --- |
+| `401` | `invalid_key_type` | Not a secret key. Confirmations require the secret key, not the publishable one. |
+| `401` | `invalid_or_revoked_key` | The secret key is unknown or has been revoked. |
+| `401` | `invalid_confirmation_token` | The `token` is malformed or can't be verified. |
+| `404` | `not found` | No confirmation for this token, or it belongs to a different key or mode (test vs live). |
+
+A declined or locked confirmation is **not** an error. It returns `200` with `verified: false`.
+
 ## Lock a confirmation (optional)
 
 For true one-shot flows, where each person should pass exactly once and never again, **lock** the confirmation once you've accepted it. After locking, `GET /v3/confirmations/{token}` returns `verified: false` for that confirmation.

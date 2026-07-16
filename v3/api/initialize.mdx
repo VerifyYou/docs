@@ -117,6 +117,25 @@ const { url } = await res.json();
 ```
 </CodeGroup>
 
+## Errors
+
+Errors return the matching HTTP status and a JSON body with a `detail` code:
+
+```json
+{ "detail": "identifiers_require_secret_key" }
+```
+
+| Status | `detail` | Cause |
+| --- | --- | --- |
+| `400` | `identifiers_require_secret_key` | `external_id`, `email`, `phone`, `verification_id`, or `verification_external_id` was sent with a publishable key. Use a secret key. |
+| `401` | `invalid_key_type` | The `Authorization` key isn't a recognized publishable or secret key. |
+| `401` | `invalid_or_revoked_key` | The key is unknown or has been revoked. |
+| `403` | `config_requires_test_key` | A `config` override was sent with a live key. Inline config is test-only. |
+| `404` | `no_matching_verification` | Couldn't resolve which verification to run. Pass `verification_id`. |
+| `409` | `external_id_already_exists` | The `external_id` is already bound to a verification. |
+| `422` | `config_incomplete: missing …` | The `config` declares options that aren't built yet; the message lists them. |
+| `422` | validation error | The request body failed schema validation. |
+
 ## Client-side: `init()` + `vycheck()`
 
 You don't have to call this endpoint by hand. In the browser, configure the SDK once with [`init()`](/v3/sdk/init) and let [`vycheck()`](/v3/sdk/vycheck) call `initialize` and run the flow for you, as a redirect, a drawer, or an inline embed:
