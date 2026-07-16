@@ -3,6 +3,28 @@ title: "Changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
+<Update label="July 16, 2026" description="SDK 0.4.0">
+
+## Embed a server-minted session
+
+`vycheck({ session })` runs a session you created on your server, so an embedded flow can carry an `external_id` or a bound identity that only a secret key can set.
+
+- Call [`POST /v3/initialize`](/v3/api/initialize) from your backend with `external_id`, `email`, or `phone`. It now returns a `session_id` next to `url`.
+- Pass the `session_id` to [`vycheck({ session })`](/v3/sdk/vycheck) in the browser. The flow opens as a drawer or inline, with no redirect.
+- Confirm the returned token on your backend as before.
+
+Embedded flows previously ran from the publishable key alone and couldn't attach an `external_id`. Now they can.
+
+## close() on the vycheck handle
+
+`vycheck()` returns a handle with a `close()` method to dismiss a drawer or inline embed before the user finishes. See [`vycheck()`](/v3/sdk/vycheck).
+
+## Documented confirmation reasons
+
+The [`reasons`](/v3/api/confirmations) on a confirmation are now enumerated in the API reference, each with a line on what it means: `collision_company`, `identity_mismatch`, `duplicate_account`, and the rest.
+
+</Update>
+
 <Update label="July 8, 2026" description="SDK 0.2.0">
 
 ## SDK 0.2.0 is the new default

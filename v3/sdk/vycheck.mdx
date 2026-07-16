@@ -41,7 +41,12 @@ Wire it to a user action like a button click. Don't auto-open the flow on page l
 ## Signature
 
 ```ts
-function vycheck(overrides?: VyCheckOptions): Promise<VyResult>;
+function vycheck(overrides?: VyCheckOptions): VyCheckHandle;
+
+// A promise for the result, with close() to tear an embed down early.
+interface VyCheckHandle extends Promise<VyResult> {
+  close(): void;
+}
 
 interface VyResult {
   token: string | null;    // the vyt confirmation token; confirm it server-side
@@ -52,8 +57,8 @@ interface VyResult {
 
 <ParamField path="overrides" type="VyCheckOptions">
   Optional per-call overrides for anything you set in `init()`, except the
-  publishable key and the mode. Useful for a one-off container or a different
-  `onComplete` for a specific call.
+  publishable key and the mode. Useful for a one-off container, a different
+  `onComplete`, or a `session` minted on your server (below).
 </ParamField>
 
 In iframe modes the promise resolves with the result. On dismiss it resolves with `{ token: null, verified: false, vyc: null }` rather than rejecting, so you don't need a try/catch around the await.
@@ -90,9 +95,40 @@ If the person already passed this verification, the flow can complete almost ins
   client-side result alone.
 </Warning>
 
+## Run a session minted on your server
+
+To attach your own user id or bind an email or phone the user can't change,
+mint the session on your server with [`POST /v3/initialize`](/v3/api/initialize)
+and a secret key, then pass the returned `session_id` to `vycheck`:
+
+```ts
+// Browser: fetch a session_id from your backend, then embed it.
+init({ publishableKey: "pk_live_…", mode: "iframe" });
+
+const { session_id } = await fetch("/api/verify/start").then((r) => r.json());
+const { token } = await vycheck({ session: session_id });
+if (token) confirmOnServer(token);
+```
+
+The publishable key set in `init()` goes unused here: the session already
+carries its config, `external_id`, and any bound identity from `initialize`.
+Parameters like `external_id` and `pass_params` only exist on the server call.
+
+## Close an embed early
+
+`vycheck()` returns a handle you can `close()` to tear a drawer or inline embed
+down before the user finishes, for example when they navigate away:
+
+```ts
+const handle = vycheck({ session: session_id });
+cancelButton.addEventListener("click", () => handle.close());
+
+const { token } = await handle; // resolves empty if you closed it
+```
+
+`close()` is a no-op in redirect mode.
+
 <Note>
-  Need to attach your own user id or bind an email or phone the user cannot
-  change? Start the session from your server instead with
-  [`POST /v3/initialize`](/v3/api/initialize) and a secret key. Parameters like
-  `external_id` and `pass_params` live there.
+  A `session` override runs the flow in an iframe. Set `mode: "iframe"` in
+  [`init()`](/v3/sdk/init) so the embed has somewhere to mount.
 </Note>

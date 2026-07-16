@@ -246,11 +246,25 @@
           },
           "reasons": {
             "items": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "collision_network",
+                "collision_company",
+                "identity_mismatch",
+                "external_identity_mismatch",
+                "duplicate_account",
+                "linked_denial",
+                "limit_reached",
+                "face_self_mismatch",
+                "age_blocked",
+                "geo_blocked",
+                "manual_override",
+                "guest_declined"
+              ]
             },
             "type": "array",
             "title": "Reasons",
-            "description": "Rule findings behind the status (e.g. collision, identity_mismatch)."
+            "description": "Rule findings behind the status. A settled denied or flagged confirmation carries at least one; a clean pass is empty.\n- collision_network / collision_company: this face already holds a confirmation for another, unlinked person, within the network or company scope.\n- identity_mismatch: this face is registered to a different identity (identity lock on).\n- external_identity_mismatch: this external_id is already bound to a different person.\n- duplicate_account: this person already has a confirmation under a different external_id.\n- linked_denial: an account linked to this person was denied.\n- limit_reached: the re-verification limit for this person was hit.\n- face_self_mismatch: the face didn't match the same session's earlier capture.\n- age_blocked: the estimated age failed the configured age gate.\n- geo_blocked: the request came from a blocked region.\n- manual_override: a staff override set this status.\n- guest_declined: the person declined the verification."
           },
           "confirmed_at": {
             "anyOf": [
@@ -425,6 +439,18 @@
             "examples": [
               "https://app.verifyyou.com/v/abc123"
             ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id",
+            "description": "The minted session id. Pass it to the SDK's vycheck({ session }) to run the flow in an embed instead of redirecting to url."
           }
         },
         "type": "object",
