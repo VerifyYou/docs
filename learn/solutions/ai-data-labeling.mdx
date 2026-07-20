@@ -1,0 +1,80 @@
+---
+title: "AI data labeling"
+description: "How HumanCheck keeps one real, live human behind every labeler account, so bots and farmed duplicate accounts cannot inflate throughput or quietly contaminate your training data. The abuse it stops, a starting configuration, and how to add it to your labeling flow."
+---
+
+If you buy human labels or run an RLHF workforce, you are paying for the judgment of distinct real people. [HumanCheck](/learn/where-humancheck-fits) binds each labeler to one verified, live human, so a single person cannot run a farm of accounts and a script cannot pose as a worker.
+
+## The problem
+
+Label quality rests on one quiet assumption: that each worker is a separate, real person actually doing the work. When that assumption breaks, everything downstream breaks with it.
+
+- One person opens dozens of labeler accounts to collect dozens of payouts for the same work.
+- A script submits labels no human ever looked at.
+- Sybil workers pad your headcount without adding a single independent judgment.
+
+The throughput numbers look healthy the whole time. Underneath, your dataset fills with correlated, low-diversity, sometimes machine-generated labels, and a model that was supposed to learn from many independent humans is quietly learning from a handful of gamed accounts.
+
+It costs you twice. You pay for labels that are not from distinct humans, and then you pay again to find and scrub the contamination out of a training set, if you catch it at all. One person running fifty accounts is fifty payouts for one person's work and fifty seats' worth of judgment that all trace back to the same head.
+
+## How HumanCheck helps
+
+Two things do the work. **Liveness** proves a real, live human is present at the moment of the check, not a recording, not a generated face, not a script, so a bot cannot stand in for a worker. **Uniqueness** proves that human is not already here under another account, so one person cannot run many labeler identities. Together they bind each seat to exactly one real person.
+
+Because your labelers have accounts, this is a member-shaped use case. You verify the human once, tie that verified human to their labeler identity, and recognize them when they come back for their next session. If the same face later turns up trying to open a second account under a new email or phone, the check catches it instead of minting another seat.
+
+## A configuration that fits
+
+A good starting point for a labeling or RLHF workforce, using the real settings on every check. Treat this as a first draft your VerifyYou contact tunes with you, not a fixed recipe.
+
+| Setting | Starting point | Why |
+|---|---|---|
+| Identity mode | signup or provided | Labelers become members. Use **signup** if the check is their front door, or **provided** if your platform already knows their email or phone and you pass it in. |
+| Identity lock | on | Binds one face to one labeler identity. If that face reappears under a different email or phone, the check returns an `identity_mismatch`, which is exactly the farmed-account move you want to stop. |
+| Collision scope | network | Looks across all of VerifyYou, not just your own platform, so someone who has been farming labeler accounts elsewhere is known to you on day one. |
+| Collision action | block | Turns a duplicate away outright. In labeling a repeat account is rarely a false alarm worth waiting on. |
+| Skip re-verify | time-windowed | A labeler re-proves at the start of a session rather than scanning before every task. Low friction, without letting a seat stay open forever on one old proof. |
+
+<Note>
+  Skip re-verify changes what a returning labeler feels, not what the check records. A returning person who skips the scan still counts as a verification for billing. [Configuring your verification](/learn/configuring-your-verification) covers every setting in full.
+</Note>
+
+## Adding it to your flow
+
+Both integration paths end in the same verified result.
+
+<CardGroup cols={2}>
+  <Card title="In your own app" icon="code" iconType="light">
+    Wire in the SDK. The browser starts the check, and your server confirms each result with a token before you credit the work, so a pass is something you verified rather than something the browser claimed.
+  </Card>
+  <Card title="No code yet" icon="link" iconType="light">
+    Every verification also has a hosted link. Drop it at the point a labeler signs up or starts a session, and watch the results arrive in your dashboard.
+  </Card>
+</CardGroup>
+
+Either way, [the quickstart](/learn/quickstart) walks both paths end to end, from nothing to a verification you watched pass.
+
+## Book a demo
+
+When you are ready to see this against your own labeling flow, talk to us and we will map a configuration to how your workforce actually signs up and works.
+
+<Card title="Book a demo" icon="calendar" iconType="light" href="https://sales.verifyyou.com">
+  Bring your labeling or RLHF setup and we will shape a check around it.
+</Card>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Market research and survey panels" icon="clipboard-list" iconType="light" href="/learn/solutions/market-research-and-survey-panels">
+    The same clean-data problem for teams running survey panels, where each response needs one real, unique respondent.
+  </Card>
+  <Card title="Communities and marketplaces" icon="users" iconType="light" href="/learn/solutions/communities-and-marketplaces">
+    Binding an account to one real human at signup, and catching a banned face that returns under a new identity.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Identity modes, collision handling, repeat limits, and the other settings that tune a check to its job.
+  </Card>
+  <Card title="Where it fits" icon="diagram-project" iconType="light" href="/learn/where-humancheck-fits">
+    Where a human check sits next to bot checks, two factor, and full KYC, and the honest split on buy versus build.
+  </Card>
+</CardGroup>
