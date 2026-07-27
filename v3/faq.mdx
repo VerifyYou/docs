@@ -66,9 +66,17 @@ description: "Common questions about verifying, keys, returning users, and data.
   </Accordion>
 
   <Accordion title="I have a one-time form and don't want resubmissions. What do I use?">
-    [Lock the confirmation](/v3/api/confirmations#lock-a-confirmation-optional)
-    once you've accepted it. The token becomes invalid for that verification, so
-    re-checking it returns `verified: false`.
+    Usually **not** lock. Store the confirmation `id` you were returned and refuse
+    to accept the same one twice — that stops a resubmission without affecting the
+    person's ability to verify again later. For caps like once per week or once per
+    event, set a verification limit in the dashboard.
+
+    Reach for
+    [locking](/v3/api/confirmations#lock-a-confirmation-optional) only when you mean
+    **one pass per person, ever**. Locking applies to the person's confirmation, not
+    just the token in your hand: their future passes on this verification come back
+    denied too, and **there is no unlock**. After locking,
+    `GET /v3/confirmations/{token}` returns `verified: false`.
   </Accordion>
 
 </AccordionGroup>
