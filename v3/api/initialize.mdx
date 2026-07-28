@@ -90,19 +90,22 @@ Accepts a **publishable key** (`pk_…`) or a **secret key** (`sk_…`). A handf
 
 ## Errors
 
-All error responses have the shape `{ "detail": "<string>" }`, except `422` which
-returns `{ "detail": [{ "type": "...", "loc": [...], "msg": "..." }] }`.
+Most error responses have the shape `{ "detail": "<string>" }`. Exceptions:
+
+- `422` from Pydantic body validation returns `{ "detail": [{ "type": "...", "loc": [...], "msg": "..." }] }`.
+- `422` from `config_incomplete` returns `{ "detail": "<string>" }` — a plain string, not an array.
 
 | Status | `detail` | When |
 |--------|----------|------|
 | `400` | `identifiers_require_secret_key` | `email`, `phone`, `external_id`, `verification_id`, or `verification_external_id` sent with a publishable key. |
-| `400` | `origin_required` | No `origin` in the request and the matched verification has none configured. |
-| `401` | `invalid key type` | Bearer token is not a `pk_*` or `sk_*` key. |
-| `401` | `invalid or revoked key` | Key not found or has been revoked. |
+| `401` | `invalid_key_type` | Bearer token is not a `pk_*` or `sk_*` key. |
+| `401` | `invalid_or_revoked_key` | Key not found or has been revoked. |
 | `401` | `Not authenticated` | `Authorization` header missing entirely. |
+| `403` | `config_requires_test_key` | `config` field sent with a live key — test keys only. |
 | `404` | `no_matching_verification` | No verification matches the `origin` / `start_path` / `return_path` for your account. |
-| `422` | _(array)_ | Request body failed validation. |
-| `503` | `upstream_unavailable` | VerifyYou's backend or AWS is temporarily unavailable. Retry with exponential back-off. |
+| `422` | _(array)_ | Request body failed Pydantic validation. |
+| `422` | `config_incomplete: missing <fields>` | `config` was supplied but required fields are absent. |
+| `502` | _(proxied)_ | VerifyYou's backend or AWS is temporarily unavailable. Retry with exponential back-off. |
 
 ## Examples
 

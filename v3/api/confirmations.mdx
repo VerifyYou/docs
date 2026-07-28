@@ -70,8 +70,8 @@ All error responses have the shape `{ "detail": "<string>" }`.
 
 | Status | `detail` | When |
 |--------|----------|------|
-| `401` | `invalid key type` | Bearer token is not a secret key (`sk_*`). |
-| `401` | `invalid or revoked key` | Secret key not found or has been revoked. |
+| `401` | `invalid_key_type` | Bearer token is not a secret key (`sk_*`). |
+| `401` | `invalid_or_revoked_key` | Secret key not found or has been revoked. |
 | `401` | `invalid_confirmation_token` | Token is malformed, expired, or was not issued for your key. |
 | `401` | `Not authenticated` | `Authorization` header missing entirely. |
 | `404` | `not found` | Confirmation not found — check that the token came from a session your key initialized, and that test/live scopes match. |
@@ -118,8 +118,8 @@ Authorization: Bearer sk_…
 
 | Status | `detail` | When |
 |--------|----------|------|
-| `401` | `invalid key type` | Bearer token is not a secret key (`sk_*`). |
-| `401` | `invalid or revoked key` | Secret key not found or has been revoked. |
+| `401` | `invalid_key_type` | Bearer token is not a secret key (`sk_*`). |
+| `401` | `invalid_or_revoked_key` | Secret key not found or has been revoked. |
 | `401` | `invalid_confirmation_token` | Token is malformed or can't be decoded. |
 | `401` | `Not authenticated` | `Authorization` header missing entirely. |
 | `404` | `not found` | Confirmation not found for your key / test-live scope. |
