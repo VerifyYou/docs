@@ -109,7 +109,7 @@
           "Confirmations"
         ],
         "summary": "Lock a confirmation",
-        "description": "Mark a confirmation as used so the same `vyt` token can't be confirmed again: single-use enforcement. **Secret key only.** After locking, `GET /v3/confirmations/{token}` returns `verified: false`.",
+        "description": "Permanently retire this person's confirmation on this verification. **Secret key only.** This is **person-level and permanent — not token single-use.** The lock lands on the confirmation the token points at, not on the token, and a returning user's later passes fold onto that same confirmation, so every future pass by that person on this verification comes back denied too. **There is no unlock.** Use this only when one pass per person, ever, is exactly what you want; for periodic caps set a verification limit in the dashboard instead, and don't lock while testing or you will deny your own test user on every retry. After locking, `GET /v3/confirmations/{token}` returns `verified: false`.",
         "operationId": "external-lock_confirmation",
         "security": [
           {
@@ -512,7 +512,7 @@
           "locked": {
             "type": "boolean",
             "title": "Locked",
-            "description": "True once the confirmation is locked. A locked confirmation can't be confirmed again; `GET /v3/confirmations/{token}` then returns `verified: false`."
+            "description": "True once the confirmation is locked. `GET /v3/confirmations/{token}` then returns `verified: false` — for this token and for every later pass by the same person on this verification."
           }
         },
         "type": "object",
