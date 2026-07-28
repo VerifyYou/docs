@@ -1,9 +1,9 @@
 ---
 title: "Account linking"
-description: "Tie a verification to your own user, and bind a stable identity for permanent uniqueness."
+description: "Tie a verification to your own user, and bind an identity that claims their uniqueness."
 ---
 
-By default a person you verify is a [guest](/v3/concepts/accounts-vs-guests) — recognized only by an anonymous browser identifier. **Account linking** ties the verification to a stable identity and to your own user record, which turns them into an account: permanent, portable uniqueness and far less repeat friction.
+By default a person you verify is a [guest](/v3/concepts/members-vs-guests), recognized only by the device ID in their browser. **Account linking** ties the verification to your own user record and, optionally, binds an identity that makes the person a [member](/v3/concepts/members-vs-guests): a durable claim to their own face record, portable across devices and browsers.
 
 You link at [`POST /v3/initialize`](/v3/api/initialize), from your server, with a **secret key**.
 
@@ -19,8 +19,6 @@ const res = await fetch("https://trust.verifyyou.com/v3/initialize", {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    origin: "https://yourapp.com",
-    return_path: "/verified",
     external_id: "user_123", // your id for this user
   }),
 });
@@ -28,23 +26,21 @@ const { url } = await res.json();
 // redirect the user to `url`; on confirm you'll get external_id back
 ```
 
-## Bind a stable identity with `phone` / `email`
+## Bind an identity with `phone` / `email`
 
-Pass a `phone` or `email` to bind the person to a durable identifier. This is what makes them an **account** — their uniqueness becomes permanent and travels across devices, browsers, and every product you run on VerifyYou.
+Pass a `phone` or `email` to bind the person to a verified identifier. This is what makes them a **member**: the identity becomes their claim to their face record, so their verified uniqueness travels across devices, browsers, and every product you run on VerifyYou. The flow challenges the identifier you supply with a one-time code, and the person can't swap it for a different one.
 
 ```json
 {
-  "origin": "https://yourapp.com",
-  "return_path": "/verified",
   "external_id": "user_123",
   "phone": "+12105550142"
 }
 ```
 
 <Warning>
-  Binding fails if that phone or email is already in use by another identity —
-  an identity is one human. Handle the `400` by routing the user to recover their
-  existing account rather than creating a duplicate.
+  Binding fails if that phone or email is already claimed by another person:
+  an identity is one human. Handle the `400` by routing the user to sign in and
+  re-assert their existing claim rather than creating a duplicate.
 </Warning>
 
 ## Reading it back
@@ -60,6 +56,6 @@ The linked `external_id` is returned on the confirmation, so the result is self-
 ```
 
 <Note>
-  All of these parameters are **secret key only** — send them from your server.
+  All of these parameters are **secret key only**: send them from your server.
   See the full list on [`POST /v3/initialize`](/v3/api/initialize).
 </Note>

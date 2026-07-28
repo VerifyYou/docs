@@ -1,0 +1,63 @@
+---
+title: "Changelog"
+description: "What's new in the VerifyYou SDK, API, and docs."
+---
+
+<Update label="July 16, 2026" description="SDK 0.4.0">
+
+## Embed a server-minted session
+
+`vycheck({ session })` runs a session you created on your server, so an embedded flow can carry an `external_id` or a bound identity that only a secret key can set.
+
+- Call [`POST /v3/initialize`](/v3/api/initialize) from your backend with `external_id`, `email`, or `phone`. It now returns a `session_id` next to `url`.
+- Pass the `session_id` to [`vycheck({ session })`](/v3/sdk/vycheck) in the browser. The flow opens as a drawer or inline, with no redirect.
+- Confirm the returned token on your backend as before.
+
+Embedded flows previously ran from the publishable key alone and couldn't attach an `external_id`. Now they can.
+
+## close() on the vycheck handle
+
+`vycheck()` returns a handle with a `close()` method to dismiss a drawer or inline embed before the user finishes. See [`vycheck()`](/v3/sdk/vycheck).
+
+## Documented confirmation reasons
+
+The [`reasons`](/v3/api/confirmations) on a confirmation are now enumerated in the API reference, each with a line on what it means: `collision_company`, `identity_mismatch`, `duplicate_account`, and the rest.
+
+</Update>
+
+<Update label="July 8, 2026" description="SDK 0.2.0">
+
+## SDK 0.2.0 is the new default
+
+`npm install @verifyyou-sdk/client` now installs 0.2.0. The headline: you choose how the flow appears.
+
+- **Display modes.** Alongside the classic redirect, the flow can now open as a **drawer** that slides over your page or **inline** inside an element you own. Pick the mode once in [`init()`](/v3/sdk/init); `vycheck()` stays the same call.
+- **Completion callbacks.** In the embedded modes the result is delivered to your `onComplete` callback and resolves the `vycheck()` promise. No redirect, no lost page state.
+- **Production by default.** SDK builds now target the production API out of the box.
+
+If you're on 0.1.1, the core contract is unchanged: the same `vyt`/`vyc` return parameters and the same backend confirmation. See the updated [vycheck()](/v3/sdk/vycheck) and [vyget()](/v3/sdk/vyget) pages for the new result shape.
+
+## Richer confirmation responses
+
+[`GET /v3/confirmations/{token}`](/v3/api/confirmations) now returns more than the verdict:
+
+- `status`: `pending`, `approved`, `flagged`, or `denied`
+- `reasons`: the rule findings behind the status, such as `collision`
+- `confirmed_at`: when the verdict settled
+- `identity`: the verified email or phone, when your verification has sharing enabled
+- `id`: the confirmation id
+
+`verified` remains the field to gate on.
+
+## Key check endpoint
+
+`POST /v3/keys/test` validates any key and reports its type and mode. Wire it into setup scripts or healthchecks.
+
+## Docs
+
+- New [`init()`](/v3/sdk/init) page covering setup and the display modes
+- [Members vs guests](/v3/concepts/members-vs-guests): clearer story on device IDs, membership, and the claim a verified identity gives a person over their own uniqueness
+- Condensed [uniqueness](/v3/concepts/humanness-and-uniqueness) explanation: check group (company or network) and collision action (block or flag)
+- Flow tracking webhooks and the Platform API pages were removed ahead of deprecation
+
+</Update>

@@ -3,25 +3,29 @@ title: "Returning users"
 description: "How a verified human is recognized the next time they come through."
 ---
 
-A verified human stays bound to their **humanness and uniqueness** for as long as they hold the identifier they verified with. Recognizing a returning user is just a matter of which identifier they still have.
+A verified human doesn't redo work they've already done. How they're recognized depends on what they verified as.
 
 ## What recognition hangs on
 
 | Verified as | Recognized by | How long it lasts |
 | --- | --- | --- |
-| **Account** | A phone or email (optionally your [external id](/v3/advanced/account-linking)) | Permanent — survives new devices, new browsers, cleared cookies |
-| **Guest** | An anonymous identifier in the browser | Until the identifier is cleared, or the guest record rolls off the pool |
+| **Member** | Their verified phone or email, plus their face (optionally your [external id](/v3/advanced/account-linking)) | Portable: survives new devices, new browsers, cleared cookies |
+| **Guest** | The device ID in their browser | Until the device ID is cleared or the guest record rolls off |
 
-In both cases the person doesn't redo work they've already done — as long as they still carry the identifier that points back to their verification. An account holder presents the same phone or email and is recognized anywhere. A guest is recognized on the same browser, until that identifier goes away.
+## The return trip, in practice
+
+- **Same browser, already passed:** the flow completes almost immediately. This is the **skip window** on your verification's configuration; within it, a prior pass counts and the person skips the face check entirely. You still get a fresh token to confirm.
+- **Member on a new device:** the new device has no history, so they start as a fresh guest. At the face check their face is recognized as belonging to a member, and the flow asks them to sign in with their number or email. One code later they've re-asserted their claim and they're through.
+- **Guest on a new device:** there's no claim to re-assert. Their face matching their old guest record reads as a collision, and the check comes back denied until that record clears. This is the main reason to make anyone who returns a member.
 
 ## Designing for the return trip
 
 - **Re-run the same call.** Send returning users through the same [`vycheck()`](/v3/sdk/vycheck) or [`initialize`](/v3/api/initialize) entry point. A recognized human passes through quickly instead of starting over.
-- **Bind an identity if they'll come back.** If you expect repeat visits, verify them as an account by attaching a phone, email, or [external id](/v3/advanced/account-linking). It's the difference between "recognized forever" and "recognized until they clear cookies."
-- **Confirm server-side every time.** Recognition still produces a fresh token each trip — always [confirm it](/v3/api/confirmations) on your backend before granting access.
+- **Bind an identity if they'll come back.** Make repeat visitors members by attaching a phone, email, or [external id](/v3/advanced/account-linking), or by using the collection identity mode. It's the difference between "recognized anywhere" and "recognized on one browser".
+- **Confirm server-side every time.** Recognition still produces a fresh token each trip. Always [confirm it](/v3/api/confirmations) on your backend before granting access.
 
 <Note>
-  Guests intentionally re-verify more often than account holders — see
-  [Accounts vs guests](/v3/concepts/accounts-vs-guests) for why, and when to
+  Guests intentionally re-verify more often than members. See
+  [Members vs guests](/v3/concepts/members-vs-guests) for why, and when to
   prefer one over the other.
 </Note>

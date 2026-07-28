@@ -1,0 +1,124 @@
+---
+title: "init()"
+description: "Configure the SDK once and choose how the flow appears: redirect, drawer, or inline."
+---
+
+`init()` configures the SDK. Call it once when your app starts, before [`vycheck()`](/v3/sdk/vycheck) or [`vyget()`](/v3/sdk/vyget). This is also where you choose how the verification flow appears to the user.
+
+```bash
+npm install @verifyyou-sdk/client
+```
+
+```ts
+import { init } from "@verifyyou-sdk/client";
+
+init({ publishableKey: "pk_test_…" });
+```
+
+That is the whole setup for the default redirect flow. The publishable key is safe to ship in the browser.
+
+## Three ways to show the flow
+
+<Tabs>
+  <Tab title="Redirect (default)">
+    The browser navigates to the hosted flow and returns to your page with the result on the URL.
+
+    ```ts
+    init({ publishableKey: "pk_test_…" });
+    ```
+  </Tab>
+  <Tab title="Drawer">
+    The flow slides over your page in a panel: a side panel on desktop, a bottom sheet on mobile. No navigation, so your app keeps its state.
+
+    ```ts
+    init({
+      publishableKey: "pk_test_…",
+      mode: "iframe",
+      onComplete: ({ token }) => {
+        // send the token to your backend to confirm
+      },
+    });
+    ```
+  </Tab>
+  <Tab title="Inline">
+    The flow mounts inside an element you own, like an embedded video. Size the container with your own CSS.
+
+    ```ts
+    init({
+      publishableKey: "pk_test_…",
+      mode: "iframe",
+      display: "inline",
+      container: "#verify-panel",
+      onComplete: ({ token }) => {
+        // send the token to your backend to confirm
+      },
+    });
+    ```
+  </Tab>
+</Tabs>
+
+In the iframe modes the result is delivered to your `onComplete` callback and to the promise returned by `vycheck()`. There is no redirect, so nothing is appended to your URL.
+
+## Options
+
+<ParamField path="publishableKey" type="string" required>
+  Your publishable key (`pk_test_…` or `pk_live_…`). Use the test key while you
+  build and swap in the live key when you ship. Keys come in matched pairs: a
+  session started with a test key can only be confirmed with the test secret
+  key on your backend, and the same goes for live.
+</ParamField>
+
+<ParamField path="mode" type='"redirect" | "iframe"' default="redirect">
+  How the flow runs. `redirect` navigates to the hosted flow and back.
+  `iframe` embeds it in your page instead.
+</ParamField>
+
+<ParamField path="display" type='"drawer" | "inline"' default="drawer">
+  Iframe modes only. `drawer` overlays the page. `inline` mounts into
+  `container`.
+</ParamField>
+
+<ParamField path="container" type="HTMLElement | string">
+  Target for inline display: an element or a CSS selector. Required when
+  `display` is `inline`.
+</ParamField>
+
+<ParamField path="inlineHeight" type="string" default="fill">
+  Inline height behavior. `fill` fills the container, `auto` grows with the
+  flow's content, or pass a CSS length like `640px`.
+</ParamField>
+
+<ParamField path="email" type="string">
+  Prefill the login step with an email. This is a UI convenience only. To bind
+  an identity the user cannot change, initialize
+  [server-side](/v3/api/initialize) with your secret key.
+</ParamField>
+
+<ParamField path="phone" type="string">
+  Prefill the login step with a phone number. Same rules as `email`.
+</ParamField>
+
+<ParamField path="onComplete" type="(result: VyResult) => void">
+  Iframe modes only. Fires with the result when the flow finishes. The same
+  result also resolves the `vycheck()` promise and is returned by `vyget()`.
+</ParamField>
+
+<ParamField path="onClose" type="() => void">
+  Iframe modes only. Fires when the user dismisses the flow without finishing.
+</ParamField>
+
+<ParamField path="connectBase" type="string">
+  Advanced. Override the API origin the SDK talks to. Defaults to production
+  (`https://trust.verifyyou.com`). You only need this for a non-production
+  environment.
+</ParamField>
+
+## Where the user returns
+
+In redirect mode the return destination is the redirect URL saved on your verification in the dashboard. Set it there before you go live. If the verification has no saved redirect URL, the SDK falls back to the page origin that started the flow.
+
+<Warning>
+  Whichever display mode you pick, the result still has to be
+  [confirmed on your backend](/v3/api/confirmations) with your secret key. The
+  client-side verdict is a UI hint, nothing more.
+</Warning>

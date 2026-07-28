@@ -5,15 +5,16 @@ description: "Common questions about verifying, keys, returning users, and data.
 
 <AccordionGroup>
   <Accordion title="What does “verified” actually mean?">
-    That the person passed two checks: they're a **live human** (liveness — not a
-    photo, video, mask, or generated face) and they're **unique** (their face
-    doesn't match anyone who already verified in their
-    [uniqueness pool](/v3/concepts/humanness-and-uniqueness)). A confirmation
-    returns `verified: true` only when both pass.
+    That the person passed two checks: they're a **live human** (a face check,
+    not a photo, video, mask, or generated face) and they're **unique** (their
+    face doesn't match someone else who already verified in the
+    [scope you chose](/v3/concepts/humanness-and-uniqueness), your company or
+    the whole network). A confirmation returns `verified: true` only when both
+    pass.
   </Accordion>
 
   <Accordion title="Can I trust the ?vyc value on the return URL?">
-    No — treat it as a UI hint only. Anyone can edit a URL. Always send the
+    No. Treat it as a UI hint only. Anyone can edit a URL. Always send the
     `vyt` token to your backend and
     [confirm it](/v3/api/confirmations) with your secret key. That result is
     authoritative.
@@ -29,30 +30,33 @@ description: "Common questions about verifying, keys, returning users, and data.
   <Accordion title="How do test and live modes work?">
     Each key comes in a test and a live flavor (`pk_test_…` / `pk_live_…`,
     `sk_test_…` / `sk_live_…`). Test keys run a sandbox flow that creates test
-    users — build against them freely. Switch to live keys to verify real people.
+    users. Build against them freely. Switch to live keys to verify real people.
   </Accordion>
 
   <Accordion title="Why did a returning user get blocked?">
-    Most often it's a **guest** who cleared their browser identifier. They look
-    like a new person, but their face is still in the uniqueness pool — so they
-    collide with their own earlier verification. Verify repeat users as
-    [accounts](/v3/concepts/accounts-vs-guests) (bind a phone or email) so their
-    uniqueness is permanent and portable.
+    Most often it's a **guest** whose device ID is gone: they cleared the
+    browser, switched devices, or used a private window. They look like a new
+    person, but their face is still on record, so they collide with their own
+    earlier verification. Verify repeat users as
+    [members](/v3/concepts/members-vs-guests) (a verified phone or email) so
+    they can be recognized and re-linked instead of blocked.
   </Accordion>
 
   <Accordion title="Do users have to verify every time?">
-    No. A recognized human passes through quickly. **Account** holders are
-    recognized permanently — across devices, browsers, and products.
-    **Guests** are recognized by a browser identifier and re-verify more often,
-    because guest uniqueness is cleared on a rolling basis. See
+    No. Within your verification's skip window, someone who already passed
+    completes almost instantly. **Members** are also recognized on new
+    devices: their face is matched and they sign back in with their number or
+    email to re-assert their claim. **Guests** are recognized only by the
+    device ID in their browser, so they re-verify more often. See
     [Returning users](/v3/concepts/returning-users).
   </Accordion>
 
-  <Accordion title="What if my user is on a desktop without a good camera?">
-    The hosted flow hands the session off to their phone via a QR code, runs the
-    camera step there, and brings the desktop along automatically over a realtime
-    channel — no copying codes or refreshing. See
-    [Humanness and uniqueness](/v3/concepts/humanness-and-uniqueness#desktop-to-mobile-handoff).
+  <Accordion title="What if my user is on a desktop?">
+    The flow runs in place with their webcam. If they'd rather use their phone,
+    one click shows a QR code that moves the same session to their phone's
+    browser, and the desktop follows along in realtime and returns to your site
+    automatically when they finish. See
+    [Humanness and uniqueness](/v3/concepts/humanness-and-uniqueness#any-device-including-desktop).
   </Accordion>
 
   <Accordion title="How do I tie a verification to my own user?">
@@ -67,16 +71,4 @@ description: "Common questions about verifying, keys, returning users, and data.
     re-checking it returns `verified: false`.
   </Accordion>
 
-  <Accordion title="How do I track where users drop off?">
-    Register a [webhook](/v3/advanced/flow-tracking). You get a signed event at
-    each step — including `liveness_failed`, `liveness_cancelled`, and
-    `face_collision`, which are where funnel loss shows up.
-  </Accordion>
-
-  <Accordion title="Can I embed VerifyYou into my own platform for my customers?">
-    That's the [Platform API](/v3/advanced/platform-api) — provision
-    verifications per customer, white-label the flow, and let your users add
-    verification to their own flows. It's under construction;
-    [reach out](https://verifyyou.com/) if you're building on it.
-  </Accordion>
 </AccordionGroup>

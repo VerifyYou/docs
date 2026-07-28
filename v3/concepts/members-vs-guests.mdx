@@ -1,0 +1,58 @@
+---
+title: "Members vs guests"
+description: "Everyone starts as a device. A verified identity gives a person a claim to their own uniqueness."
+---
+
+Every person who enters the flow starts as a **guest**: an anonymous identity tied to a **device ID** stored in their browser. When they verify an email or phone number, they become a **member**. The difference is ownership: a member holds a durable **claim to their own face record**, the thing their uniqueness hangs on. A guest has a face record too, but nothing that ties them back to it beyond the browser they used.
+
+## Guests: a face record with no claim on it
+
+A guest verifies without giving any identity. We recognize them by the device ID, nothing else: no phone, no email, no name.
+
+That's the right shape for one-off anonymous flows, but the recognition is only as durable as the browser it lives in:
+
+- **Clear the browser, switch devices, or open a private window**, and the guest looks like a brand-new person. Their face record is still there, but they have no way to claim it, so a fresh attempt can **collide with their own earlier verification** and come back denied.
+- **Guest records don't live forever.** Stale and orphaned guest entries are cleaned up over time, which frees up people who got stuck, at the cost that guests re-verify more often than members.
+
+<Warning>
+  A guest who loses their device ID can be blocked by their own prior
+  verification until that record clears. If your users come back, make them
+  members.
+</Warning>
+
+## Members: a claim they can assert anywhere
+
+A **member** is a person whose **verified phone number or email** is bound to their face record, optionally tied to your own user via an [external id](/v3/advanced/account-linking). Ownership is always proven with a one-time code during the flow; there is no way to skip it.
+
+The identity is the claim. When a member shows up on a new device, their face is recognized as one that belongs to a member, and instead of a dead-end collision the flow asks them to sign in with their number or email. One code later they've re-asserted the claim, the new device is linked, and they're through. New browser, cleared cookies, a year later: same human, same uniqueness, no starting over.
+
+## Identity in the flow
+
+The email or phone plays several roles, all controlled by the verification's identity configuration in the dashboard:
+
+- **How it's collected.** `anonymous` skips identity entirely (guests only). `collection` has the person enter their own email or phone in the flow. `provided` means your server supplies it at [initialize](/v3/api/initialize), and the person can't swap it for a different one.
+- **Whether you receive it.** Identity **sharing** controls whether the verified email or phone is returned to you on the [confirmation](/v3/api/confirmations). Off by default: we prove ownership without exposing the value.
+- **Whether it's exclusive.** Identity **lock** holds each face to one identity within your company. The same face coming back with a different email or phone is reported as an `identity_mismatch`.
+
+## Which to use
+
+<CardGroup cols={2}>
+  <Card title="Make them members" icon="user-check">
+    Returning users, anything you'll re-verify, or when you already know the
+    user (link them with phone/email + an external id). A durable claim to
+    their uniqueness, minimal repeat friction.
+  </Card>
+  <Card title="Keep them guests" icon="user">
+    One-off, anonymous, no-login flows, such as a single collection form or a
+    one-time gate, where you don't hold an identity and don't need the person
+    to come back.
+  </Card>
+</CardGroup>
+
+<Note>
+  This is a product decision more than a code one: the same hosted flow handles
+  both. You steer toward membership with the identity mode on your verification,
+  or by binding a phone, email, or external id at
+  [initialize](/v3/api/initialize). With nothing bound and identity optional,
+  the person can continue as a guest.
+</Note>
