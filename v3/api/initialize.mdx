@@ -101,6 +101,26 @@ Keys come in matched test and live pairs. A session started with a test key mint
 }
 ```
 
+## Errors
+
+Most error responses have the shape `{ "detail": "<string>" }`. Exceptions:
+
+- `422` from Pydantic body validation returns `{ "detail": [{ "type": "...", "loc": [...], "msg": "..." }] }`.
+- `422` from `config_incomplete` returns `{ "detail": "<string>" }` — a plain string, not an array.
+
+| Status | `detail` | When |
+|--------|----------|------|
+| `400` | `identifiers_require_secret_key` | `email`, `phone`, `external_id`, `verification_id`, or `verification_external_id` sent with a publishable key. |
+| `401` | `invalid_key_type` | Bearer token is not a `pk_*` or `sk_*` key. |
+| `401` | `invalid_or_revoked_key` | Key not found or has been revoked. |
+| `401` | `Not authenticated` | `Authorization` header missing entirely. |
+| `403` | `config_requires_test_key` | `config` field sent with a live key — test keys only. |
+| `404` | `no_matching_verification` | No verification matches the `origin` / `start_path` / `return_path` for your account. |
+| `409` | `external_id_already_exists` | The `external_id` is already bound to a verification. |
+| `422` | _(array)_ | Request body failed Pydantic validation. |
+| `422` | `config_incomplete: missing <fields>` | `config` was supplied but required fields are absent. |
+| `502` | _(proxied)_ | VerifyYou's backend or AWS is temporarily unavailable. Retry with exponential back-off. |
+
 ## Examples
 
 <CodeGroup>
@@ -127,25 +147,6 @@ const { url } = await res.json();
 // Redirect the user to `url`.
 ```
 </CodeGroup>
-
-## Errors
-
-Errors return the matching HTTP status and a JSON body with a `detail` code:
-
-```json
-{ "detail": "identifiers_require_secret_key" }
-```
-
-| Status | `detail` | Cause |
-| --- | --- | --- |
-| `400` | `identifiers_require_secret_key` | `external_id`, `email`, `phone`, `verification_id`, or `verification_external_id` was sent with a publishable key. Use a secret key. |
-| `401` | `invalid_key_type` | The `Authorization` key isn't a recognized publishable or secret key. |
-| `401` | `invalid_or_revoked_key` | The key is unknown or has been revoked. |
-| `403` | `config_requires_test_key` | A `config` override was sent with a live key. Inline config is test-only. |
-| `404` | `no_matching_verification` | Couldn't resolve which verification to run. Pass `verification_id`. |
-| `409` | `external_id_already_exists` | The `external_id` is already bound to a verification. |
-| `422` | `config_incomplete: missing …` | The `config` declares options that aren't built yet; the message lists them. |
-| `422` | validation error | The request body failed schema validation. |
 
 ## Client-side: `init()` + `vycheck()`
 
