@@ -1,0 +1,136 @@
+---
+title: "The security and friction balance"
+description: "How to choose how strict your HumanCheck verification should be. A stricter check gives you a stronger guarantee that the person acting is the same real human every time, and friction is what you pay for that certainty."
+---
+
+Every setting in [HumanCheck](/learn/why-humancheck) answers one question: how sure do you need to be that the person acting right now is the same real human who signed up, and not a second account, someone you already blocked, or a bot?
+
+A stricter check gives you a stronger guarantee of that. It also asks a little more of your real users. A lighter check asks less and lets a little more through. Neither end is right or wrong. The right point depends on how much it matters, in a given moment, that the same person is really there.
+
+This page is how to make that call on purpose.
+
+## What does not move
+
+Wherever you set the bar, two things stay the same.
+
+<CardGroup cols={2}>
+  <Card title="The check is always quick" icon="bolt" iconType="light">
+    Even at the strictest setting, the face scan takes a few seconds, in the browser on a desktop or on a phone. No documents, no government ID. Stricter means the check happens more often, or asks for a phone or email, not that the scan itself gets longer or harder.
+  </Card>
+  <Card title="The data handling never changes" icon="shield-halved" iconType="light">
+    At every setting, the face scan becomes a face vector, a numerical representation of the face's geometry, not a saved image. We do not store images, and your business never receives a face, a name, or an image. It sees the verdict and the session signals in your dashboard. See [what we store](/learn/what-we-store).
+  </Card>
+</CardGroup>
+
+## Start with what is at stake
+
+One question sets your direction: what does it cost you when it is not the same person, when one human quietly runs fifteen accounts, or someone you blocked comes back under a new name? The bigger that cost, the more certainty you want.
+
+<CardGroup cols={2}>
+  <Card title="High stakes, lean toward certainty" icon="lock" iconType="light">
+    A payout, a gated offer, a limited release, a labeling task you pay for. When one person behind fifteen accounts costs you real money, a little friction is cheap. Here you want a fresh check and a high bar, so you know it is the same person each time.
+  </Card>
+  <Card title="Low stakes, lean toward less friction" icon="feather" iconType="light">
+    A newsletter signup, a free trial, a community where one duplicate account costs little. Completion matters most, so keep it light and let a recognized person back through with no scan.
+  </Card>
+</CardGroup>
+
+One way to picture it: think of the person you most want to keep out, then the real user you most want to keep. The right setting turns the first away while barely slowing the second. Most flows land in the middle, and your check starts from a sensible baseline for your use case rather than from zero.
+
+<Note>
+  Stakes are not the same as scale. A small platform handing out a high-value reward can be more at risk than a large one running a low-value signup. Set the bar by what a bad account costs you, not by how big you are.
+</Note>
+
+## What moves when you turn it up
+
+Raising the bar is not one switch. It is a few settings, and each one buys you more certainty that the person is the same real human, at the cost of asking a little more. Here is what changes as you turn it up.
+
+<Steps>
+  <Step title="The member step comes in">
+    By default a check runs anonymous: the person scans, and HumanCheck recognizes them as a guest, by their device, without asking who they are. Turn on the member step and they also confirm a phone or email with a one-time code during the flow. The code proves they control that identifier, which blocks cheap identity swaps and creates a member record that travels with the person across devices. Be realistic about what it stops: a determined fraudster can buy phone numbers. What actually catches them is uniqueness, one face no matter how many numbers. The member step raises their cost and sharpens the record, and it adds a step your real users have to complete.
+  </Step>
+  <Step title="People re-verify more often">
+    You can let a returning guest back through quietly, with no new scan, for a set window or indefinitely, or you can require a fresh check every time. Quiet recognition works per device, and guest records expire over time, so a new device or a long absence means a fresh check anyway. A fresh check is the strongest guarantee that the person here now is the person you verified before, and it is the most friction. A common pattern: require a fresh check only at the high-stakes moment, like a payout, and recognize people quietly the rest of the time.
+  </Step>
+  <Step title="Collisions get handled more firmly">
+    A collision is the same face turning up where your rules say it should not, like a second signup from someone already verified. You choose the scope, checking against your own verifications only or against the wider VerifyYou network, and the action, blocking outright or letting the person through flagged as suspicious. Blocking catches more and is unforgiving. Flagging keeps the door open while you review the session in your dashboard.
+  </Step>
+  <Step title="Gates get added">
+    Repeat limits cap how many times the same person can pass: once within a rolling window, once ever, or once per event. Age gating turns away people outside an age band, using an estimate from the same scan rather than an ID document. Each gate is a place a real user could be turned away if the rule is too tight, so use the ones your use case needs and leave the rest off.
+  </Step>
+</Steps>
+
+<Note>
+  Networks and VPNs are not a setting you flip. Every session is scored across five signal families, Network, Velocity, Automation, Liveness, and Identity, so things like VPN use or rapid repeat attempts surface as threat signals in your dashboard. The score is informational: it tells you where to look, and it never blocks anyone on its own. See [reading your dashboard](/learn/reading-your-dashboard).
+</Note>
+
+Turning it down relaxes each of these. Nothing is locked in, and each setting moves on its own rather than as one big switch. Your check arrives configured for your use case, and your VerifyYou contact tunes any of it with you as you learn what your traffic looks like. The full model, setting by setting, is in [configuring your verification](/learn/configuring-your-verification).
+
+## Be honest about the trade-off
+
+We do not hide that a stricter check adds a step. Turn on the member step and a real user confirms a phone or email. Require a fresh check at a payout and a returning person scans again. That is what the certainty costs, and pretending otherwise would only surprise you later.
+
+What we do is make the effect of each setting clear before it changes, and leave the decision with you. The goal is not the strictest possible check. It is the lightest check that still gives you enough certainty for what is at stake, so your real users barely notice and the people gaming you do not get through.
+
+A check turns some traffic away, and most of what it turns away is traffic you did not want. Real users clear it in seconds, a recognized person is not asked to do it again, and how strict it runs depends on your use case.
+
+## How the trade-off lands by use case
+
+The same dial sits in a different place for different jobs. Here is a sensible starting point for each, and why.
+
+<AccordionGroup>
+  <Accordion title="Loyalty, gated offers, and limited releases">
+    High stakes, lean toward certainty. Fraudulent redemption and gated-offer abuse cost you real money per fake account, and bulk buyers will run as many as you let them. Ask for the member step, require a fresh check at the moment of reward, and cap repeats at once per event. A little friction here pays for itself.
+  </Accordion>
+  <Accordion title="Marketplaces and communities">
+    Medium to high, depending on what changes hands. You are building trust between strangers, so it matters that one person cannot become several: when you remove a bad actor, they should not come back under a new name. Attach the verification to your signup so one real human maps to one profile, and keep the bar firm without making every visit a scan.
+  </Accordion>
+  <Accordion title="Market research and survey panels">
+    Medium, with data quality as the real prize. Fake respondents and one person taking a survey fifteen times wreck your data and raise what you pay for every real response. You often want an anonymous check rather than a member step, so completion stays high while every response still comes from a real, unique human.
+  </Accordion>
+  <Accordion title="AI data labeling">
+    Medium to high. You are paying per task, so you want every task done by a verified unique human, not one person behind many accounts. Require uniqueness firmly, and consider a fresh check periodically rather than on every task so labelers are not slowed on each item.
+  </Accordion>
+  <Accordion title="Newsletter signups and free trials">
+    Low stakes, lean toward less friction. One extra account costs little and completion matters most. Keep it light: liveness and uniqueness, no member step, and recognize returning guests with no scan. You can always tighten later if abuse shows up.
+  </Accordion>
+  <Accordion title="Polling and civic platforms">
+    Medium to high. The damage is bot scripts and duplicate accounts skewing the result, so one real, unique human per vote is the whole point. Lean toward a fresh check and firm uniqueness, since the outcome has to be trustworthy even if that asks a little more of each voter.
+  </Accordion>
+</AccordionGroup>
+
+## A simple way to choose
+
+If you remember one method, use this.
+
+<Steps>
+  <Step title="Name the thing being gamed">
+    Write down what a bad account actually gets: a payout, a duplicate survey response, a stolen offer, a fake vote. Be specific, because that is what you are protecting.
+  </Step>
+  <Step title="Put a cost on one bad account">
+    Roughly, what does it cost you when one slips through? High cost pushes you toward certainty. Low cost pushes you toward less friction.
+  </Step>
+  <Step title="Start from how your check arrives, then confirm a few">
+    Your check arrives configured for your use case. Confirm the settings that matter most for your stakes: the member step, how often people re-verify, and what happens on a collision. Your VerifyYou contact tunes any of them with you.
+  </Step>
+  <Step title="Watch real completion, then adjust">
+    Once it is live, watch how many real users clear the check. Your dashboard shows pass rate and sessions by outcome, so you can see it instead of guessing. If completion is healthy and abuse is gone, you are done. If completion drops more than you expected, relax one setting at a time with your contact. The bar is meant to be tuned.
+  </Step>
+</Steps>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Configure your verification" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Every setting of a check, what it changes, and when to reach for it, so you set the bar on purpose.
+  </Card>
+  <Card title="Reading your dashboard" icon="chart-line" iconType="light" href="/learn/reading-your-dashboard">
+    Where results, threat signals, and pass rates land once your check is live, and how to read them.
+  </Card>
+  <Card title="Cross-network verification" icon="rotate" iconType="light" href="/learn/cross-network-verification">
+    How a returning person is recognized, and how you set your own re-verification bar across the VerifyYou network.
+  </Card>
+  <Card title="Why HumanCheck" icon="circle-question" iconType="light" href="/learn/why-humancheck">
+    The bigger picture: the trust layer between no checks and KYC, and where this balance fits.
+  </Card>
+</CardGroup>

@@ -1,0 +1,188 @@
+---
+title: "Quickstart"
+description: "Run your first HumanCheck verification end to end in about ten minutes: share your check's link with no code, or wire in the SDK and confirm the result on your server. Both paths end with a verification you watched pass and a result you can trust."
+---
+
+By the end of this page you will have run a verification and watched it pass: someone completes a quick face scan, the result lands in your dashboard, and if you take the code path, your server confirms it with a token nobody can spoof from a browser. That is the whole loop, and it is shorter than it sounds.
+
+<Note>
+  **Before you start.** You need a workspace and your keys, which the VerifyYou team sets up with you. If you do not have them yet, [getting access](/learn/getting-access) covers it. Set aside about ten minutes. Test keys run against a simulator, so the code path works end to end without involving a real person.
+</Note>
+
+## Pick your path
+
+There are two ways to a first verification, and they end in the same place. The no-code path uses the link every verification already has. The code path wires the SDK into your app and confirms results server side.
+
+<Tabs>
+  <Tab title="No code">
+    Every verification in your dashboard has a shareable link. That link is a complete, hosted verification flow that shows your company name, so this path is genuinely zero code: copy, share, watch results arrive.
+
+    <Steps>
+      <Step title="Copy your check's link">
+        Open [your dashboard](https://platform.verifyyou.com/dashboard), find your verification in the list, and use **Copy link**. The link opens your check, so it can go anywhere a link can go: a signup email, a survey intro, a community application, a page in your own product.
+      </Step>
+      <Step title="Run a test session first">
+        Before a real person touches it, run the check yourself once as a test. Your VerifyYou contact can set up a test session so it does not count as a live verification. Expected result: the session shows up in your dashboard shortly after.
+      </Step>
+      <Step title="Put it behind whatever you gate">
+        Share the link with the people you want verified. They complete a quick face scan. On a phone the camera does the work; on a desktop the check runs right there with the webcam, and handing off to a phone with a QR code is one optional click. Expected result: a quick scan for them, and the session appears in your dashboard soon after.
+      </Step>
+      <Step title="They land back with you">
+        When the check completes, the person lands on the redirect URL saved on your verification, usually the next page of your own flow. To them it reads as one short step in your journey, not a detour.
+      </Step>
+      <Step title="Watch the result arrive">
+        Back in the dashboard, **Activity** lists the new session with its identity, location, and status, and **Insights** rolls it into your threat levels and outcomes. Expected result: your test session (or your first real person) appears as a verified session. That is your first verification.
+      </Step>
+    </Steps>
+
+    When you are ready to read those screens fluently, [reading your dashboard](/learn/reading-your-dashboard) walks through every panel.
+  </Tab>
+
+  <Tab title="Code">
+    The browser starts the check with a publishable key; your server confirms the result with a secret key. Five small steps.
+
+    ### 1. Install the SDK
+
+    ```bash
+    npm install @verifyyou-sdk/client
+    ```
+
+    The package exports three functions: `init()`, `vycheck()`, and `vyget()`. That is the whole browser surface.
+
+    ### 2. Initialize once, then start the check
+
+    ```ts
+    import { init, vycheck } from "@verifyyou-sdk/client";
+
+    // Once, at app startup
+    init({ publishableKey: "pk_test_your_key" });
+
+    // When the person clicks your verify button
+    await vycheck();
+    ```
+
+    By default the check runs in redirect mode: the page navigates to the hosted flow, so the `vycheck()` promise never resolves. The person completes the scan and returns to the redirect URL saved on your verification, with `?vyt=<token>&vyc=<0|1>` on the URL. That redirect URL is set when your verification is created, and your VerifyYou contact can change it for you; make sure it is saved before you go live. If it is unset, the SDK falls back to the origin of the page that started the check.
+
+    Prefer to keep people on your page? `init()` also supports embedded modes, a drawer overlay or an inline embed, where `vycheck()` resolves with the result and your `onComplete` callback fires instead of a redirect. The [docs tab](/v3/introduction) covers every option.
+
+    ### 3. Read the result when they return
+
+    ```ts
+    import { vyget } from "@verifyyou-sdk/client";
+
+    // On the page they return to. Synchronous, no network,
+    // safe to call on every page load.
+    const { token, verified, vyc } = vyget();
+
+    if (token) {
+      // vyc, and the verified flag derived from it, is only a
+      // hint for your UI. Send the token to your backend.
+      await fetch("/api/confirm-human", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+    }
+
+    // Tidy the URL: remove just vyt and vyc, keep everything else
+    const url = new URL(window.location.href);
+    url.searchParams.delete("vyt");
+    url.searchParams.delete("vyc");
+    window.history.replaceState({}, "", url);
+    ```
+
+    `verified` here is true only when `vyc === "1"`, and both are hints: fine for showing a cheerful message, never for granting access. The token is the truth, and your server is where you check it. In embedded modes nothing appears on the URL; the same `vyget()` call returns the last completed embedded result instead.
+
+    ### 4. Confirm on your server
+
+    <CodeGroup>
+
+    ```ts Node
+    // Server only. The secret key never goes near a browser.
+    export async function confirmHuman(token: string) {
+      const res = await fetch(
+        `https://trust.verifyyou.com/v3/confirmations/${token}`,
+        { headers: { Authorization: `Bearer ${process.env.VERIFYYOU_SECRET_KEY}` } }
+      );
+      const confirmation = await res.json();
+
+      // Gate on verified. Everything else is context.
+      return confirmation.verified === true;
+    }
+    ```
+
+    ```bash curl
+    curl "https://trust.verifyyou.com/v3/confirmations/$VYT_TOKEN" \
+      -H "Authorization: Bearer sk_test_your_key"
+    ```
+
+    </CodeGroup>
+
+    Confirm each token exactly once, then store your own record of the outcome. For one-shot flows, a form that must not be reused, for example, lock the token after confirming: `POST /v3/confirmations/{token}/lock` invalidates it, and any later confirm returns `verified: false`.
+
+    ### 5. Test keys, live keys
+
+    Keys come in matched pairs: `pk_test_` with `sk_test_`, and `pk_live_` with `sk_live_`. Publishable keys are safe in the browser; secret keys live on your server only. Test and live cannot mix: a session started with a test publishable key confirms only with the test secret key. Test keys run against a simulator, so the whole loop above works without a real person. Not sure which key you are holding? Ask the API:
+
+    ```bash
+    curl -X POST "https://trust.verifyyou.com/v3/keys/test" \
+      -H "Authorization: Bearer sk_test_your_key"
+    ```
+
+    It reports the key's type and mode. When the test run looks right, swap in the live pair and you are done: same integration, different prefix.
+  </Tab>
+</Tabs>
+
+## What you get back
+
+The confirmation from your server call is the authoritative record of the check. These are the fields you will use most; the [full reference](/v3/introduction) has the complete shape:
+
+```json
+{
+  "verified": true,
+  "status": "approved",
+  "reasons": [],
+  "confirmed_at": "2026-07-09T14:03:22Z",
+  "identity": null,
+  "external_id": null
+}
+```
+
+- **`verified`** is the gate. When it is true, a real, live, unique human passed your check's rules.
+- **`status`** gives the fuller picture at a glance: `pending`, `approved`, `flagged`, or `denied`.
+- **`reasons`** explains a flag or denial, with values like `collision` (the same face has verified before, where your check's rules do not allow that) or `identity_mismatch` (a known face came back with a different email or phone).
+- **`identity`** carries the verified email or phone when identity sharing is enabled on your check, and **`external_id`** echoes the id your server attached, so you can join the result to your own user record.
+
+## If something looks off
+
+<AccordionGroup>
+  <Accordion title="A real returning user was blocked">
+    Guests are recognized by their device ID and nothing else, so a cleared browser or a new phone can make a familiar person look brand new, and strict uniqueness rules may then block them. For audiences that come back, register people as members: a verified email or phone bound to their face record, portable across devices. Your VerifyYou contact can set this up; [configuring your verification](/learn/configuring-your-verification) explains the identity modes. You can also find the session in Activity, open the person's profile, and put a wrongly caught person through with Override on their history.
+  </Accordion>
+  <Accordion title="vyc said 1 but verified came back false">
+    The URL hint and the server verdict are allowed to disagree, and the server wins. A frequent cause is mixed keys: a session started with a test publishable key confirms only with the test secret key. Check both keys with `POST /v3/keys/test`. Also remember to confirm each token once: if it was already confirmed and locked, later confirms return `verified: false` by design.
+  </Accordion>
+  <Accordion title="The vycheck() promise never resolves">
+    In redirect mode that is the expected behavior: the page navigates away to the hosted check, so nothing is left to resolve. Read the result with `vyget()` on the return page instead. If you want the promise to resolve in place, use an embedded mode (drawer or inline) in `init()`.
+  </Accordion>
+  <Accordion title="Nothing appears on the URL after the check">
+    Embedded modes never touch the URL; results arrive through the `onComplete` callback and the resolved `vycheck()` promise, and `vyget()` returns the last completed embedded result. If you expected a redirect, check that a redirect URL is saved on your verification. It is set when the verification is created, and your VerifyYou contact can change it for you.
+  </Accordion>
+</AccordionGroup>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Reading your dashboard" icon="chart-line" iconType="light" href="/learn/reading-your-dashboard">
+    What Activity, Insights, and threat levels mean, and how to read your first results.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Identity modes, repeat limits, collision rules: shape the check around your use case.
+  </Card>
+  <Card title="Branding your check" icon="palette" iconType="light" href="/learn/branding-your-check">
+    What the person verifying sees of your brand, and what you control.
+  </Card>
+  <Card title="Full API and SDK reference" icon="code" iconType="light" href="/v3/introduction">
+    Every call, option, and response field, from init() to the confirm endpoint.
+  </Card>
+</CardGroup>

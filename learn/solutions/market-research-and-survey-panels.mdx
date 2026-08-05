@@ -1,0 +1,75 @@
+---
+title: "Market research and survey panels"
+description: "Bots and duplicate respondents poison survey data and waste incentive spend. How HumanCheck screens out fakes and repeats with an anonymous, one-per-respondent check, a starting configuration for survey panels, and how to add it to your study."
+---
+
+If you run surveys or a panel, you pay per respondent, and the value of the whole study rests on those respondents being real, distinct people. [HumanCheck](/learn/what-humancheck-is) puts a quick, anonymous check at the front of your survey so a bot or a repeat respondent is screened out before it ever reaches your data.
+
+## The problem
+
+Fake and duplicate respondents quietly wreck a survey. A bot fills out your study for the incentive. One person takes the same survey ten times under ten sessions to collect ten payouts. Panelists share logins, or a small group of fraudsters farms a panel for the reward and answers at random to get through fast. You do not see most of it in the moment. You see it later, as noise in the results, a suspiciously flat distribution, or a cost per real respondent that keeps climbing.
+
+Every one of those responses is paid-for garbage. It skews your findings, dilutes the honest respondents you did reach, and burns incentive budget on data you will end up throwing away. The worst outcome is not the wasted spend, it is a decision made on a dataset you trusted and should not have.
+
+## How HumanCheck helps
+
+A HumanCheck verification proves two things that clean survey data depends on. Liveness proves a live human is present right now, not a script, a recording, or an AI generated face, so bots do not make it into your sample. Uniqueness proves this human is not already in your study, so one person cannot become ten respondents and account-sharing does not multiply into duplicate rows.
+
+Because you do not need to know who a respondent is, only that they are a real person who has not already answered, the right fit is an anonymous check. Respondents stay guests, recognized by device, with no email, name, or other identity collected. You screen out fakes and repeats without holding any personal data about the people who answer, and the experience stays light: a few seconds of face scan, then straight into the survey.
+
+A respondent who declines or cannot verify does not hit a dead end. You send them onward as a screen-out, the same way you would disqualify anyone who does not match your quota, so your completion flow stays clean and no one is stranded.
+
+<Note>
+  An anonymous check means you improve data quality without taking on any personal data about your respondents. The check works from a face vector, not a stored photo, and passes your systems a verdict rather than an identity. You get a cleaner sample and a lighter privacy footprint at the same time.
+</Note>
+
+## A configuration that fits
+
+Here is a sensible starting point for a survey or panel. Treat it as a first setup, not a final one: your VerifyYou contact tunes it with you once you see real traffic.
+
+| Setting | Starting point | Why |
+|---|---|---|
+| Identity mode | Anonymous | You need a real, unique respondent, not an account. No email and no name collected, so nothing personal to hold. |
+| Collision scope | Company, or network | Company gives one response per person across your own studies. Network also catches people who farm the same face across many panels, at the cost of recognizing someone who verified on an unrelated platform. |
+| Collision action | Block | A duplicate respondent is turned away before they reach your data, not flagged after the fact. |
+| Repeat limits | Once per event | One response per person per survey or wave, resettable when the next wave opens so returning panelists are welcome again. |
+| Allow decline | On | A respondent who will not or cannot verify exits cleanly as a screen-out instead of being forced through. |
+
+The one real choice to make here is collision scope. Company scope keeps things self-contained: it stops the same person answering your study twice, and it leaves respondents who verified elsewhere untouched. Network scope reaches wider and catches professional respondents who farm the same face across many panels, which is worth it for high-value studies, with the trade-off that someone who verified on a completely unrelated platform is recognized too. When in doubt, start with company and move to network if you suspect cross-study farming. [Configuring your verification](/learn/configuring-your-verification) walks through every setting in full.
+
+## Adding it to your flow
+
+You place the check at the very start of your survey, before the first real question, so only verified respondents reach your questionnaire.
+
+<CardGroup cols={2}>
+  <Card title="A hosted check link" icon="link" iconType="light">
+    A no-code link you drop in as the first step of your study. The respondent verifies, then lands on your survey. Nothing to build.
+  </Card>
+  <Card title="A screen-out redirect" icon="arrow-right-arrow-left" iconType="light">
+    Route non-verified respondents onward as a disqualify, the same way you handle anyone who fails a quota, so a decline is a clean screen-out rather than a dead end.
+  </Card>
+</CardGroup>
+
+HumanCheck connects with survey platforms, with Alchemer supported today, and more on the way. For how a connection fits your specific platform and study, talk to us and we will map it to your flow. [The quickstart](/learn/quickstart) covers the no-code link and the code path from first setup to your first confirmed verification.
+
+## Book a demo
+
+If fake or duplicate respondents are costing you clean data, the fastest way forward is a short conversation about your study and your panel. We will set up a verification tuned to your use case and walk it through with you.
+
+<Card title="Talk to us about your panel" icon="calendar-check" iconType="light" href="https://sales.verifyyou.com">
+  Book a demo and we will map HumanCheck to your survey flow and recommend a starting configuration.
+</Card>
+
+## Where to go next
+
+<CardGroup cols={3}>
+  <Card title="AI data labeling" icon="tags" iconType="light" href="/learn/solutions/ai-data-labeling">
+    The sibling case where every task must come from a distinct, verified human.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Identity modes, collision handling, repeat limits, and the rest, in full.
+  </Card>
+  <Card title="Add it to your flow" icon="code" iconType="light" href="/learn/quickstart">
+    From nothing to your first confirmed verification, no-code and code paths.
+  </Card>
+</CardGroup>

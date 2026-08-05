@@ -1,0 +1,136 @@
+---
+title: "Configuring your verification"
+description: "Every HumanCheck verification carries its own configuration: identity mode, collision scope and action, repeat limits, skip re-verify, age gating, and flow options. What each setting does, when to use it, and how the settings work together."
+---
+
+The same scan can be light or strict depending on what you are protecting. A low-stakes signup is not a survey panel paying real money for clean data. So every verification in [HumanCheck](/learn/what-humancheck-is) has its own configuration: who it verifies, how it handles repeats and collisions, what it gates on, and how the flow behaves.
+
+## Creating a verification, and where the settings come from
+
+In the dashboard, you create a verification by clicking **New verification** and filling three fields: a **Label** to recognize it by, an optional **Company name**, and the **Redirect URL** where people land after the check. Then you click **Add**. That is the whole form.
+
+Everything below (identity mode, collisions, repeat limits, and the rest) is the configuration behind the check, and you do not set it yourself yet. Your VerifyYou contact configures the check with you and tunes it on request. A Configuration tab that puts these controls in your own hands is coming to the dashboard. Until then, this page is here so you know exactly what can be tuned, which way each setting moves you, and what to ask your contact for.
+
+If you are new to HumanCheck, start with [what HumanCheck is](/learn/what-humancheck-is), which covers the product in a minute. [How it works](/learn/how-it-works) covers the flow a person goes through, and this page sits on top of both.
+
+## Identity mode: the biggest decision
+
+Identity mode controls what identity, if any, the check ties a verified person to. It is the setting that shapes everything else, because it decides whether people stay guests or become members.
+
+A **guest** is recognized by their device only. No phone, no email, no name. A **member** has a verified email or phone bound to their face record, proven with a one-time code during the flow, which makes them recognizable across devices. Guests suit one-off gates; members suit anywhere a person keeps coming back.
+
+<AccordionGroup>
+  <Accordion title="Anonymous" icon="user-secret">
+    Face only, no identity collected. Proves a unique human without attaching an email or phone. Good when you care that a person is real and that one human cannot pass as many, but you do not need to know who they are: a survey response, a public poll, a gated offer.
+  </Accordion>
+  <Accordion title="Signup" icon="user-plus">
+    The person becomes a member during the check, adding an email or phone as they verify. Good when the check doubles as the front door to your platform.
+  </Accordion>
+  <Accordion title="Provided" icon="arrow-right-to-bracket">
+    You pass in the email or phone yourself, and that identity is bound to the face record. Good when your platform already knows who the person is and you want the verification bound to your record of them.
+  </Accordion>
+  <Accordion title="Identity collect (MFA)" icon="shield-check">
+    The check challenges the identifier with a one-time code, so the person proves they actually control the email or phone, not just that they typed one in. You choose what to challenge: email, phone, or either.
+  </Accordion>
+  <Accordion title="Identity lock" icon="lock">
+    Freezes an identity to a face. If the same face later appears with a different email or phone, the check fails with an identity_mismatch. This is the strictest mode, for platforms where one person swapping identities is exactly the thing you need to stop.
+  </Accordion>
+</AccordionGroup>
+
+Whichever mode your check uses, your systems receive a result plus the external_id you attached, never a face or an image. [What we store](/learn/what-we-store) covers that side in full.
+
+## Collisions: where to look, and what to do
+
+A collision is the same person showing up again where they should not. Two settings work together here: scope decides where the check looks, and action decides what happens when it finds something.
+
+<Columns cols={2}>
+  <Card title="Collision scope" icon="magnifying-glass" iconType="light">
+    **Network** checks across all of VerifyYou, so a person verified anywhere on the network is recognized on your platform. **Company** checks only within your own verifications, so the same person can exist on other platforms without affecting yours.
+  </Card>
+  <Card title="Collision action" icon="hand" iconType="light">
+    **Block** turns the session away outright. **Flag as suspicious** lets it through but marks it for review, so you can watch a pattern before you decide to start blocking it.
+  </Card>
+</Columns>
+
+The two settings pair up. Network scope with block is the strictest: one human, one pass, anywhere. Company scope with flag is the gentlest: you watch only your own verifications, and you review rather than refuse. Most setups land in between. The right pairing depends on what a duplicate costs you, so talk it through with your VerifyYou contact. [Cross-network verification](/learn/cross-network-verification) goes deeper on the network side.
+
+## Repeat limits: how often the same person can verify
+
+Some checks should pass a person once and never again. Others should welcome the same person back every week. Repeat limits set that cap.
+
+<AccordionGroup>
+  <Accordion title="Unlimited" icon="infinity">
+    No cap. The same person can verify as often as they come back. Right when the check is about proving humanity, not rationing entries.
+  </Accordion>
+  <Accordion title="Once per rolling window" icon="calendar-days">
+    One verification within a moving time window. Right for recurring gates: a weekly survey, a monthly reward, anywhere "once per period" is the rule.
+  </Accordion>
+  <Accordion title="Once lifetime" icon="hourglass-end">
+    One verification, ever. Right when a second attempt is by definition a problem: a one-per-person offer, a study that must never sample the same human twice.
+  </Accordion>
+  <Accordion title="Once per event" icon="ticket">
+    One verification per event, and the count can be reset when a new event starts. Right for ticketing, releases, and anything that runs in rounds.
+  </Accordion>
+</AccordionGroup>
+
+## Skip re-verify: what happens when a guest returns
+
+When a guest you already verified comes back, you decide whether they scan again or walk straight through.
+
+- **Off**: always re-verify. The person does a fresh scan on every visit. Highest assurance, right where every pass must be a live human at that moment.
+- **Time-windowed**: skip re-verification for a set period, then require a fresh scan. A middle path for routine returns.
+- **Never expires**: a returning guest is not asked to re-verify again. Lowest friction, right when the return itself is routine and the first proof is what mattered.
+
+<Note>
+  A returning guest who skips the scan is still recorded as a verification. Skipping changes what the person experiences, not what the check counts.
+</Note>
+
+Repeat limits and skip re-verify work as a pair: repeat limits cap how often a person may verify, and skip re-verify decides how much they feel it when they do.
+
+## Age gating
+
+Age gating restricts who can pass based on age bands: older than an age, younger than an age, or between two ages. People outside the allowed band do not pass. The check estimates age from the scan itself, with no document and no ID upload, so use it where an age estimate is the right tool for the job.
+
+## How the flow behaves
+
+Three smaller settings shape the experience around the scan itself.
+
+<AccordionGroup>
+  <Accordion title="Prompt for location" icon="location-dot">
+    When on, the flow asks the person for their location during the check.
+  </Accordion>
+  <Accordion title="Allow decline" icon="door-open">
+    When on, a person can choose to bow out of the check and come back to you as declined, instead of being forced through. It gives people a graceful exit rather than a dead end, and it tells you something too: a declined is a choice, not a failure.
+  </Accordion>
+  <Accordion title="Demo mode" icon="flask">
+    Runs the check in a demonstration state, useful for testing and for showing teammates how the flow behaves without recording a live verification. Keep it off for anything real.
+  </Accordion>
+</AccordionGroup>
+
+## Putting it together
+
+When you talk your configuration through with your VerifyYou contact, a few things drive most of the decision:
+
+- **Identity mode is the anchor.** It decides whether people stay guests or become members, and whether an identity is locked to a face. Everything else works around that.
+- **Collision scope sets where the check looks; collision action sets what it does.** Network scope catches a repeat human anywhere on VerifyYou; company scope stays inside your own verifications. Block turns a repeat away; flag lets it through and marks it for review.
+- **Repeat limits and skip re-verify control returns.** Tighten both when a repeat is expensive, loosen both when a return is just the same real person coming back.
+- **Allow decline spares real people a dead end.** Someone who cannot or will not continue exits cleanly, and you see the decline instead of a silent drop-off.
+
+None of this is fixed. Start where your use case points, watch what the check does in your dashboard, and adjust from real traffic with your VerifyYou contact. [Security and friction](/learn/security-and-friction) is the companion page on choosing your strictness point, and [reading your dashboard](/learn/reading-your-dashboard) shows you how the results of these choices read back.
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Security and friction" icon="sliders" iconType="light" href="/learn/security-and-friction">
+    How to choose the strictness point for your use case, and what each direction costs.
+  </Card>
+  <Card title="Reading your dashboard" icon="chart-line" iconType="light" href="/learn/reading-your-dashboard">
+    Where the results of these settings land, and how to read them.
+  </Card>
+  <Card title="Branding your check" icon="palette" iconType="light" href="/learn/branding-your-check">
+    What the person being verified sees of your brand, and what you control.
+  </Card>
+  <Card title="Cross-network verification" icon="share-nodes" iconType="light" href="/learn/cross-network-verification">
+    How the VerifyYou network recognizes people, and how you set your own bar.
+  </Card>
+</CardGroup>

@@ -1,0 +1,45 @@
+---
+title: "How the check works"
+description: "What happens during a HumanCheck, step by step: the check runs as a full-page redirect or embedded in your page, the person does a quick face scan, and your server confirms the token for the verdict you can trust."
+---
+
+A check is a short, hosted flow. It can take over the page, open as a drawer over your app, or sit inline within it. The person does a quick face scan, and you get back a result your server can trust. The face never touches your systems.
+
+## The flow, end to end
+
+<Steps>
+  <Step title="Start the check">
+    From the browser with `vycheck()`, or from your server with `POST /v3/initialize`, which returns a hosted URL to send the person to. In the browser you choose the shape once in `init()`: a full-page redirect (the default), a drawer over your page, or an inline embed. No code is needed if you share your verification's link from the dashboard.
+  </Step>
+  <Step title="The person does a face scan">
+    On our hosted flow, a quick scan confirms a live, present human, and checks whether we have seen them before. On a desktop the check runs right there with the webcam; handing off to a phone with a QR code is one optional click.
+  </Step>
+  <Step title="The result comes back">
+    In redirect mode the person returns to your page with `?vyt=<token>&vyc=<0|1>` on the URL, and `vyget()` reads them for you. In drawer and inline modes the result arrives through your `onComplete` callback instead. Either way, `vyc` is only a hint for your UI. The token is what matters.
+  </Step>
+  <Step title="You confirm on your server">
+    Your server exchanges the token at `GET /v3/confirmations/{token}` with your secret key, never from the browser, and gates access on the `verified` field it returns. That answer is the truth, not the hint on the URL.
+  </Step>
+</Steps>
+
+## What each side ends up with
+
+<CardGroup cols={2}>
+  <Card title="The person" icon="user" iconType="light">
+    A few seconds, a face scan, no documents and no government ID. If they come back later, they can be recognized instead of starting from scratch: guests by their device, members by the verified email or phone bound to their face record.
+  </Card>
+  <Card title="Your business" icon="circle-check" iconType="light">
+    A clear verdict that this is a real, unique human, and a stable id to store. Never a face, a name, or an image. See [what we store](/learn/what-we-store).
+  </Card>
+</CardGroup>
+
+## Two ways to add it
+
+<CardGroup cols={2}>
+  <Card title="No code" icon="wand-magic-sparkles" iconType="light" href="/learn/quickstart">
+    Every verification has a link you can copy from the dashboard and drop into a signup, an email, or a survey. The quickstart walks it through step by step.
+  </Card>
+  <Card title="Code" icon="code" iconType="light" href="/v3/introduction">
+    Wire it in with the SDK or the REST API. The Docs tab covers every call, from `init()` to the confirm endpoint.
+  </Card>
+</CardGroup>

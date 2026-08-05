@@ -1,0 +1,102 @@
+---
+title: "What a human check is"
+description: "HumanCheck answers one narrow question: is there a real, unique, live human here right now. What liveness and uniqueness prove, how returning people are recognized, and why your business receives a verdict, never a face."
+---
+
+A human check answers one narrow question: is there a real, unique, live human on the other end of this action, right now. Not who they are. Not their name, their address, or their documents. Just that they are a real, present human, and not someone quietly running many accounts under different names. You put a quick check in front of something that matters, a signup, a survey, a payout, a gated offer, and you get back a clear verdict that a real person cleared it.
+
+The check itself takes a few seconds with a camera, on a phone or right in the browser with a desktop webcam. No documents, no government ID, no wallet. The person does a quick face scan, and from that one scan [HumanCheck](/learn/why-humancheck) proves the two things below.
+
+## It proves two things
+
+<CardGroup cols={2}>
+  <Card title="Liveness" icon="user" iconType="light">
+    A real person is present right now, so a bot script gets nowhere against it. Not a photo, not a recording, not a screen showing a screen, and not an AI generated face.
+  </Card>
+  <Card title="Uniqueness" icon="fingerprint" iconType="light">
+    One human, one signup. So one person cannot quietly become fifteen, and when you block someone, it makes it very hard for them to come back under a new name.
+  </Card>
+</CardGroup>
+
+These two are doing different jobs, and most teams need both.
+
+### Liveness, in plain terms
+
+Liveness is the check against fakery. The flow is built to defeat a saved photo, a recorded clip, or a face an AI generated this morning: it looks for the small signals that only a living person produces in the moment, so the thing being verified is happening live, not replayed. This is the part that holds up as the fakes get better. A passive bot check can be fooled by traffic that now looks human; asking for a live, present person is a much harder bar to fake.
+
+### Uniqueness, in plain terms
+
+Uniqueness is the part most teams are really after. You do not want your users' identities, and you do not want to hold the PII. You want to know that when you block someone, it is very hard for that person to come straight back. So uniqueness ties one real human to one signup. One person cannot quietly become fifteen to skew a survey, drain a gated offer, or buy out a release, and a banned person cannot easily return under a fresh name. When someone comes back, we check both again against the record we already hold, so a genuine returning user moves through quickly while a repeat offender is recognized.
+
+<Note>
+  Liveness without uniqueness stops bots but lets one person sign up many times over. Uniqueness without liveness can be gamed with a recording. Together they cover both, which is why a human check does both at once. See [Humanness and uniqueness](/v3/concepts/humanness-and-uniqueness) for the technical view.
+</Note>
+
+## The return moment
+
+The first scan is the easy part. What makes a human check useful is what happens when the person comes back, because that is where you decide how much assurance you want.
+
+<Steps>
+  <Step title="The person verifies once">
+    A few seconds of face scan confirms a live, present, unique human, and you gate access on the result.
+  </Step>
+  <Step title="They come back later">
+    On the next visit you decide how we make sure it is the same person. Require a fresh check every time, for the highest assurance, or recognize a returning guest quietly by their device, with no scan at all. A guest is known by their device alone, and guest records fade over time. A member, someone who confirmed an email or phone with a one-time code during their check, is recognized across devices.
+  </Step>
+  <Step title="You get real assurance either way">
+    Whichever you choose, you get a real level of assurance that the person returning is the one you verified. You set the bar; a returning genuine user is never made to start over unless you want them to.
+  </Step>
+</Steps>
+
+This is the difference between a one time gate and a layer of trust that holds across every visit. See [Returning users](/v3/concepts/returning-users) for how it works in code.
+
+## Why teams choose it
+
+The scan is the start. Teams keep HumanCheck for what surrounds it. You hold a verdict instead of a pile of personal data, and we run the liveness model and the verified-human network so you never build or maintain any of it. [Why HumanCheck](/learn/why-humancheck) makes the full case, from the economics of fraud to what your team gets back.
+
+## What it does not do
+
+A human check is deliberately narrow, and it helps to be clear about the edges.
+
+<AccordionGroup>
+  <Accordion title="It is not KYC">
+    HumanCheck does not confirm a person's name or legal identity, and that is a design choice, not a gap. If your use case legally requires a named, documented identity, full KYC is the right tool. A human check sits a step before that: it proves a real, unique human without asking who they are, so you skip the cost, the PII, and the friction of an ID check when you do not actually need the identity.
+  </Accordion>
+  <Accordion title="It does more than two factor, and can include it">
+    You can add a phone step as a second factor. But on its own, two factor only proves someone holds a credential, a phone or a passkey, and one person can hold ten. It says nothing about whether a real, unique human is there, or whether the same person is already here under another name. A human check proves the human first, and adds the second factor when you want it. A common pattern is two factor on login and a human check at signup or at the moment that matters.
+  </Accordion>
+  <Accordion title="It is not a passive bot check">
+    A bot check reads passive signals and is cheap and worth keeping. But passive signals are easy to fake, and AI is now better at looking human than many people are, making a purely passive check harder to rely on. A human check asks for a live, present person, which is a much stronger signal, and it sits behind your bot check for the abuse that now looks human.
+  </Accordion>
+</AccordionGroup>
+
+## Where it sits
+
+HumanCheck is the trust layer between no checks at one end and full KYC at the other, and [where it fits](/learn/where-humancheck-fits) has the full side by side against bot checks, two factor, and KYC, and when to buy versus build.
+
+## You get a verdict, never a face
+
+The face scan is turned into a face vector, a numerical representation of the face's geometry, not a saved image. We do not store images. The face vector persists, because that is what lets us recognize a person when they return.
+
+Your business never touches any of that. By default the company receives a verdict plus the reference id you chose to attach (your own external_id), so you can tie the result to your user without holding anything about their face. Never a face, never a name, never an image. If you turn on identity sharing, the verified email or phone comes back too, and nothing else. No documents or government IDs change hands. You get the answer you needed and none of the data you did not want to hold.
+
+<Card title="What we keep and what you receive" icon="shield-halved" iconType="light" href="/learn/what-we-store">
+  The full breakdown of the face vector, the verdict, your external_id, and what we never collect.
+</Card>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="How the check works" icon="route" iconType="light" href="/learn/how-it-works">
+    The hosted flow, the token exchange, and how your server gets a result it can trust.
+  </Card>
+  <Card title="Quickstart" icon="rocket" iconType="light" href="/learn/quickstart">
+    From nothing to your first confirmed verification, with or without code.
+  </Card>
+  <Card title="Cross-network verification" icon="share-nodes" iconType="light" href="/learn/cross-network-verification">
+    How someone verified elsewhere is recognized on your platform, with you setting the bar.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Identity modes, collision handling, repeat limits, age gating, and the rest of the configuration model.
+  </Card>
+</CardGroup>

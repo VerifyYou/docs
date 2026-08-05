@@ -1,0 +1,73 @@
+---
+title: "Communities and marketplaces"
+description: "Fake accounts, sockpuppets, and ban evasion erode trust in communities and marketplaces. HumanCheck binds each member to one real human at signup and recognizes a banned face returning under a new email, so a removed bad actor cannot quietly walk back in."
+---
+
+In a community or a marketplace, trust between strangers is the product. [HumanCheck](/learn/what-humancheck-is) puts one real, unique human behind each account, so a person you remove stays removed and a member cannot quietly become five.
+
+## The problem
+
+The moment your platform is worth being on, people start gaming who is on it. Fake accounts pad follower counts and vote scores. Sockpuppets argue with themselves and prop up their own listings. A seller you banned for fraud is back the next morning under a fresh email, defrauding the next member. None of this needs a sophisticated attacker. An email address is free, and most signup flows have no way to tell that the new stranger is the old problem.
+
+The cost is quiet but real. Every duplicate identity thins out the trust your community runs on. Every ban evasion is moderation work you already did, undone. And when the bad actor is a scammer, the damage lands on a real member who thought they were dealing with a real person.
+
+## How HumanCheck helps
+
+A camera-based check does two things a password and an email address cannot.
+
+<CardGroup cols={2}>
+  <Card title="It proves a live human" icon="user-check" iconType="light">
+    A quick face scan confirms a real person is present right now, not a script, a recording, or an AI generated face. Bulk account creation stops being cheap.
+  </Card>
+  <Card title="It proves a unique human" icon="fingerprint" iconType="light">
+    The same face cannot quietly hold ten accounts, and a banned face returning under a new email is recognized rather than waved back in.
+  </Card>
+</CardGroup>
+
+Because people in a community come back again and again, this is a place for members rather than anonymous guests. When the check runs at signup, the person becomes a member: a verified email or phone bound to their face record, proven with a one-time code during the flow. That binding is what turns "another new account" into "the same human we already know", which is exactly the signal a moderator never used to have.
+
+## A configuration that fits
+
+Here is a sensible starting point for a community or marketplace. It is a starting point, not a fixed recipe: your VerifyYou contact tunes it with you once you see real traffic, and the [full set of settings](/learn/configuring-your-verification) is worth a read.
+
+| Setting | Starting point | Why |
+|---|---|---|
+| Identity mode | Signup | Each person becomes a member as they join, so the account is bound to one real human from day one. |
+| Identity lock | On | If a banned face comes back with a new email, the check fails with an identity_mismatch instead of letting them create a fresh account. |
+| Collision scope | Company | You watch for duplicates across your own community, so the same person cannot run parallel accounts on your platform. |
+| Collision action | Block, or flag as suspicious | Block for a strict community. Flag where you would rather review a pattern than turn a real person away by mistake. |
+| Repeat limits | Unlimited | Members should come and go freely. You are proving humanity, not rationing entries. |
+| Skip re-verify | Time-windowed or never expires | Genuine members return smoothly without scanning on every visit. |
+
+<Note>
+  A returning member who skips the scan still counts as a verification for billing. Skipping changes what the person experiences, not what the check records. [Pricing](/learn/pricing) covers how verifications are priced.
+</Note>
+
+Two of these are worth a sentence more. Identity lock is the setting that closes the ban-evasion door: it holds one identity to a face, so a second identity on the same face trips an identity_mismatch. And if you want to catch a bad actor who has already turned up somewhere else on VerifyYou, you can widen collision scope from company to network, which recognizes the same person across the whole network rather than only within your own walls. That is stricter, and it is a good conversation to have with your VerifyYou contact about what a duplicate actually costs you.
+
+## Adding it to your flow
+
+Communities and marketplaces usually run their own accounts, so the natural home for the check is your signup. There are two ways in, and they end in the same place.
+
+- **A hosted link, no code.** Every verification has a shareable link that is a complete, hosted flow showing your brand. Drop it into a signup email or a "verify to post" step, and results arrive in your dashboard.
+- **The SDK, in your app.** Call the check from the browser at signup and confirm the result on your server before you let the account through, so verification is a real gate rather than a suggestion.
+
+The [quickstart](/learn/quickstart) walks both paths from nothing to your first confirmed verification.
+
+## Talk to us
+
+Your check should fit how your community actually works, not the other way around. [Book a demo](https://sales.verifyyou.com) and we will create your workspace, configure a check around your signup and your moderation, and tune it with you from real traffic.
+
+## Where to go next
+
+<CardGroup cols={3}>
+  <Card title="Where it fits" icon="layer-group" iconType="light" href="/learn/where-humancheck-fits">
+    How a human check sits next to bot checks, two factor, and full KYC, and when it is the right tool.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/learn/configuring-your-verification">
+    Identity modes, collision handling, repeat limits, and the settings that tune a check to its job.
+  </Card>
+  <Card title="Ticketing and limited releases" icon="ticket" iconType="light" href="/learn/solutions/ticketing-and-limited-releases">
+    A sibling use case: keeping bots and bulk buyers out of a limited release.
+  </Card>
+</CardGroup>
