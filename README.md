@@ -55,3 +55,4 @@ Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/sett
 - [Mintlify documentation](https://mintlify.com/docs)
 
 <!-- trailing newline: throwaway VY-457 test B, see PR body -->
+<!-- second trivial line, forcing a fresh commit for the manual-trigger test -->
