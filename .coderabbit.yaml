@@ -1,0 +1,212 @@
+# Central CodeRabbit config for the VerifyYou org.
+# docs.coderabbit.ai/configuration/central-configuration -- any repo without its own
+# .coderabbit.yaml automatically inherits this file, once CodeRabbit is installed on
+# THIS repo. See README.md for current status.
+#
+# Repos with their own .coderabbit.yaml (connect-service, app-service as of 2026-07-29)
+# override this file entirely unless they add `inheritance: true` as their first line,
+# in which case they merge with it (their values win per-key). Full priority order:
+# Repo YAML > Central YAML (this file) > Repo UI settings > Org UI settings > defaults.
+#
+# Full rationale, evidence, and the phased rollout plan:
+# https://linear.app/verifyyou/document/coderabbit-coderabbityaml-baseline-recommendation-d44070c78229
+# Tracking issue: https://linear.app/verifyyou/issue/VY-190
+
+language: "en-US"
+
+reviews:
+  profile: chill
+  # Chill = bugs/security/logic/runtime issues only, silent on style/naming/nits.
+  # Matches "every repo already runs ruff/eslint/semgrep in CI" -- style is covered,
+  # AI review should add signal CI structurally can't (intent, cross-file, contract drift).
+  # CodeRabbit's own docs recommend chill-first, assertive-after-calibration (2-4 weeks).
+
+  request_changes_workflow: false
+  # Advisory only, does not block merge on its own. VY-357 ("should an AI review satisfy
+  # the required human approval") is a separate open question -- leave this off so CodeRabbit
+  # never becomes a blocking gate by accident while that's undecided.
+
+  auto_review:
+    enabled: false  # VY-457 amended 2026-08-10: automatic review off entirely. Reviewers
+                    # invoke `@coderabbitai review` manually at review time; authors run
+                    # `cr review` locally before moving a draft to ready for review.
+    drafts: false
+    auto_incremental_review: false        # kept for when enabled is ever flipped back on
+    auto_pause_after_reviewed_commits: 2  # was default (5), caps damage if flipped back on
+
+  path_filters:
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+    - "!**/storybook-static/**"
+    - "!**/alembic/versions/**"
+    # CLAUDE.md in every backend repo forbids hand-editing migrations; a reviewer
+    # suggesting style/logic edits there is actively harmful, not just noise.
+    #
+    # Deliberately NOT excluding lockfiles (uv.lock/pnpm-lock.yaml/package-lock.json) --
+    # see tools.osv-scanner below and the lockfile path_instructions entry. Excluding them
+    # would also silence the one dependency-vulnerability signal in the org (CI's semgrep
+    # runs p/secrets, not a vuln scanner; no pip-audit/npm audit/Dependabot required check
+    # anywhere -- confirmed 2026-07-29 CI audit).
+
+  path_instructions:
+    - path: "**/*.py"
+      instructions: |
+        If a class is a Pydantic BaseModel (request/response schema), do not suggest
+        rewording, shortening, or restyling its docstring. Pydantic publishes model
+        docstrings as the OpenAPI `description` field, which renders verbatim in the
+        customer-facing API Reference (docs.verifyyou.com). Only flag factual
+        inaccuracies in these docstrings, never tone/style/length.
+    - path: "**/openapi.json"
+      instructions: |
+        GENERATED FILE -- never recommend editing it directly. It is produced by
+        `make gen-openapi`, which dumps the live FastAPI app's spec; CI regenerates it and
+        flags a hand-edit as stale drift (warning only, not a merge-blocking check -- a
+        hand-edit passes CI and is silently reverted at the next regen). If the spec is
+        wrong or incomplete, the defect is in the route source under `src/**/routes/`:
+        missing status codes belong in the route decorator's `responses={...}`, wrong
+        shapes in `response_model=`. Anchor the comment on the route, state the fix, and
+        say to regenerate with `make gen-openapi` and commit the result. Do not raise diff
+        noise in this file as a finding on its own.
+        (Caught live on app-service#45: a comment told the author to hand-add status codes
+        to openapi.json; the real fix was a `responses=` change on the route.)
+    - path: "**/*.lock"
+      instructions: |
+        Machine-generated lockfile. Do not review the diff for style/formatting -- it's not
+        human-authored. DO flag a newly added or version-bumped dependency if you can
+        identify a known CVE, an unmaintained package, or a license concern; say which
+        package and why. Silence on everything else.
+    - path: "**/*.py"
+      instructions: |
+        Postgres/SQLAlchemy idioms specific to this codebase (from a live review of
+        app-service#48, 2026-07-29, verified against `main`):
+
+        1. A partial unique index (`Index(..., unique=True, postgresql_where=...)`) is
+           the house idiom for "at most one row per group satisfying a predicate," not a
+           smell. Do not flag one as unusual or suggest replacing it with a trigger,
+           app-level locking, or a nullable FK -- a plain `UNIQUE(group_col, flag_col)`
+           would be WRONG here (it caps non-matching rows too, not just matching ones).
+        2. Before claiming a business invariant is unenforced (e.g. "nothing stops two
+           default rows," "this count-then-insert has a race"), check the model's
+           `__table_args__` and `alembic/versions/` for a matching unique index FIRST.
+           A count/exists check before an insert is usually an optimization that picks
+           the common path, not the actual guard -- the index is the guarantee. If you
+           still want to comment, the correct framing is "the code reads as if the count
+           is the guard" (a naming/clarity note), not "this is unenforced" (a false
+           claim about the actual guarantee).
+        3. Before reporting a DB constraint violation (`IntegrityError` or similar) as an
+           unhandled 500, check the app's entrypoint (`app.py` / equivalent) for a global
+           `@app.exception_handler(IntegrityError)`-style handler. Several of our FastAPI
+           services translate constraint violations to a 409 there; it's easy to miss
+           because it's registered once, far from the code that triggers it.
+        4. `db.refresh()` immediately after `flush()` is usually a needless round-trip,
+           worth flagging -- `flush()` does not expire attributes, only `commit()` does,
+           so `refresh()` just re-SELECTs values the session already holds. It only earns
+           its keep when a column is server-generated with NO Python-side default (check
+           the model's `mapped_column(...)` for a `default=`/`default_factory=` before
+           flagging this as needless).
+        5. Prefer `exists()` (or `.limit(1)` + a boolean check) over `count()` for a
+           zero-vs-nonzero question -- `COUNT` scans every matching row, `exists()`
+           short-circuits on the first match.
+
+        Per this repo's CLAUDE.md ("no comments except hidden invariants, upstream-bug
+        workarounds, or surprising behavior -- if a comment explains WHAT the code does,
+        delete it and rename a variable instead"): when you'd otherwise suggest adding an
+        explanatory comment, suggest a better name first. Conversely, do not flag a
+        comment that documents a hidden invariant or a non-obvious constraint -- CLAUDE.md
+        explicitly allows those.
+    - path: "**/services/**/*.py"
+      instructions: |
+        Before suggesting a model field, argument, or return value looks unused, check
+        whether it's consumed from a DIFFERENT repo in the org, not just this one. Some
+        services expose a read model over another service's database table (see the
+        `verifications` example in this org: app-service owns writes and migrations,
+        connect-service's `VerificationRow` is a `skip_autogenerate` read model over the
+        SAME physical table). A single-repo grep showing "no other caller" does not mean
+        unused -- it can mean the caller lives in a sibling repo. Say so as a caveat rather
+        than asserting removal is safe.
+
+  tools:
+    # Off wherever our own CI already blocks on the same tool -- every repo where these
+    # tools apply already runs them as a required status check (verified against `main`
+    # 2026-07-29; see recommendation doc). Duplicating a red CI check in a PR comment is
+    # pure noise, not signal.
+    ruff:
+      enabled: false      # app-service/connect-service/authority/health-monitor/vy-common: required `pr/quality` check
+    eslint:
+      enabled: false      # app-fe/connect-fe: required `pr/quality` check (pnpm lint)
+    semgrep:
+      enabled: false      # all repos except bootstrap/docs: required `semgrep/semgrep` check
+    tflint:
+      enabled: false      # infra-common: required `tflint` check
+    # Left ON: nothing in CI covers these anywhere in the org today.
+    gitleaks:
+      enabled: true
+    markdownlint:
+      enabled: true        # only repo with real content to check is `docs`; harmless no-op elsewhere
+    shellcheck:
+      enabled: true        # `bootstrap` has zero CI (confirmed: no .github/workflows/ at all)
+    osv-scanner:
+      enabled: true        # dependency-vulnerability scan; closes a real gap (see path_filters note
+                            # above) -- nothing else in the org checks lockfiles against known CVEs
+
+  pre_merge_checks:
+    custom_checks:
+      - name: "Test plan"
+        mode: warning
+        # WARNING, never ERROR. `error` requires resolution before merge, which would
+        # make this a gate; the decision (VY-502) was a nudge. Template presence across
+        # PRs merged to `main` was 6/61 (10%) on 2026-08-04 -- the local templates that
+        # fix the mechanical cause landed 2026-08-05, and until adoption is re-measured,
+        # anything stricter than a comment asserts a control we cannot evidence.
+        instructions: |
+          Pass if the pull request description contains a "Test plan" section holding at
+          least one concrete step a person other than the author could follow -- a command
+          to run, a URL to open, a flag to toggle, a place to look.
+
+          Fail if that section is absent, empty, or contains only placeholder text: a bare
+          "1.", "N/A", "tested locally", "see description", or the template's own comment
+          text left unedited.
+
+          Pass docs-only, config-only and dependency-bump pull requests when they state in
+          one line why no test plan applies. Do not demand steps for a change that cannot
+          be exercised.
+
+          Do not treat a filled-in Test plan as a claim of truth -- you cannot verify what
+          the author ran. Check that the section exists and is specific, nothing more.
+
+          Keep the comment to one sentence naming what is missing. This is a reminder, not
+          a review finding.
+
+  finishing_touches:
+    docstrings:
+      enabled: true
+      # Opt-in per PR (checkbox / `@coderabbitai generate docstrings`), not automatic.
+      # Already the org default today -- kept explicit here for the central baseline.
+    autofix:
+      enabled: false
+      # VY-190 asks for a deliberate autofix policy. There is no config-level split
+      # between "lint fix" and "logic fix" (confirmed: single enabled/disabled toggle,
+      # docs.coderabbit.ai/finishing-touches/autofix). Once ruff/eslint/semgrep are off
+      # above, whatever CodeRabbit still flags on chill profile skews toward logic/
+      # security findings -- autofix committing THOSE straight to a branch unreviewed
+      # is the "different matter" VY-190 flags, not the "exactly right" lint case.
+      # Default OFF. Revisit turning on per-repo once a repo has 2-4 weeks of chill-
+      # profile reviews to see what CodeRabbit is actually flagging there. Follow-on to
+      # revisit is filed and linked from VY-404 (the decision issue).
+      #
+      # APPLIED 2026-07-29: also turned off at the org UI-settings level directly in the
+      # console (reviews.finishing_touches.autofix.enabled: false) -- zero coderabbitai
+      # commits across all 11 repos in 30 days, zero click-to-apply suggestions since
+      # July 1, decided by Jack. Repo-level YAML still wins on precedence (Repo YAML >
+      # Central YAML > Repo UI > Org UI), which is why this stays explicit here and in
+      # every per-repo file rather than relying on the org default alone.
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    # This is NOT a future toggle -- it's already live. CodeRabbit auto-detects
+    # CLAUDE.md (case-sensitive, zero config) and had already ingested 14 guideline
+    # rules from connect-service's CLAUDE.md as of 2026-07-28 (confirmed via console,
+    # Repository > Code guidelines), before any .coderabbit.yaml existed anywhere.
+    # Repos with a stale CLAUDE.md need per-repo `code_guidelines.enabled: false` until
+    # fixed -- see the recommendation doc's stale-convention list.

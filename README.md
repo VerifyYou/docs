@@ -53,3 +53,5 @@ Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/sett
 
 ### Resources
 - [Mintlify documentation](https://mintlify.com/docs)
+
+<!-- trailing newline: throwaway VY-457 test B, see PR body -->
