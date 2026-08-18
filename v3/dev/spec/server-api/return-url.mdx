@@ -1,0 +1,12 @@
+---
+title: "Return URL parameters"
+description: "What is appended to redirect_url."
+---
+
+| Param | Meaning |
+| --- | --- |
+| `vyt` | Confirmation token. Exchange server side within 30 minutes. |
+| `vyc` | `1` passed, `0` not. UI hint. Never gate on it. |
+| your `pass_params` | Echoed as sent. |
+
+Every name starting with `vy` is reserved. Strip `vyt` and `vyc` after handoff.

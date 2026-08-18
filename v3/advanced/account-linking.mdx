@@ -5,11 +5,11 @@ description: "Tie a verification to your own user, and bind an identity that cla
 
 By default a person you verify is a [guest](/v3/concepts/members-vs-guests), recognized only by the device ID in their browser. **Account linking** ties the verification to your own user record and, optionally, binds an identity that makes the person a [member](/v3/concepts/members-vs-guests): a durable claim to their own face record, portable across devices and browsers.
 
-You link at [`POST /v3/initialize`](/v3/api/initialize), from your server, with a **secret key**.
+You link at [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize), from your server, with a **secret key**.
 
 ## Link your own user with `external_id`
 
-Pass `external_id` to associate the session with a record on your side. It comes straight back when you [confirm](/v3/api/confirmations), so you can match the verified human to your user without a lookup table.
+Pass `external_id` to associate the session with a record on your side. It comes straight back when you [confirm](/v3/dev/spec/server-api/confirmations), so you can match the verified human to your user without a lookup table.
 
 ```ts
 const res = await fetch("https://trust.verifyyou.com/v3/initialize", {
@@ -57,5 +57,5 @@ The linked `external_id` is returned on the confirmation, so the result is self-
 
 <Note>
   All of these parameters are **secret key only**: send them from your server.
-  See the full list on [`POST /v3/initialize`](/v3/api/initialize).
+  See the full list on [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize).
 </Note>

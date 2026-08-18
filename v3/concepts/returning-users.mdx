@@ -20,9 +20,9 @@ A verified human doesn't redo work they've already done. How they're recognized 
 
 ## Designing for the return trip
 
-- **Re-run the same call.** Send returning users through the same [`vycheck()`](/v3/sdk/vycheck) or [`initialize`](/v3/api/initialize) entry point. A recognized human passes through quickly instead of starting over.
+- **Re-run the same call.** Send returning users through the same [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck) or [`initialize`](/v3/dev/spec/server-api/initialize) entry point. A recognized human passes through quickly instead of starting over.
 - **Bind an identity if they'll come back.** Make repeat visitors members by attaching a phone, email, or [external id](/v3/advanced/account-linking), or by using the collection identity mode. It's the difference between "recognized anywhere" and "recognized on one browser".
-- **Confirm server-side every time.** Recognition still produces a fresh token each trip. Always [confirm it](/v3/api/confirmations) on your backend before granting access.
+- **Confirm server-side every time.** Recognition still produces a fresh token each trip. Always [confirm it](/v3/dev/spec/server-api/confirmations) on your backend before granting access.
 
 <Note>
   Guests intentionally re-verify more often than members. See

@@ -1,0 +1,32 @@
+---
+title: "Authentication"
+description: "Base URL, keys, partitions, and the errors every endpoint can return."
+---
+
+Base URL `https://trust.verifyyou.com`. `Authorization: Bearer <secret key>` on every request. Raw spec: [`openapi.json`](https://trust.verifyyou.com/openapi.json). Try it: [Swagger UI](https://trust.verifyyou.com/docs).
+
+| Endpoint | Purpose |
+| --- | --- |
+| [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize) | Mint a session |
+| [`GET /v3/confirmations/{token}`](/v3/dev/spec/server-api/confirmations) | Exchange a token for the verdict |
+| [`POST /v3/confirmations/{token}/lock`](/v3/dev/spec/server-api/lock) | Consume a pass |
+| [`POST /v3/confirmations`](/v3/dev/spec/server-api/lookup) | Verdict by email or phone, no token |
+| [`POST /v3/test/confirmation-token`](/v3/dev/spec/server-api/test-confirmation-token) | Mint a token for your test suite |
+
+## Keys
+
+Secret keys, `sk_test_…` and `sk_live_…`. Server only. Test keys see test runs; live keys see live runs. A token or session from one partition reads as nonexistent under the other.
+
+Publishable keys (`pk_*`) are deprecated. Start every session server side and open it in the browser with `vycheck({ session })`.
+
+## Errors on every endpoint
+
+Errors are `{ "detail": "<code>" }`, except `422` (schema validation, an array).
+
+| Status | `detail` | When |
+| --- | --- | --- |
+| `401` | `authentication_required` | No `Authorization` header. |
+| `401` | `invalid_key_type` | Not a secret key. |
+| `401` | `invalid_or_revoked_key` | Key not found or revoked. |
+
+Deprecated and still served (see the [OpenAPI spec](https://trust.verifyyou.com/openapi.json)): `POST /v3/keys/test`.

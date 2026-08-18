@@ -1,0 +1,24 @@
+---
+title: "/v3/confirmations"
+description: "Latest settled pass by email or phone, no token."
+---
+
+`POST` Secret key. Scoped to your company and partition. Weaker than the token exchange: it says where the person stands, not that a run just finished.
+
+## Body
+
+<ParamField body="email" type="string">As sent to `initialize`. Exactly one of `email` or `phone`.</ParamField>
+<ParamField body="phone" type="string">Alternative.</ParamField>
+<ParamField body="verification_id" type="string (uuid)">Narrow to one verification. Omit for all of yours.</ParamField>
+
+## Response
+
+Same shape as [`GET /v3/confirmations/{token}`](/v3/dev/spec/server-api/confirmations).
+
+## Errors
+
+| Status | `detail` | When |
+| --- | --- | --- |
+| `400` | `one_identifier_only` | Both or neither. |
+| `400` | `identifier_unrecognized` | Not parseable. |
+| `404` | `no_settled_pass` | Never finished a run with you. |

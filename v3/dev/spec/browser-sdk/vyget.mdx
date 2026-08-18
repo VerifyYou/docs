@@ -1,0 +1,23 @@
+---
+title: "vyget()"
+description: "Read the result off the return URL, or the last embedded completion."
+---
+
+## Signature
+
+```ts
+function vyget(): VyResult;
+```
+
+Synchronous, no network. Checks the URL for `vyt`/`vyc` first, then the last iframe completion on this page. Safe on every page load.
+
+## Returns
+
+| Situation | [`VyResult`](/v3/dev/spec/browser-sdk/vyresult) |
+| --- | --- |
+| `?vyt=tok&vyc=1` | `{ token: "tok", verified: true, vyc: "1" }` |
+| `?vyc=0` | `{ token: null, verified: false, vyc: "0" }` |
+| Embedded run just completed | That result |
+| Nothing | `{ token: null, verified: false, vyc: null }` |
+
+Strip `vyt` and `vyc` with `history.replaceState` after handoff. Full list of reserved params: [Return URL parameters](/v3/dev/spec/server-api/return-url).

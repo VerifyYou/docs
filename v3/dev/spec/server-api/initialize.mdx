@@ -1,0 +1,48 @@
+---
+title: "/v3/initialize"
+description: "Mint a session and get back session_id and the hosted URL."
+---
+
+`POST` Secret key. Returns the `session_id` your frontend opens with `vycheck({ session })`, and the hosted `url` if you would rather redirect yourself.
+
+## Body
+
+<ParamField body="verification_id" type="string (uuid)">Which verification to run. Omit for your default.</ParamField>
+<ParamField body="redirect_url" type="string">Where the person lands when done, with `?vyt=<token>&vyc=<0|1>` appended. Overrides the URL saved on the verification. Absolute `https`; `http` allowed on localhost and private addresses.</ParamField>
+<ParamField body="external_id" type="string">Your id for this run. Duplicates are reported against it.</ParamField>
+<ParamField body="email" type="string">Bind the run to this email. The flow cannot collect a different one. One of `email` or `phone`.</ParamField>
+<ParamField body="phone" type="string">Bind the run to this phone. Same rules.</ParamField>
+<ParamField body="pass_params" type="object<string, string>">Extra query params echoed onto the return URL. `vy*` names are ignored.</ParamField>
+<ParamField body="config" type="object">Test key only. Per-run config override, used verbatim, never merged.</ParamField>
+
+## Response
+
+<ResponseField name="session_id" type="string">Open it with `vycheck({ session })`.</ResponseField>
+<ResponseField name="url" type="string">Hosted link with the run queued up.</ResponseField>
+
+```json
+{ "session_id": "sess_abc123", "url": "https://app.verifyyou.com/v/abc123" }
+```
+
+## Errors
+
+| Status | `detail` | When |
+| --- | --- | --- |
+| `400` | `one_identifier_only` | Both `email` and `phone`. |
+| `400` | `identifier_unrecognized` | Not a parseable email or phone. |
+| `400` | `invalid_redirect_url` | Not absolute, or not `https` off localhost. |
+| `400` | `verification_requires_identifier` | The verification is set to "provided by you" and none was sent. |
+| `400` | `identifiers_require_secret_key` | A deprecated publishable key was used with identity or targeting fields. |
+| `403` | `config_requires_test_key` | `config` with a live key. |
+| `404` | `no_matching_verification` | Not on your account. |
+| `409` | `method_not_runnable` | The verification's integration method is not code. |
+
+## Example
+
+```bash
+curl -X POST https://trust.verifyyou.com/v3/initialize \
+  -H "Authorization: Bearer sk_test_…" -H "Content-Type: application/json" \
+  -d '{ "verification_id": "<id>", "redirect_url": "https://yourapp.com/verified", "external_id": "acct_8f21" }'
+```
+
+Deprecated and still accepted (see the [OpenAPI spec](https://trust.verifyyou.com/openapi.json)): `verification_external_id`, `external_tracker`, `expire_in_days`, and the `invite_id` response field.

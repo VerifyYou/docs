@@ -9,32 +9,32 @@ VerifyYou confirms that the person on the other end of your app is a **real, liv
 
 <Steps>
   <Step title="Start a verification">
-    From the browser with the SDK's [`vycheck()`](/v3/sdk/vycheck), or from your server with [`POST /v3/initialize`](/v3/api/initialize). The flow can run as a full-page redirect, a drawer that slides over your page, or an inline embed. Pick the presentation in [`init()`](/v3/sdk/init).
+    From the browser with the SDK's [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck), or from your server with [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize). The flow can run as a full-page redirect, a drawer that slides over your page, or an inline embed. Pick the presentation in [`init()`](/v3/dev/spec/browser-sdk/init).
   </Step>
   <Step title="We verify the human">
     The hosted flow runs a short face check for liveness, then a uniqueness check against people who already verified. It works in place on phones and desktops alike, and a desktop user can move the session to their phone with a QR code and be returned automatically. See [Humanness and uniqueness](/v3/concepts/humanness-and-uniqueness).
   </Step>
   <Step title="The result comes back to your app">
-    Redirect mode returns the user to your page with `?vyt=<token>&vyc=<0|1>` on the URL. The embedded modes hand the same result to your `onComplete` callback with no redirect. Either way, read it with [`vyget()`](/v3/sdk/vyget).
+    Redirect mode returns the user to your page with `?vyt=<token>&vyc=<0|1>` on the URL. The embedded modes hand the same result to your `onComplete` callback with no redirect. Either way, read it with [`vyget()`](/v3/dev/spec/browser-sdk/vyget).
   </Step>
   <Step title="Confirm on your backend">
-    Exchange the token for the authoritative result with [`GET /v3/confirmations/{token}`](/v3/api/confirmations). Gate access on that, never on the URL alone.
+    Exchange the token for the authoritative result with [`GET /v3/confirmations/{token}`](/v3/dev/spec/server-api/confirmations). Gate access on that, never on the URL alone.
   </Step>
 </Steps>
 
 ## Where to go next
 
 <CardGroup cols={2}>
-  <Card title="init(): setup and display modes" icon="sliders" href="/v3/sdk/init">
+  <Card title="init(): setup and display modes" icon="sliders" href="/v3/dev/spec/browser-sdk/init">
     One-time SDK setup, and choosing redirect, drawer, or inline.
   </Card>
   <Card title="Humanness and uniqueness" icon="fingerprint" href="/v3/concepts/humanness-and-uniqueness">
     How we prove someone is live, then prove they're unique.
   </Card>
-  <Card title="vycheck() and vyget()" icon="code" href="/v3/sdk/vycheck">
+  <Card title="vycheck() and vyget()" icon="code" href="/v3/dev/spec/browser-sdk/vycheck">
     The two browser calls that drive the whole flow.
   </Card>
-  <Card title="POST /v3/initialize" icon="server" href="/v3/api/initialize">
+  <Card title="POST /v3/initialize" icon="server" href="/v3/dev/spec/server-api/initialize">
     Mint a session server-side, with a full parameter breakdown.
   </Card>
 </CardGroup>

@@ -1,0 +1,18 @@
+---
+title: "VerifyYouError"
+description: "Rejection codes from vycheck()."
+---
+
+```ts
+class VerifyYouError extends Error {
+  code: "timeout" | "network" | "http" | "bad_response";
+  status?: number; // when code === "http"
+}
+```
+
+| `code` | Meaning | Do |
+| --- | --- | --- |
+| `timeout` | No answer in 10 s | Retry |
+| `network` | Request failed | Retry |
+| `http` | Non-2xx opening the session; usually expired or already used | Mint a new session |
+| `bad_response` | Not JSON | Treat as failed |

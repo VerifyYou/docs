@@ -1,0 +1,74 @@
+---
+title: "Handling results"
+description: "Exchange the token on your server, in the request that performs the action."
+---
+
+Never trust the client result alone. The token (`vyt`) is proof, not a verdict; it exchanges for 30 minutes, secret key only. Do it inside the handler that performs the gated action so the proof and the action never exist apart.
+
+<Tabs>
+  <Tab title="With the token">
+    ```ts
+    const VY_SK = process.env.VY_SK;
+
+    const res = await fetch(`https://trust.verifyyou.com/v3/confirmations/${token}`, {
+      headers: { Authorization: `Bearer ${VY_SK}` },
+    });
+
+    if (!res.ok) {
+      // 404 token_invalid  not a token we issued, or not yours; never let them through
+      // 410 token_expired  older than the confirmation window; have them run it again
+      throw new Error(`verifyyou confirm: ${res.status}`);
+    }
+
+    const { verified, status, reasons } = await res.json();
+
+    // use verified for the gate; when it's falsy they failed
+    if (!verified) {
+      // status is "denied", or "approved" with reasons (flagged)
+      // `reasons` says why, e.g. ["collision_company"]
+      return { allowed: false, status, reasons };
+    }
+
+    return { allowed: true };
+    ```
+  </Tab>
+  <Tab title="Without a token">
+    ```ts
+    const VY_SK = process.env.VY_SK;
+
+    const res = await fetch("https://trust.verifyyou.com/v3/confirmations", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${VY_SK}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: user.email }),
+    });
+
+    if (res.status === 404) {
+      // no_settled_pass: this credential has never finished a run with you
+      return { allowed: false, status: "none", reasons: [] };
+    }
+    if (!res.ok) {
+      // 400 one_identifier_only / identifier_unrecognized: send exactly one, well formed
+      throw new Error(`verifyyou lookup: ${res.status}`);
+    }
+
+    // Same body as the token read. It IS a pass, just the latest one.
+    const { verified, status, reasons } = await res.json();
+    return { allowed: verified, status, reasons };
+    ```
+  </Tab>
+</Tabs>
+
+**With the token** is the stronger check: it proves this run just finished, names exactly one pass, and puts no email in your request logs. **Without a token** is a recovery path: it answers whether the email or phone has verified, and lets a returning person skip another redirect. What it cannot tell you is whether they just did a check.
+
+We report `verified: true | false`. Pass or fail is your decision, and routing lives in your code, next to the action.
+
+- Gate on `verified`. `vyc` in the URL is a UI hint.
+- Fail closed on `404`, `410`, or a timeout. Fresh session, try again.
+- Test keys read test runs only. Never point a live action at a test key.
+- Consume each token once. Prefer your own idempotency over [lock](/v3/dev/spec/server-api/lock) unless you mean one pass per human, ever.
+- Strip `vyt` and `vyc` from the URL after handoff.
+
+Response fields and reasons: [`GET /v3/confirmations/{token}`](/v3/dev/spec/server-api/confirmations).

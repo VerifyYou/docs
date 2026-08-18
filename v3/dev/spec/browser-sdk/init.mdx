@@ -1,0 +1,18 @@
+---
+title: "init()"
+description: "Optional. Set vycheck() defaults once."
+---
+
+## Signature
+
+```ts
+function init(config: InitConfig): void;
+```
+
+Optional. Anything here can be passed to [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck) per call instead; use `init()` to set it once.
+
+## Options
+
+Presentation and callbacks: `mode`, `display`, `container`, `inlineHeight`, `theme`, `onComplete`, `onClose`. Same meaning as on [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck#options).
+
+Deprecated and still accepted: `publishableKey`, `email`, `phone`, `config`, `origin`, `returnPath`. All belong to browser-started runs; mint the session on your server instead.
