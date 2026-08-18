@@ -1,0 +1,25 @@
+---
+title: "/v3/test/confirmation-token"
+description: "Mint a real test vyt with the verdict you choose."
+---
+
+`POST` Test secret key only. Settles a real pass in your test partition and returns its token. Use it to drive every branch of your result handling from a test suite.
+
+## Body
+
+<ParamField body="status" type='"approved" | "denied"' required>Verdict to settle with.</ParamField>
+<ParamField body="reasons" type="string[]">Reasons to attach. Unknown values are rejected.</ParamField>
+<ParamField body="verification_id" type="string (uuid)">Default when omitted.</ParamField>
+
+## Response
+
+<ResponseField name="token" type="string">Exchange at `GET /v3/confirmations/{token}` with the same test key.</ResponseField>
+<ResponseField name="verified" type="boolean">What the exchange will report.</ResponseField>
+
+## Errors
+
+| Status | `detail` | When |
+| --- | --- | --- |
+| `403` | `test_key_required` | Live key. |
+| `400` | `{ "error": "unknown_reason", "reasons": [...] }` | Unknown reason. |
+| `404` | `no_matching_verification` | Not on your account. |

@@ -16,48 +16,90 @@
         "dark": "/logo/dark.svg"
     },
     "navigation": {
-        "tabs": [
+        "versions": [
             {
-                "tab": "Docs",
-                "pages": [
+                "version": "v3",
+                "default": true,
+                "tabs": [
                     {
-                        "group": "Verification processes",
+                        "tab": "Dev",
                         "pages": [
-                            "v3/introduction",
-                            "v3/concepts/humanness-and-uniqueness",
-                            "v3/concepts/members-vs-guests",
-                            "v3/concepts/returning-users"
+                            {
+                                "group": "Integrating",
+                                "pages": [
+                                    "v3/dev/integrating/start-a-session",
+                                    "v3/dev/integrating/placing-your-check",
+                                    "v3/dev/integrating/handling-results"
+                                ]
+                            },
+                            {
+                                "group": "Server API",
+                                "pages": [
+                                    "v3/dev/spec/server-api/authentication",
+                                    "v3/dev/spec/server-api/initialize",
+                                    "v3/dev/spec/server-api/confirmations",
+                                    "v3/dev/spec/server-api/lock",
+                                    "v3/dev/spec/server-api/lookup",
+                                    "v3/dev/spec/server-api/test-confirmation-token",
+                                    "v3/dev/spec/server-api/return-url",
+                                    "v3/dev/spec/server-api/clients"
+                                ]
+                            },
+                            {
+                                "group": "Browser SDK",
+                                "pages": [
+                                    "v3/dev/spec/browser-sdk/vycheck",
+                                    "v3/dev/spec/browser-sdk/vyget",
+                                    "v3/dev/spec/browser-sdk/init",
+                                    "v3/dev/spec/browser-sdk/vyresult",
+                                    "v3/dev/spec/browser-sdk/errors"
+                                ]
+                            }
                         ]
-                    },
-                    {
-                        "group": "SDK and API",
-                        "pages": [
-                            "v3/sdk/init",
-                            "v3/sdk/vycheck",
-                            "v3/sdk/vyget",
-                            "v3/api/initialize",
-                            "v3/api/confirmations"
-                        ]
-                    },
-                    {
-                        "group": "Advanced usage",
-                        "pages": [
-                            "v3/advanced/account-linking"
-                        ]
-                    },
-                    {
-                        "group": "Reference",
-                        "pages": [
-                            "v3/openapi"
-                        ]
-                    },
-                    "v3/faq",
-                    "v3/changelog"
+                    }
                 ]
             },
             {
-                "tab": "API Reference",
-                "openapi": "v3/openapi.json"
+                "version": "v2",
+                "tabs": [
+                    {
+                        "tab": "Docs",
+                        "groups": [
+                            {
+                                "group": "v2 (legacy)",
+                                "pages": [
+                                    "v2/quickstart",
+                                    "v2/authentication",
+                                    "v2/external-ids",
+                                    "v2/testing",
+                                    "v2/uniqueness-regions"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "tab": "API Reference",
+                        "openapi": "v2/openapi.yaml"
+                    }
+                ]
+            },
+            {
+                "version": "v1",
+                "tabs": [
+                    {
+                        "tab": "Docs",
+                        "groups": [
+                            {
+                                "group": "v1 (legacy)",
+                                "pages": [
+                                    "v1/index",
+                                    "v1/quickstart",
+                                    "v1/webhooks"
+                                ]
+                            }
+                        ]
+                    }
+                ]
             }
         ]
     },
@@ -65,10 +107,38 @@
         {
             "source": "/v3/concepts/accounts-vs-guests",
             "destination": "/v3/concepts/members-vs-guests"
+        },
+        {
+            "source": "/v3/api/initialize",
+            "destination": "/v3/dev/spec/server-api/initialize"
+        },
+        {
+            "source": "/v3/api/confirmations",
+            "destination": "/v3/dev/spec/server-api/confirmations"
+        },
+        {
+            "source": "/v3/openapi",
+            "destination": "/v3/dev/spec/server-api/authentication"
+        },
+        {
+            "source": "/v3/sdk/init",
+            "destination": "/v3/dev/spec/browser-sdk/init"
+        },
+        {
+            "source": "/v3/sdk/vycheck",
+            "destination": "/v3/dev/spec/browser-sdk/vycheck"
+        },
+        {
+            "source": "/v3/sdk/vyget",
+            "destination": "/v3/dev/spec/browser-sdk/vyget"
         }
     ],
     "navbar": {
         "links": [
+            {
+                "label": "OpenAPI spec",
+                "href": "https://trust.verifyyou.com/openapi.json"
+            },
             {
                 "label": "Website",
                 "href": "https://verifyyou.com/"

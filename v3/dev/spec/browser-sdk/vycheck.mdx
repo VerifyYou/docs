@@ -1,0 +1,57 @@
+---
+title: "vycheck()"
+description: "Open a session and get a handle that resolves with the result."
+---
+
+```bash
+npm install @verifyyou-sdk/client
+```
+
+```ts
+import { vycheck, vyget, init, VerifyYouError } from "@verifyyou-sdk/client";
+import type { VyCheckOptions, VyCheckHandle, VyResult, InitConfig } from "@verifyyou-sdk/client";
+```
+
+## Signature
+
+```ts
+function vycheck(options: VyCheckOptions): VyCheckHandle;
+
+type VyCheckOptions = Partial<InitConfig> & { session: string };
+
+interface VyCheckHandle extends Promise<VyResult> {
+  close(): void; // dismiss an embed early; no-op in redirect mode or once settled
+}
+```
+
+## Options
+
+<ParamField path="session" type="string" required>The `session_id` from `/v3/initialize`. The SDK opens that run: no key, no `init()`.</ParamField>
+<ParamField path="mode" type='"redirect" | "iframe"' default="redirect">`redirect` navigates to the hosted flow and back. `iframe` embeds it.</ParamField>
+<ParamField path="display" type='"drawer" | "inline"' default="drawer">Iframe only. Drawer overlays the page; inline mounts into `container`.</ParamField>
+<ParamField path="container" type="HTMLElement | string">Inline only. Element or CSS selector.</ParamField>
+<ParamField path="inlineHeight" type='"fill" | "auto" | string' default="fill">Inline only. Or a CSS length like `640px`.</ParamField>
+<ParamField path="theme" type='"light" | "dark" | "auto"' default="auto">Iframe only.</ParamField>
+<ParamField path="onComplete" type="(result: VyResult) => void">Iframe only. Same result as the promise.</ParamField>
+<ParamField path="onClose" type="() => void">Iframe only. The person dismissed without finishing.</ParamField>
+
+Any of these can be set once with [`init()`](/v3/dev/spec/browser-sdk/init) instead.
+
+## Returns
+
+| Mode | Behavior | Promise |
+| --- | --- | --- |
+| `redirect` | Navigates to the hosted flow. The person returns to `redirect_url` with `?vyt&vyc`. | Never resolves. Read the result with [`vyget()`](/v3/dev/spec/browser-sdk/vyget). |
+| `iframe` | Mounts as drawer or inline. | Resolves with [`VyResult`](/v3/dev/spec/browser-sdk/vyresult); `onComplete` fires. Dismiss resolves `{ token: null, verified: false, vyc: null }` and fires `onClose`. |
+
+## Errors
+
+Rejects with [`VerifyYouError`](/v3/dev/spec/browser-sdk/errors) when opening the session fails. Never throws synchronously. Dismiss is not an error.
+
+## Example
+
+```ts
+const handle = vycheck({ session, mode: "iframe", display: "inline", container: "#verify-here" });
+cancel.onclick = () => handle.close();
+const { token } = await handle;
+```

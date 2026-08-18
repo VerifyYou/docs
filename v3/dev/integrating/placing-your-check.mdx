@@ -1,0 +1,111 @@
+---
+title: "Placing your check"
+description: "Open the session in the browser with vycheck() and hand the token to your server."
+---
+
+```bash
+npm install @verifyyou-sdk/client
+```
+
+The SDK opens the session your server minted and hands back a token. No key, no `init()`. It is not a router: put `vycheck()` on the action only humans should do, and send the token with that action.
+
+<Tabs>
+  <Tab title="Redirect">
+    Zero UI to build. We host the whole flow and send them back to `redirect_url` with `?vyt=<token>&vyc=<0|1>`. `vycheck` navigates away, so it never resolves; on the way back, `vyget()` reads the result off the URL.
+
+    ```js 1. where they leave
+    import { vycheck, VerifyYouError } from "@verifyyou-sdk/client";
+
+    // `session` is the id provided by your server
+    try {
+      await vycheck({ session: sessionId });
+    } catch (err) {
+      // Only reachable BEFORE the browser navigates away:
+      //   "network" / "timeout"  couldn't reach VerifyYou
+      //   "http"                 session expired or already used; mint a new one
+      if (err instanceof VerifyYouError) console.error("verifyyou:", err.code);
+      throw err;
+    }
+
+    // Nothing below here runs. The page is already gone.
+    ```
+
+    ```js 2. where they come back
+    import { vyget } from "@verifyyou-sdk/client";
+
+    // run on every page load to check for the token (will not error if no token is found)
+    const { token } = vyget();
+
+    if (token) {
+      // check with your server if the person is verified
+      await fetch("/api/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+    }
+    ```
+  </Tab>
+  <Tab title="Drawer">
+    Slides over your page: bottom sheet on mobile, side panel on desktop. No redirect. `vycheck` resolves in place with the result.
+
+    ```js
+    import { vycheck, VerifyYouError } from "@verifyyou-sdk/client";
+
+    // `session` is the id from step 1. It runs THAT session, the one already
+    // carrying your external_id and redirect_url, so there is no key and no
+    // init() on this path.
+    try {
+      const { token } = await vycheck({ session: sessionId, mode: "iframe" });
+      // No token = they closed it without finishing. Not an error; let them retry.
+      if (token) {
+        // Hand it to your own endpoint; the confirm runs there, with your secret key.
+        await fetch("/api/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+      }
+    } catch (err) {
+      // "network" / "timeout"  couldn't reach VerifyYou; safe to retry
+      // "http"                 session expired or already used; mint a new one
+      // "bad_response"         unexpected payload; treat the attempt as failed
+      if (err instanceof VerifyYouError) console.error("verifyyou:", err.code);
+      else throw err;
+    }
+    ```
+  </Tab>
+  <Tab title="Inline">
+    Mounts inside your own element, like an embedded video. `vycheck` resolves in place with the result.
+
+    ```js
+    import { vycheck, VerifyYouError } from "@verifyyou-sdk/client";
+
+    try {
+      const { token } = await vycheck({
+        session: sessionId,
+        mode: "iframe",
+        display: "inline",
+        container: "#verify-here", // your element; size it with CSS
+      });
+      if (token) {
+        await fetch("/api/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+      }
+    } catch (err) {
+      if (err instanceof VerifyYouError) console.error("verifyyou:", err.code);
+      else throw err;
+    }
+    ```
+
+    ```html
+    <!-- the flow fills this element, like an embedded video -->
+    <div id="verify-here" style="height: 640px"></div>
+    ```
+  </Tab>
+</Tabs>
+
+Options and modes: [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck).

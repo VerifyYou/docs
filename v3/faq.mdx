@@ -16,7 +16,7 @@ description: "Common questions about verifying, keys, returning users, and data.
   <Accordion title="Can I trust the ?vyc value on the return URL?">
     No. Treat it as a UI hint only. Anyone can edit a URL. Always send the
     `vyt` token to your backend and
-    [confirm it](/v3/api/confirmations) with your secret key. That result is
+    [confirm it](/v3/dev/spec/server-api/confirmations) with your secret key. That result is
     authoritative.
   </Accordion>
 
@@ -61,7 +61,7 @@ description: "Common questions about verifying, keys, returning users, and data.
 
   <Accordion title="How do I tie a verification to my own user?">
     Pass `external_id` (and optionally `phone`/`email`) at
-    [initialize](/v3/api/initialize) from your server. The `external_id` comes
+    [initialize](/v3/dev/spec/server-api/initialize) from your server. The `external_id` comes
     back on the confirmation. See [Account linking](/v3/advanced/account-linking).
   </Accordion>
 
@@ -72,7 +72,7 @@ description: "Common questions about verifying, keys, returning users, and data.
     event, set a verification limit in the dashboard.
 
     Reach for
-    [locking](/v3/api/confirmations#lock-a-confirmation-optional) only when you mean
+    [locking](/v3/dev/spec/server-api/lock) only when you mean
     **one pass per person, ever**. Locking applies to the person's confirmation, not
     just the token in your hand: their future passes on this verification come back
     denied too, and **there is no unlock**. After locking,

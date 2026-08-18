@@ -30,8 +30,8 @@ The identity is the claim. When a member shows up on a new device, their face is
 
 The email or phone plays several roles, all controlled by the verification's identity configuration in the dashboard:
 
-- **How it's collected.** `anonymous` skips identity entirely (guests only). `collection` has the person enter their own email or phone in the flow. `provided` means your server supplies it at [initialize](/v3/api/initialize), and the person can't swap it for a different one.
-- **Whether you receive it.** Identity **sharing** controls whether the verified email or phone is returned to you on the [confirmation](/v3/api/confirmations). Off by default: we prove ownership without exposing the value.
+- **How it's collected.** `anonymous` skips identity entirely (guests only). `collection` has the person enter their own email or phone in the flow. `provided` means your server supplies it at [initialize](/v3/dev/spec/server-api/initialize), and the person can't swap it for a different one.
+- **Whether you receive it.** Identity **sharing** controls whether the verified email or phone is returned to you on the [confirmation](/v3/dev/spec/server-api/confirmations). Off by default: we prove ownership without exposing the value.
 - **Whether it's exclusive.** Identity **lock** holds each face to one identity within your company. The same face coming back with a different email or phone is reported as an `identity_mismatch`.
 
 ## Which to use
@@ -53,6 +53,6 @@ The email or phone plays several roles, all controlled by the verification's ide
   This is a product decision more than a code one: the same hosted flow handles
   both. You steer toward membership with the identity mode on your verification,
   or by binding a phone, email, or external id at
-  [initialize](/v3/api/initialize). With nothing bound and identity optional,
+  [initialize](/v3/dev/spec/server-api/initialize). With nothing bound and identity optional,
   the person can continue as a guest.
 </Note>

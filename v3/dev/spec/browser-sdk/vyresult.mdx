@@ -1,0 +1,14 @@
+---
+title: "VyResult"
+description: "The result shape."
+---
+
+```ts
+interface VyResult {
+  token: string | null;  // vyt; send to your server
+  verified: boolean;     // vyc === "1"; UI hint only
+  vyc: string | null;    // "1" | "0" | null
+}
+```
+
+`token` is the only field your server needs. `verified` and `vyc` are what the browser saw; never gate on them.

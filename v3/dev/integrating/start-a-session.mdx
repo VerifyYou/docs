@@ -1,0 +1,54 @@
+---
+title: "Start a session"
+description: "Mint a session on your server with your secret key."
+---
+
+One session is one person's attempt at one verification. Create it server side. The secret key never leaves your server; the browser only ever sees the `session_id`.
+
+```ts
+const VY_SK = process.env.VY_SK; // sk_test_… while building, sk_live_… to ship
+
+const res = await fetch("https://trust.verifyyou.com/v3/initialize", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${VY_SK}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    verification_id: "<verification_id>",
+    // where they land when done
+    redirect_url: "http://localhost:3000/verified",
+    // optionally link with your database
+    // external_id: user.id,
+    // link with a new person or external identifier
+    // email: user.email,
+  }),
+});
+
+if (!res.ok) {
+  const { detail } = await res.json();
+  // 400 one_identifier_only               send email OR phone, never both
+  // 400 identifier_unrecognized           that email/phone isn't a shape we parse
+  // 400 invalid_redirect_url              must be absolute, and https off localhost
+  // 400 verification_requires_identifier  this check is set to "Provided by you"
+  // 401 / 403                             wrong key, or a test-only field on a live key
+  // 404 no_matching_verification          that verification_id isn't on your account
+  // 409 method_not_runnable               the check isn't wired for code yet
+  throw new Error(`verifyyou initialize: ${res.status} ${detail}`);
+}
+
+// => { session_id: "…", url: "…" }
+// use the session_id to run the verification on the frontend;
+// a session's ttl is reasonable but not infinite
+const { session_id } = await res.json();
+```
+
+Attach what ties the run to your records:
+
+| You have | Send | You get back |
+| --- | --- | --- |
+| An existing account | `external_id` | Duplicates reported against your id |
+| A new signup | `email` or `phone` | The run is bound to that identity; the person cannot swap it |
+| Nothing (anonymous) | just `verification_id` | A session. Mint it only when your own signals say this request deserves a check |
+
+Minting server side is also your rate limit and your gate. Nobody can flood your account from a browser, and you decide which requests get a scan. Full parameters and errors: [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize).

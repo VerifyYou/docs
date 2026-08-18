@@ -1,0 +1,23 @@
+---
+title: "/v3/confirmations/{token}/lock"
+description: "Consume a pass so it reads as not passed everywhere."
+---
+
+`POST` Secret key. Idempotent. Applies to the person's pass on this verification, not just the token.
+
+Use it for one pass per human, ever. For double-submit protection use your own idempotency on the token. For once-per-period caps configure a limit on the verification.
+
+## Path parameter
+
+<ParamField path="token" type="string" required>The `vyt` for the pass to lock.</ParamField>
+
+## Response
+
+Same shape as [`GET /v3/confirmations/{token}`](/v3/dev/spec/server-api/confirmations); after locking, `verified` is `false`.
+
+## Errors
+
+| Status | `detail` | When |
+| --- | --- | --- |
+| `404` | `token_invalid` | Not ours, not yours, wrong partition, or the pass is gone. |
+| `410` | `token_expired` | Older than 30 minutes. |
