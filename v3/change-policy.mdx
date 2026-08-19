@@ -15,7 +15,7 @@ You are building against a live API. This page tells you what we can change unde
 
 ## What we can change without telling you
 
-Build so these do not break you, because they will happen:
+We make these changes on an ongoing basis. Your integration must be resilient to them.
 
 | Change | Example |
 | --- | --- |
@@ -25,11 +25,16 @@ Build so these do not break you, because they will happen:
 | A new value in an existing list | A new entry in `reasons` |
 | A new error code for a case that already failed | A clearer `4xx` where you previously got a generic one |
 
-Two habits keep you safe. **Ignore fields you do not recognize** rather than rejecting the response, and **treat lists like `reasons` as open**, so an unfamiliar value does not crash your handler. If your client rejects unknown fields, a routine additive release will look like an outage on your side.
+Two habits cover almost all of it:
+
+- **Ignore fields you do not recognize.** Do not reject a response because it grew.
+- **Treat lists like `reasons` as open.** An unfamiliar value must not break your handler.
+
+If your client rejects unknown fields, a routine additive release will look like an outage on your side.
 
 ## What counts as a breaking change
 
-Anything that can make a request you send today stop working, or a response you read today stop parsing:
+Anything that can stop a request you send today from working, or stop a response you read today from parsing:
 
 - Removing an endpoint, a field, or a parameter
 - Renaming any of them
@@ -38,47 +43,49 @@ Anything that can make a request you send today stop working, or a response you 
 - Removing a value we previously returned
 - Changing what a value means while keeping its name
 
-That last one is the reason we treat wording carefully in the changelog. A field that keeps its type and changes its meaning is the hardest kind to notice from the outside, so we call it out in the same way as a removal.
+We treat the last one as breaking too. A field that keeps its name and its type, and starts meaning something else, is the hardest change to notice from the outside. We call it out in the changelog the same way we call out a removal.
 
 ## What our build enforces
 
-The published shape of `/v3` is recorded in our source and checked on every change. A change that removes an endpoint, a field, or a parameter from that record, or that makes an existing parameter newly required, fails the build and cannot merge. Removing something from that record is the deliberate act of breaking the version, and our process is that this only happens by minting the next version.
+We record the published shape of `/v3` in our source. Our build checks every change against that record. If a change removes an endpoint, a field, or a parameter, or makes an existing parameter required, the build fails and the change cannot merge.
 
-That check runs on every pull request across the service that serves `/v3`. It is a floor, not a substitute for the notice below.
+Editing that record is how we break a version on purpose. Our process is that this only happens when we mint the next version.
+
+This check runs on every pull request to the service that serves `/v3`. It is a floor. It does not replace the notice below.
 
 ## Versions and deprecation
 
 A breaking change means a new version, served alongside the old one at a new path.
 
-**We do not deprecate a version you are still on.** When `/v4` arrives, `/v3` keeps running. You move when you are ready, and you tell us when you have moved. We will ask, and we will tell you what changed and what it takes to move, but the date is yours.
+**We do not deprecate a version you are still on.** When `/v4` arrives, `/v3` keeps running. You move when you are ready, and you tell us once you have moved. We will ask, and we will tell you what changed and what the move takes. The date is yours.
 
-Once every integration has moved off a version, we retire it.
+We retire a version once every integration has moved off it.
 
 ## Pruning what you do not use
 
-Between versions we prune parts of the surface nobody uses in production. If your integration calls an endpoint, that endpoint stays. Our default is to leave anything we are unsure about in place.
+Between versions we prune parts of the surface that nobody uses in production. If your integration calls an endpoint, that endpoint stays. Where we are unsure, we leave it in place.
 
-If you are planning to start using something you have not called before, tell us, and we will treat it as in use from that point.
+If you plan to start using something you have not called before, tell us. We will treat it as in use from that point.
 
 ## How you hear about it
 
-**The [changelog](/v3/changelog)** carries every integrator-visible change: new capabilities, fixes you can observe, SDK releases, and any change of behavior. It is the record, and it is the place to check when something looks different.
+**The [changelog](/v3/changelog)** carries every integrator-visible change: new capabilities, fixes you can observe, SDK releases, and changes of behavior. Check it when something looks different.
 
-**For breaking changes we email you.** Give us the contacts who need to know, usually a mix of engineering, product, and whoever carries support. A change that could affect people using your product should reach someone who can act on it, and an email does that in a way a page you have to remember to visit does not.
+**For breaking changes we email you.** Give us the contacts who need to know. Most teams give us a mix of engineering, product, and whoever carries support. A change that affects people using your product needs to reach somebody who can act on it, and email does that.
 
-The dashboard shows the same information for your workspace. Treat email as the alert and the changelog as the reference.
+Your dashboard shows the same information for your workspace. Treat email as the alert and the changelog as the reference.
 
-**We know when you go live.** Once you are running in production we get an alert on our side, and from that point your configuration is part of the compatibility checks we run before a release. Your integration stops being one of many and starts being one we test against.
+**We know when you go live.** Once you run in production, we get an alert on our side. From that point we include your configuration in the compatibility checks we run before a release.
 
 ## What we ask of you
 
-1. **Keep your contacts current.** Tell us when the right people change. Notice we send to somebody who left is notice nobody read.
+1. **Keep your contacts current.** Tell us when the right people change.
 2. **Tell us when you go to production**, and when you move between versions.
-3. **Confirm on your server.** Read the result with [`GET /v3/confirmations/{token}`](/v3/api/confirmations) using your secret key. The `vyc` value on the return URL is a UI hint and the person can edit it.
+3. **Confirm on your server.** Read the result with [`GET /v3/confirmations/{token}`](/v3/api/confirmations) using your secret key. The `vyc` value on the return URL is a UI hint, and the person can edit it.
 4. **Pin your SDK version** and upgrade deliberately. The [changelog](/v3/changelog) tells you what each release changed.
 
 <Note>
-  Something changed and you cannot find it in the changelog? Tell us. A change
-  you noticed before we published it is a miss on our side, and we would rather
-  hear about it than not.
+  Something changed and you cannot find it in the changelog? Tell us. If you
+  noticed a change before we published it, that is a miss on our side, and we
+  want to hear about it.
 </Note>
