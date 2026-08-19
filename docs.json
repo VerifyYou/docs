@@ -57,15 +57,6 @@
                                 ]
                             },
                             {
-                                "group": "Concepts",
-                                "pages": [
-                                    "v3/concepts/humanness-and-uniqueness",
-                                    "v3/concepts/identity-and-recognition",
-                                    "v3/concepts/returning-users",
-                                    "v3/advanced/account-linking"
-                                ]
-                            },
-                            {
                                 "group": "Reference",
                                 "pages": [
                                     "v3/faq",
