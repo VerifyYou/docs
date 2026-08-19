@@ -125,8 +125,8 @@ The canonical snippets live in connect-fe:
 `integrationPrompt.ts`). Docs code blocks mirror them, comments included, so a
 developer sees the same code in the dashboard and the docs. When either side
 changes, sync the other, and correct drift against the live API rather than
-copying it (that page has shipped `"flagged"` and `["collision"]`; the live
-enum is `approved | denied` and reasons like `collision_company`).
+copying it. Watch for snippets touching deprecated response fields (for
+example destructuring `external_id` from a confirmation).
 
 ## Verify before you write
 
@@ -145,6 +145,9 @@ behavior:
 - **Unresolved**: trust-score framing (claim gates say deductive from 100; the
   wire says 0 to 100, higher = riskier). Do not write score prose until
   reconciled.
+- Retired terms sweep: "guest"/"member" pages were rewritten 2026-08 (Identity
+  and recognition, Returning people). If an old term reappears, it rode in
+  from a stale branch; fix it, do not propagate it.
 
 Cannot ground a fact? `[PLACEHOLDER: exact question]` and flag it, per the
 voice skill.
