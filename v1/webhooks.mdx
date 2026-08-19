@@ -9,13 +9,13 @@ Webhook configurations are tied to your API key. If you switch from sandbox keys
 
 ## Events
 
-- `USER_VERIFICATION_COMPLETED` — the user has successfully completed verification.
-- `USER_VERIFICATION_REVOKED` — a user voluntarily revoked their connection to the company.
-- `USER_VERIFICATION_DENIED` — the company denied a user's verification request (e.g., after reviewer rejection).
-- `USER_VERIFICATION_DETERMINED_UNFULFILLABLE` — the verification cannot be fulfilled.
+- `USER_VERIFICATION_COMPLETED`: the user has successfully completed verification.
+- `USER_VERIFICATION_REVOKED`: a user voluntarily revoked their connection to the company.
+- `USER_VERIFICATION_DENIED`: the company denied a user's verification request (e.g., after reviewer rejection).
+- `USER_VERIFICATION_DETERMINED_UNFULFILLABLE`: the verification cannot be fulfilled.
 
 <Note>
-**`USER_VERIFICATION_REVOKED` vs `USER_VERIFICATION_DENIED`** — These events represent two different disconnection flows:
+**`USER_VERIFICATION_REVOKED` vs `USER_VERIFICATION_DENIED`**: These events represent two different disconnection flows:
 - **Revoked**: The *user* initiates the disconnection by voluntarily revoking their verification.
 - **Denied**: The *company* initiates the rejection by denying the user's verification request.
 

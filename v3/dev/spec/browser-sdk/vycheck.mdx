@@ -46,7 +46,7 @@ Any of these can be set once with [`init()`](/v3/dev/spec/browser-sdk/init) inst
 
 ## Errors
 
-Rejects with [`VerifyYouError`](/v3/dev/spec/browser-sdk/errors) when opening the session fails. Never throws synchronously. Dismiss is not an error.
+Rejects when opening the session fails, with an ordinary `Error` today; read `err.message`. Never throws synchronously. Dismiss is not an error. See [Errors](/v3/dev/spec/browser-sdk/errors).
 
 ## Example
 

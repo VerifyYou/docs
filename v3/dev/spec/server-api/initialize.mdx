@@ -33,9 +33,11 @@ description: "Mint a session and get back session_id and the hosted URL."
 | `400` | `invalid_redirect_url` | Not absolute, or not `https` off localhost. |
 | `400` | `verification_requires_identifier` | The verification is set to "provided by you" and none was sent. |
 | `400` | `identifiers_require_secret_key` | A deprecated publishable key was used with identity or targeting fields. |
+| `400` | `invalid_verification_config` | The verification's stored config does not compile. |
 | `403` | `config_requires_test_key` | `config` with a live key. |
 | `404` | `no_matching_verification` | Not on your account. |
-| `409` | `method_not_runnable` | The verification's integration method is not code. |
+| `409` | `link_not_active` | The verification runs on invites, so it has no code door. |
+| `409` | `method_not_runnable` | The verification runs on one-time passwords and its code pool has not been provisioned yet. |
 
 ## Example
 

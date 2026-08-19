@@ -24,6 +24,7 @@
                     {
                         "tab": "Dev",
                         "pages": [
+                            "v3/introduction",
                             {
                                 "group": "Integrating",
                                 "pages": [
@@ -53,6 +54,22 @@
                                     "v3/dev/spec/browser-sdk/init",
                                     "v3/dev/spec/browser-sdk/vyresult",
                                     "v3/dev/spec/browser-sdk/errors"
+                                ]
+                            },
+                            {
+                                "group": "Concepts",
+                                "pages": [
+                                    "v3/concepts/humanness-and-uniqueness",
+                                    "v3/concepts/members-vs-guests",
+                                    "v3/concepts/returning-users",
+                                    "v3/advanced/account-linking"
+                                ]
+                            },
+                            {
+                                "group": "Reference",
+                                "pages": [
+                                    "v3/faq",
+                                    "v3/changelog"
                                 ]
                             }
                         ]

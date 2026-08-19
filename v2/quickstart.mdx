@@ -3,7 +3,7 @@ title: "Quick start"
 description: "Two API calls. Verified unique humans in your product."
 ---
 
-We handle — Bots, dupes, and fraud before they get to you.
+We handle bots, dupes, and fraud before they get to you.
 All you decide is where to put the human check in your flow and what happens when someone passes.
 
 <Note>
@@ -15,7 +15,7 @@ All you decide is where to put the human check in your flow and what happens whe
   <Step title="Create a verification">
     ## Step 1: Create a verification
 
-    Call `POST /v2/verification/create` from your backend with a return URL. You get back a link — send your user there.
+    Call `POST /v2/verification/create` from your backend with a return URL. You get back a link; send your user there.
 
     <CodeGroup>
 
@@ -151,13 +151,13 @@ All you decide is where to put the human check in your flow and what happens whe
     </Info>
 
     <Info>
-      Redirect the user to `verification_url` — open it as a redirect, in a modal webview, or a new tab.
+      Redirect the user to `verification_url`: open it as a redirect, in a modal webview, or a new tab.
     </Info>
 
     <Accordion title="Skip phone verification with `phone`" icon="phone">
       ### Skip phone verification with `phone`
 
-      If you've already verified the user's phone number on your end (e.g. your own SMS login, an authenticated session), pass it in `phone`. The returned `verification_url` will land the user directly on the liveness check — no phone-OTP step. Same field, same code path on your side; only the URL shape changes.
+      If you've already verified the user's phone number on your end (e.g. your own SMS login, an authenticated session), pass it in `phone`. The returned `verification_url` will land the user directly on the liveness check, with no phone-OTP step. Same field, same code path on your side; only the URL shape changes.
 
       ```json Request
       {
@@ -174,10 +174,10 @@ All you decide is where to put the human check in your flow and what happens whe
       ```
 
       <Warning>
-        The `verification_url` is the trust anchor — anyone with it can complete the flow as that user. Deliver it over a channel you've already authenticated (post-login redirect, authenticated email, push notification). Don't drop it in a public page or unauthenticated email.
+        The `verification_url` is the trust anchor; anyone with it can complete the flow as that user. Deliver it over a channel you've already authenticated (post-login redirect, authenticated email, push notification). Don't drop it in a public page or unauthenticated email.
       </Warning>
 
-      `phone` skips the OTP step, not the verification itself — every call runs the full liveness check.
+      `phone` skips the OTP step, not the verification itself; every call runs the full liveness check.
     </Accordion>
   </Step>
 
@@ -186,23 +186,23 @@ All you decide is where to put the human check in your flow and what happens whe
 
     Once the user lands on our flow, VerifyYou runs a two-stage check automatically:
 
-    1. **Phone number check** — a verified phone number acts as a persistent identifier that follows the user across devices, browsers, and sessions.
-    2. **Liveness + uniqueness scan** — confirms a real human is present and they haven't verified under a different account.
+    1. **Phone number check**: a verified phone number acts as a persistent identifier that follows the user across devices, browsers, and sessions.
+    2. **Liveness + uniqueness scan**: confirms a real human is present and they haven't verified under a different account.
 
-    {/* TODO: update this section once the new retry + human-review flow is finalized. Emphasize that it's a safety net — very little traffic should actually pass through it. */}
+    {/* TODO: update this section once the new retry + human-review flow is finalized. Emphasize that it's a safety net, very little traffic should actually pass through it. */}
 
     <Info>
-      **Desktop vs. mobile.** If your user hits the flow on desktop, we hand them off to their phone via a QR code — they scan, complete the liveness capture on mobile, and (on success) the desktop session automatically advances and redirects back to your `redirect` URL. Users who start on mobile stay on mobile and complete the whole flow on one device. Either way, your app just gets one redirect back with the same query params — you don't need to branch your integration on device type.
+      **Desktop vs. mobile.** If your user hits the flow on desktop, we hand them off to their phone via a QR code: they scan, complete the liveness capture on mobile, and (on success) the desktop session automatically advances and redirects back to your `redirect` URL. Users who start on mobile stay on mobile and complete the whole flow on one device. Either way, your app just gets one redirect back with the same query params; you don't need to branch your integration on device type.
     </Info>
 
     <Accordion title="Why a verification can be denied">
-      A `denied` result isn't a single thing — it means the user failed one of a few checks:
+      A `denied` result isn't a single thing; it means the user failed one of a few checks:
 
-      - **Liveness** — the capture didn't confirm a real person was present (e.g. photo of a photo, screen replay, mask).
-      - **Uniqueness** — the person has already verified under another account, either in your app or elsewhere on our network.
-      - **Risk signals** — patterns consistent with fraudulent attempts.
+      - **Liveness**: the capture didn't confirm a real person was present (e.g. photo of a photo, screen replay, mask).
+      - **Uniqueness**: the person has already verified under another account, either in your app or elsewhere on our network.
+      - **Risk signals**: patterns consistent with fraudulent attempts.
 
-      We don't return the specific reason per attempt on purpose. Exposing which check failed would give bad actors a map of what to try next. That said, we're working on getting this data back to you in a shape that's actually useful — more on that down the road. 
+      We don't return the specific reason per attempt on purpose. Exposing which check failed would give bad actors a map of what to try next. That said, we're working on getting this data back to you in a shape that's actually useful; more on that down the road. 
     </Accordion>
 
     When done, we redirect back to your `redirect` URL with query params appended:
@@ -213,18 +213,18 @@ All you decide is where to put the human check in your flow and what happens whe
 
     | Param | Values |
     | --- | --- |
-    | `vy_status` | `approved` — passed all checks. `denied` — didn't pass. |
+    | `vy_status` | `approved`: passed all checks. `denied`: did not pass. |
     | `vy_token` | Short-lived verification token (expires after 15 minutes). Use this in step 3 to confirm server-side. |
 
     <Note>
-      Want to try the flow right now? Generate a test phone number with the [sandbox](/v2/testing) — no API key needed:
+      Want to try the flow right now? Generate a test phone number with the [sandbox](/v2/testing); no API key needed:
       ```bash
       curl -s https://api.connect.verifyyou.com/v2/sandbox/phone-number -H "Content-Type: application/json" -d '{}'
       ```
     </Note>
 
     <Note>
-      Running the flow yourself? There are a few quirks worth knowing — test phone numbers, account stickiness across browsers, and human review. See [Testing the flow](/v2/testing#what-to-expect-when-testing) before you start.
+      Running the flow yourself? There are a few quirks worth knowing: test phone numbers, account stickiness across browsers, and human review. See [Testing the flow](/v2/testing#what-to-expect-when-testing) before you start.
     </Note>
 
     <Accordion title="Extract query params from the redirect">
@@ -255,13 +255,13 @@ All you decide is where to put the human check in your flow and what happens whe
   <Step title="Confirm the result">
     ## Step 3: Confirm the result
 
-    Never trust the `vy_status` query param alone — anyone can fake a URL. Call `POST /v2/verification/status` from your backend to confirm.
+    Never trust the `vy_status` query param alone; anyone can fake a URL. Call `POST /v2/verification/status` from your backend to confirm.
 
     <Info>
-      Safe to poll — an in-flight verification (created but the user hasn't finished yet) returns `200` with `verification_complete: false`. A `404` only happens for tokens or `external_id`s that don't match any verification.
+      Safe to poll: an in-flight verification (created but the user hasn't finished yet) returns `200` with `verification_complete: false`. A `404` only happens for tokens or `external_id`s that don't match any verification.
     </Info>
 
-    **Option A — check by token:**
+    **Option A, check by token:**
 
     <CodeGroup>
 
@@ -368,7 +368,7 @@ All you decide is where to put the human check in your flow and what happens whe
 
     </CodeGroup>
 
-    **Option B — check by external ID:**
+    **Option B, check by external ID:**
 
     Use this when the token has expired (after 15 minutes), or when you want to check status without a redirect flow.
 
@@ -476,11 +476,11 @@ All you decide is where to put the human check in your flow and what happens whe
     ```
 
     <Info>
-      **Status answers at the user level, not the session level.** Looking up by `external_id` returns `true` as soon as *any* session for that user has completed — useful if you call `verification/create` more than once for the same user (e.g. to deliver the URL via different channels). See [Reusing the same external_id](/v2/external-ids#reusing-the-same-external-id) for details. Looking up by `token` is always session-scoped.
+      **Status answers at the user level, not the session level.** Looking up by `external_id` returns `true` as soon as *any* session for that user has completed. Useful if you call `verification/create` more than once for the same user (e.g. to deliver the URL via different channels). See [Reusing the same external_id](/v2/external-ids#reusing-the-same-external-id) for details. Looking up by `token` is always session-scoped.
     </Info>
 
     <Info>
-      That's it. Two endpoints, one redirect, one check — your user is verified as a real, unique human.
+      That's it. Two endpoints, one redirect, one check. Your user is verified as a real, unique human.
     </Info>
   </Step>
 </Steps>

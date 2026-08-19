@@ -61,6 +61,13 @@ Never trust the client result alone. The token (`vyt`) is proof, not a verdict; 
   </Tab>
 </Tabs>
 
+<Note>
+  The token-free read needs a credential to match on. An **anonymous**
+  verification binds none, so it answers `404 no_settled_pass` every time. On
+  those checks the `vyt` is your only route to the verdict. See
+  [Anonymous checks](/v3/dev/integrating/start-a-session#anonymous-checks).
+</Note>
+
 **With the token** is the stronger check: it proves this run just finished, names exactly one pass, and puts no email in your request logs. **Without a token** is a recovery path: it answers whether the email or phone has verified, and lets a returning person skip another redirect. What it cannot tell you is whether they just did a check.
 
 We report `verified: true | false`. Pass or fail is your decision, and routing lives in your code, next to the action.

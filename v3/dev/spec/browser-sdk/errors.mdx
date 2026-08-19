@@ -1,7 +1,36 @@
 ---
-title: "VerifyYouError"
-description: "Rejection codes from vycheck()."
+title: "Errors"
+description: "What vycheck() rejects with, and how to handle it."
 ---
+
+`vycheck()` never throws synchronously. Failures arrive as a promise rejection, and every rejection today is a plain `Error`: read `err.message`, not a code.
+
+```js
+try {
+  const { token } = await vycheck({ session: sessionId, mode: "iframe" });
+  if (!token) {
+    // They closed it without finishing. Not an error. Let them retry.
+  }
+} catch (err) {
+  // Session expired or already used, or the network failed. Mint a fresh
+  // session and let them try again.
+  console.error("verifyyou:", err.message);
+}
+```
+
+The common failure is opening the session: a non-2xx rejects with `VerifyYou: initialize failed (HTTP <status>)`. The session expired or was already used; mint a fresh one.
+
+## Dismissal is not an error
+
+Closing a drawer or inline embed without finishing **resolves** with `{ token: null, verified: false, vyc: null }`. Check for a missing `token`; do not rely on `catch`.
+
+## Redirect mode never rejects after navigation
+
+In redirect mode `vycheck()` navigates the page away, so its promise never settles and nothing after it runs. Error handling for that path belongs on the return page, around `vyget()` and your own confirmation call.
+
+## VerifyYouError
+
+The package exports a typed error class for transport failures. **No code path throws it today**, so do not branch on `instanceof VerifyYouError`. It exists for forward compatibility; when it does fire, it is still an `Error`, so `err.message` handling keeps working.
 
 ```ts
 class VerifyYouError extends Error {
@@ -10,9 +39,4 @@ class VerifyYouError extends Error {
 }
 ```
 
-| `code` | Meaning | Do |
-| --- | --- | --- |
-| `timeout` | No answer in 10 s | Retry |
-| `network` | Request failed | Retry |
-| `http` | Non-2xx opening the session; usually expired or already used | Mint a new session |
-| `bad_response` | Not JSON | Treat as failed |
+It is not on the CDN global; the IIFE build exposes only `init`, `vycheck`, and `vyget`.

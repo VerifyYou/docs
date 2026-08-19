@@ -3,7 +3,7 @@ title: "Authentication"
 description: "Authenticate API requests with your API key."
 ---
 
-All API requests are authenticated with an `API-KEY` header. You can try the API without a key using the sandbox — unauthenticated requests are rate limited to 5 requests per minute and automatically use a public sandbox account.
+All API requests are authenticated with an `API-KEY` header. You can try the API without a key using the sandbox; unauthenticated requests are rate limited to 5 requests per minute and automatically use a public sandbox account.
 
 ```bash
 # Authenticated (production)
@@ -19,5 +19,5 @@ curl -X POST https://api.connect.verifyyou.com/v2/verification/create \
 ```
 
 <Warning>
-  Keep your API key secret. Never expose it in client-side code — always call the API from your backend.
+  Keep your API key secret. Never expose it in client-side code; always call the API from your backend.
 </Warning>

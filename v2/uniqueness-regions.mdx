@@ -3,11 +3,11 @@ title: "Uniqueness Regions"
 description: "Scope one-account-per-person limits to specific contexts like competitions, forms, or servers."
 ---
 
-By default, each verified person is limited to one account across your entire integration — preventing duplicate accounts and fraud.
+By default, each verified person is limited to one account across your entire integration, which prevents duplicate accounts and fraud.
 
 Pass a `region` to scope that limit per context. Each verified person is limited to one account **per region**, so they can't create duplicates within the same context. Users who are already verified can connect to new regions instantly without redoing the liveness check.
 
-Use this when you need to ensure one real human per context — for example, one account per competition, one response per form, or one player per server.
+Use this when you need to ensure one real human per context: for example, one account per competition, one response per form, or one player per server.
 
 <CodeGroup>
 
@@ -122,5 +122,5 @@ defer resp.Body.Close()
 </CodeGroup>
 
 <Info>
-  Region strings are arbitrary — define them however makes sense for your product. Something descriptive and stable like `survey_abc123` or `event_2026_austin` works better than a timestamp.
+  Region strings are arbitrary; define them however makes sense for your product. Something descriptive and stable like `survey_abc123` or `event_2026_austin` works better than a timestamp.
 </Info>
