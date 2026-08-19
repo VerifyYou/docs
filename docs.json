@@ -24,7 +24,6 @@
                     {
                         "tab": "Dev",
                         "pages": [
-                            "v3/introduction",
                             {
                                 "group": "Integrating",
                                 "pages": [
@@ -121,6 +120,10 @@
         ]
     },
     "redirects": [
+        {
+            "source": "/v3/introduction",
+            "destination": "/v3/dev/integrating/start-a-session"
+        },
         {
             "source": "/v3/concepts/accounts-vs-guests",
             "destination": "/v3/concepts/identity-and-recognition"
