@@ -5,11 +5,11 @@ description: "General gotchas and how to use the sandbox API"
 
 ## What to expect when testing
 
-If you're running the full flow yourself in a browser — not just hitting the API — there are a few things to know up front.
+If you're running the full flow yourself in a browser (not just hitting the API), there are a few things to know up front.
 
 ### Heads up if you're testing on desktop
 
-If you open the verification URL on a laptop or desktop, you'll be handed off to your phone via a QR code — the liveness capture only runs on mobile. Scan the QR, finish the flow on your phone, and the desktop tab will advance and redirect back on its own. See the [Quick start](/v2/quickstart) for the full breakdown.
+If you open the verification URL on a laptop or desktop, you'll be handed off to your phone via a QR code; the liveness capture only runs on mobile. Scan the QR, finish the flow on your phone, and the desktop tab will advance and redirect back on its own. See the [Quick start](/v2/quickstart) for the full breakdown.
 
 ### Test phone numbers are required
 
@@ -18,23 +18,23 @@ You can generate a number and its verification code first via `POST /v2/sandbox/
 then enter both when the flow prompts you.
 
 <Tip>
-  Want to skip the phone-OTP step entirely during testing? Pass the test phone number as `phone` on `verification.create` — the flow lands straight on the liveness check. See [Skip phone verification](/v2/quickstart#skip-phone-verification-with-phone).
+  Want to skip the phone-OTP step entirely during testing? Pass the test phone number as `phone` on `verification.create`; the flow lands straight on the liveness check. See [Skip phone verification](/v2/quickstart#skip-phone-verification-with-phone).
 </Tip>
 
 ### Account state persists beyond your browser
 
-{/* TODO: Ammar + James to riff on final wording — confirm BCU / alts-exhausted naming matches what the system actually returns. */}
+{/* TODO: Ammar + James to riff on final wording, confirm BCU / alts-exhausted naming matches what the system actually returns. */}
 VerifyYou tracks accounts at the user level, not the browser level.
 Your verified phone number acts as a persistent identifier that follows the account
-across devices and sessions — clearing cookies, switching devices, or opening an
+across devices and sessions, clearing cookies, switching devices, or opening an
 incognito window won't give you a fresh start.
 
-When you're testing, you'll probably run into this pretty quickly — and from the API
+When you're testing, you'll probably run into this pretty quickly, and from the API
 side it can feel like a bug. You'll call `verification.create`, push the same user
 (or someone close) through the flow a second time, and not get the fresh slate you
 expected. That's by design: every verification you create is tied to a user at
 creation time, and that tie follows them through the whole lifecycle on our end.
-Incognito, cleared cookies, a different browser, a new device — none of that gives
+Incognito, cleared cookies, a different browser, a new device: none of that gives
 you a fresh start, because the state lives on our servers, not in your browser.
 One verified account per user per company is the rule.
 
@@ -43,27 +43,27 @@ the same user, or kick off a new `verification.create` with a different test pho
 number so you're binding a different user.
 
 If something looks genuinely broken (not just "I got blocked again"),
-report it to us — we want to know.
+report it to us; we want to know.
 
 If you actually need a clean slate (which is often when testing), visit [/del](https://vyjoin.com/del) on the
 VerifyYou web app to delete your account, then try again.
 
 ### Landing in human review
 
-{/* TODO: rewrite this section once the new retry + review logic is finalized. Frame it as a safety net — emphasize that minimal traffic should actually flow through here. */}
+{/* TODO: rewrite this section once the new retry + review logic is finalized. Frame it as a safety net, emphasize that minimal traffic should actually flow through here. */}
 On your second attempt through the flow, you'll should land in human review. The
 reason is simple: your face is already on file from the first run, so the second
-attempt collides with an existing verified account — and that collision is what
+attempt collides with an existing verified account, and that collision is what
 sends you to human review.
 
-Human review is a safety net, not a catch-all — in production it should see very
+Human review is a safety net, not a catch-all; in production it should see very
 little traffic. You won't see a big scary error when you land here; things just
 sort themselves out in the background.
 
 <Info>
   The human review step can be annoying during development. We're working on
   a sandbox dashboard where you can self-approve pending verifications for
-  testing — no ETA yet, but reach out if it's slowing you down.
+  testing. No ETA yet, but reach out if it's slowing you down.
 </Info>
 
 ---
@@ -71,7 +71,7 @@ sort themselves out in the background.
 
 ## Sandbox API
 
-The sandbox endpoints let you test the full verification flow without real phone numbers or SMS. No API key is needed — unauthenticated access works out of the box.
+The sandbox endpoints let you test the full verification flow without real phone numbers or SMS. No API key is needed; unauthenticated access works out of the box.
 
 <Note>
   Public access to these endpoints is heavily rate limited. Please use an [API key](/v2/authentication) when possible.
@@ -388,7 +388,7 @@ json.NewDecoder(resp.Body).Decode(&data)
 ```
 
 <Info>
-  The verification code is always the last 6 digits of the phone number. Only test phone numbers are accepted — real numbers will return a `400` error.
+  The verification code is always the last 6 digits of the phone number. Only test phone numbers are accepted; real numbers will return a `400` error.
 </Info>
 
 ---
@@ -414,7 +414,7 @@ another clean run.
 
 <Warning>
   The liveness + uniqueness scan has to be completed in a browser by a real
-  human in front of a camera. It's intentionally not API-automatable — don't
+  human in front of a camera. It's intentionally not API-automatable; don't
   try to wire it into an automated test suite. The script below handles the
   backend steps; the human step happens in the hosted flow.
 </Warning>
@@ -458,7 +458,7 @@ print(status)
 
 **4. Restart the loop (for repeat testing, spoof attempts, etc.):**
 
-Once you've verified, your face is on file — the next run through the flow
+Once you've verified, your face is on file; the next run through the flow
 will collide with your existing account and land in human review (see
 [Landing in human review](#landing-in-human-review)). To get a clean slate,
 visit [/del](https://vyjoin.com/del) on the VerifyYou web app to delete your

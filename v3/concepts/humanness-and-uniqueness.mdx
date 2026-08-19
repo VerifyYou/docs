@@ -11,7 +11,7 @@ Humanness is a short, guided **face check** using the device camera. The person 
 
 The capture is scored for confidence that a real, present person is in front of the camera, not a photo, a video replay, a mask, or a generated face. Below the threshold, the verification doesn't pass.
 
-The capture itself doesn't stick around as a picture. It becomes a **face code**, a numeric representation used for the uniqueness check below. That's the promise the flow makes on its consent screen: your selfie becomes a code, not a photo.
+The capture itself doesn't stick around as a picture. It becomes a **face vector**, a numerical representation of the face's geometry, and the image itself is discarded. The vector is what the uniqueness check below runs on.
 
 ### Any device, including desktop
 
@@ -25,7 +25,7 @@ The flow runs wherever the person is:
 
 Once we know the person is live, we check that they're new. The face code from the capture is searched against the faces of people who have already verified.
 
-A match to **this same person's own record** is recognition, not a problem. That's how returning users get through quickly and how a [member](/v3/concepts/members-vs-guests) is recognized on a new device.
+A match to **this same person's own record** is recognition, not a problem. That's how returning people get through quickly and how a person with a [bound identity](/v3/concepts/identity-and-recognition) is recognized on a new device.
 
 A match to **someone else's record** is a **collision**: the same face already verified under a different person. What happens next is up to two settings on your verification:
 
@@ -34,10 +34,10 @@ A match to **someone else's record** is a **collision**: the same face already v
 | **Check group** | `company` or `network` | Who the face is compared against. Company scope only checks people verified through your own verifications. Network scope checks everyone who has verified anywhere on VerifyYou. |
 | **Collision action** | `block` or `flag` | What a finding does. Block denies the verification outright. Flag lets it pass as `flagged` so you can review it, and the finding shows up in the confirmation's `reasons`. |
 
-One more face rule applies to signed-in members: if someone signs in with their identity and the new capture doesn't match the face on their record, that's a **self mismatch** and it's reported the same way.
+One more face rule applies after sign-in: if someone signs in with their bound identity and the new capture doesn't match the face on their record, that's a **self mismatch** and it's reported the same way.
 
 This combination is what lets you say "one real human, once": no duplicates, no second submission from the same face, scoped as tightly or as widely as your product needs.
 
 ## What you get back
 
-A confirmation reports `verified: true` only when the person cleared **both** checks. The confirmation also carries a `status` (`approved`, `flagged`, or `denied`) and the `reasons` behind it, such as `collision`. You confirm that result on your backend; see [Confirmations](/v3/dev/spec/server-api/confirmations).
+A confirmation reports `verified: true` only when the person cleared **both** checks. The confirmation also carries a `status` (`approved` or `denied`; approved with findings is presented as flagged) and the `reasons` behind it, such as `collision_company`. You confirm that result on your backend; see [Confirmations](/v3/dev/spec/server-api/confirmations).

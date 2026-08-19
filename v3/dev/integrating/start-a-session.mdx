@@ -33,7 +33,7 @@ if (!res.ok) {
   // 400 verification_requires_identifier  this check is set to "Provided by you"
   // 401 / 403                             wrong key, or a test-only field on a live key
   // 404 no_matching_verification          that verification_id isn't on your account
-  // 409 method_not_runnable               the check isn't wired for code yet
+  // 409 link_not_active                   this check runs on invites, not on code
   throw new Error(`verifyyou initialize: ${res.status} ${detail}`);
 }
 
@@ -49,6 +49,38 @@ Attach what ties the run to your records:
 | --- | --- | --- |
 | An existing account | `external_id` | Duplicates reported against your id |
 | A new signup | `email` or `phone` | The run is bound to that identity; the person cannot swap it |
-| Nothing (anonymous) | just `verification_id` | A session. Mint it only when your own signals say this request deserves a check |
+| Nothing (anonymous) | just `verification_id` | A session, and a pass with no identity attached to it |
+
+## Anonymous checks
+
+A verification configured as **Anonymous** collects no email and no phone. The
+person never sees an identity step, and three things follow that are easy to
+trip over:
+
+- **Send neither `email` nor `phone`.** Neither is rejected, but either one seeds
+  the run and quietly turns it into a bound one, which is not what the
+  verification is configured to do.
+- **`identity` on the confirmation is always `null`.** Do not build a flow that
+  expects an address back, and do not ask the person for one to reconcile
+  against.
+- **There is no token-free lookup.** [`POST /v3/confirmations`](/v3/dev/spec/server-api/lookup)
+  matches on a credential, and an anonymous run binds none, so it answers
+  `404 no_settled_pass` every time. The `vyt` is the only way to read the
+  result, so do not drop it.
+
+<Warning>
+  While a run carries no identifier at all, an anonymous verification meters
+  **one successful pass per person, for life**, ahead of any limit configured on
+  the verification. Sending an `external_id` is enough to take the run out of
+  that ceiling and restore the configured limit. If your second test run comes
+  back denied, this is why.
+
+  An option to control this is coming: check segmentation will let you group
+  the collision gate, so a pass counts within a segment you define instead of
+  once for life.
+</Warning>
+
+`external_id` is the only handle an anonymous check gives you. It is how you tie
+a pass back to your own record, and how duplicates get reported against your id.
 
 Minting server side is also your rate limit and your gate. Nobody can flood your account from a browser, and you decide which requests get a scan. Full parameters and errors: [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize).

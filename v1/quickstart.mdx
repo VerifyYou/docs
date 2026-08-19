@@ -70,7 +70,7 @@ Once the user has verified, call `/get_status` to get the `simple_data_request_r
 
 ## Enforcing uniqueness with `uniqueness_region_id`
 
-By default, unique human ID uniqueness is enforced at the service account level — each real person can only verify once across your entire account.
+By default, unique human ID uniqueness is enforced at the service account level: each real person can only verify once across your entire account.
 
 If you don't have a persistent `reference_user_id` for the user (e.g. anonymous surveys), you can pass an ephemeral session or token ID as the `reference_user_id` and use `uniqueness_region_id` to scope uniqueness to a specific context instead. For example, passing a survey ID as the `uniqueness_region_id` ensures each person can only complete that particular survey once, without requiring you to track users across surveys.
 

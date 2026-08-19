@@ -1,6 +1,6 @@
 ---
 title: "FAQ"
-description: "Common questions about verifying, keys, returning users, and data."
+description: "Common questions about verifying, keys, returning people, and data."
 ---
 
 <AccordionGroup>
@@ -20,38 +20,39 @@ description: "Common questions about verifying, keys, returning users, and data.
     authoritative.
   </Accordion>
 
-  <Accordion title="What's the difference between publishable and secret keys?">
-    The **publishable key** (`pk_…`) is safe in the browser and is what the SDK
-    uses to start a verification. The **secret key** (`sk_…`) stays on your
-    server and is required to confirm tokens, lock confirmations, and attach
-    identities at initialize. Never ship a secret key to the client.
+  <Accordion title="Which key do I use where?">
+    The **secret key** (`sk_…`) stays on your server. It mints sessions at
+    initialize and confirms tokens. The browser needs no key at all: it opens
+    the session your server minted with `vycheck({ session })`. Publishable
+    keys (`pk_…`) are deprecated. Never ship a secret key to the client.
   </Accordion>
 
   <Accordion title="How do test and live modes work?">
-    Each key comes in a test and a live flavor (`pk_test_…` / `pk_live_…`,
-    `sk_test_…` / `sk_live_…`). Test keys run a sandbox flow that creates test
-    users. Build against them freely. Switch to live keys to verify real people.
+    Each key comes in a test and a live flavor (`sk_test_…` / `sk_live_…`).
+    Test keys run the simulator and create test people, isolated from live
+    records. Build against them freely. Switch to the live key to verify real
+    people.
   </Accordion>
 
-  <Accordion title="Why did a returning user get blocked?">
-    Most often it's a **guest** whose device ID is gone: they cleared the
-    browser, switched devices, or used a private window. They look like a new
-    person, but their face is still on record, so they collide with their own
-    earlier verification. Verify repeat users as
-    [members](/v3/concepts/members-vs-guests) (a verified phone or email) so
-    they can be recognized and re-linked instead of blocked.
+  <Accordion title="Why did a returning person get blocked?">
+    Most often it's an **anonymous person** whose device ID is gone: they
+    cleared the browser, switched devices, or used a private window. They look
+    new, but their face is still on record, so they collide with their own
+    earlier verification. Bind repeat visitors to a
+    [verified phone or email](/v3/concepts/identity-and-recognition) so they
+    can be recognized and re-linked instead of blocked.
   </Accordion>
 
-  <Accordion title="Do users have to verify every time?">
+  <Accordion title="Does a person have to verify every time?">
     No. Within your verification's skip window, someone who already passed
-    completes almost instantly. **Members** are also recognized on new
-    devices: their face is matched and they sign back in with their number or
-    email to re-assert their claim. **Guests** are recognized only by the
-    device ID in their browser, so they re-verify more often. See
-    [Returning users](/v3/concepts/returning-users).
+    completes almost instantly. A person with a **bound identity** is also
+    recognized on new devices: their face is matched and they sign back in
+    with their number or email to re-assert their claim. An anonymous person
+    is recognized only by the device ID in their browser, so they re-verify
+    more often. See [Returning people](/v3/concepts/returning-users).
   </Accordion>
 
-  <Accordion title="What if my user is on a desktop?">
+  <Accordion title="What if the person is on a desktop?">
     The flow runs in place with their webcam. If they'd rather use their phone,
     one click shows a QR code that moves the same session to their phone's
     browser, and the desktop follows along in realtime and returns to your site
@@ -59,15 +60,16 @@ description: "Common questions about verifying, keys, returning users, and data.
     [Humanness and uniqueness](/v3/concepts/humanness-and-uniqueness#any-device-including-desktop).
   </Accordion>
 
-  <Accordion title="How do I tie a verification to my own user?">
+  <Accordion title="How do I tie a verification to my own account records?">
     Pass `external_id` (and optionally `phone`/`email`) at
-    [initialize](/v3/dev/spec/server-api/initialize) from your server. The `external_id` comes
-    back on the confirmation. See [Account linking](/v3/advanced/account-linking).
+    [initialize](/v3/dev/spec/server-api/initialize) from your server.
+    Duplicates are reported against your id. See
+    [Account linking](/v3/advanced/account-linking).
   </Accordion>
 
   <Accordion title="I have a one-time form and don't want resubmissions. What do I use?">
-    Usually **not** lock. Store the confirmation `id` you were returned and refuse
-    to accept the same one twice — that stops a resubmission without affecting the
+    Usually **not** lock. Use your own idempotency on the submission so the same
+    token is not accepted twice. That stops a resubmission without affecting the
     person's ability to verify again later. For caps like once per week or once per
     event, set a verification limit in the dashboard.
 

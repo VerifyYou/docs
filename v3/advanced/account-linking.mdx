@@ -1,15 +1,15 @@
 ---
 title: "Account linking"
-description: "Tie a verification to your own user, and bind an identity that claims their uniqueness."
+description: "Tie a verification to your own record, and bind an identity that claims their uniqueness."
 ---
 
-By default a person you verify is a [guest](/v3/concepts/members-vs-guests), recognized only by the device ID in their browser. **Account linking** ties the verification to your own user record and, optionally, binds an identity that makes the person a [member](/v3/concepts/members-vs-guests): a durable claim to their own face record, portable across devices and browsers.
+By default a person you verify is anonymous, recognized only by the device ID in their browser. **Account linking** ties the verification to your own record and, optionally, binds a [durable identity](/v3/concepts/identity-and-recognition): a claim to their own face record, portable across devices and browsers.
 
 You link at [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize), from your server, with a **secret key**.
 
-## Link your own user with `external_id`
+## Link your own record with `external_id`
 
-Pass `external_id` to associate the session with a record on your side. It comes straight back when you [confirm](/v3/dev/spec/server-api/confirmations), so you can match the verified human to your user without a lookup table.
+Pass `external_id` to associate the session with a record on your side. Duplicates are reported against it, so one person claiming to be two of your records surfaces as `duplicate_account` when you [confirm](/v3/dev/spec/server-api/confirmations).
 
 ```ts
 const res = await fetch("https://trust.verifyyou.com/v3/initialize", {
@@ -19,16 +19,16 @@ const res = await fetch("https://trust.verifyyou.com/v3/initialize", {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    external_id: "user_123", // your id for this user
+    external_id: "user_123", // your id for this person
   }),
 });
 const { url } = await res.json();
-// redirect the user to `url`; on confirm you'll get external_id back
+// open the session with vycheck({ session }) or redirect to `url`
 ```
 
 ## Bind an identity with `phone` / `email`
 
-Pass a `phone` or `email` to bind the person to a verified identifier. This is what makes them a **member**: the identity becomes their claim to their face record, so their verified uniqueness travels across devices, browsers, and every product you run on VerifyYou. The flow challenges the identifier you supply with a one-time code, and the person can't swap it for a different one.
+Pass a `phone` or `email` to bind the person to a verified identifier. The identity becomes their claim to their face record, so their verified uniqueness travels across devices, browsers, and every product you run on VerifyYou. The flow challenges the identifier you supply with a one-time code, and the person can't swap it for a different one.
 
 ```json
 {
@@ -38,21 +38,18 @@ Pass a `phone` or `email` to bind the person to a verified identifier. This is w
 ```
 
 <Warning>
-  Binding fails if that phone or email is already claimed by another person:
-  an identity is one human. Handle the `400` by routing the user to sign in and
-  re-assert their existing claim rather than creating a duplicate.
+  An identity is one human. If the phone or email you bind is already claimed
+  by a different face, the run settles denied with the finding in `reasons`
+  (for example `identity_mismatch` or `duplicate_account`). Route the person to
+  sign in and re-assert their existing claim rather than creating a duplicate.
 </Warning>
 
 ## Reading it back
 
-The linked `external_id` is returned on the confirmation, so the result is self-describing:
+Confirm the token as usual; findings against your linked record arrive in `reasons`:
 
 ```json
-{
-  "verified": true,
-  "external_id": "user_123",
-  "verification": { "external_id": "signup-flow", "external_tenant_id": null }
-}
+{ "verified": true, "status": "approved", "reasons": [], "declined": false }
 ```
 
 <Note>

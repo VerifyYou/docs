@@ -17,7 +17,7 @@ Embedded flows previously ran from the publishable key alone and couldn't attach
 
 ## close() on the vycheck handle
 
-`vycheck()` returns a handle with a `close()` method to dismiss a drawer or inline embed before the user finishes. See [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck).
+`vycheck()` returns a handle with a `close()` method to dismiss a drawer or inline embed before the person finishes. See [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck).
 
 ## Documented confirmation reasons
 
@@ -41,8 +41,8 @@ If you're on 0.1.1, the core contract is unchanged: the same `vyt`/`vyc` return 
 
 [`GET /v3/confirmations/{token}`](/v3/dev/spec/server-api/confirmations) now returns more than the verdict:
 
-- `status`: `pending`, `approved`, `flagged`, or `denied`
-- `reasons`: the rule findings behind the status, such as `collision`
+- `status`: `approved` or `denied` (approved with findings is presented as flagged)
+- `reasons`: the rule findings behind the status, such as `collision_company`
 - `confirmed_at`: when the verdict settled
 - `identity`: the verified email or phone, when your verification has sharing enabled
 - `id`: the confirmation id
@@ -56,7 +56,7 @@ If you're on 0.1.1, the core contract is unchanged: the same `vyt`/`vyc` return 
 ## Docs
 
 - New [`init()`](/v3/dev/spec/browser-sdk/init) page covering setup and the display modes
-- [Members vs guests](/v3/concepts/members-vs-guests): clearer story on device IDs, membership, and the claim a verified identity gives a person over their own uniqueness
+- [Identity and recognition](/v3/concepts/identity-and-recognition): clearer story on device IDs and the claim a verified identity gives a person over their own uniqueness
 - Condensed [uniqueness](/v3/concepts/humanness-and-uniqueness) explanation: check group (company or network) and collision action (block or flag)
 - Flow tracking webhooks and the Platform API pages were removed ahead of deprecation
 

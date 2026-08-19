@@ -14,16 +14,15 @@ The SDK opens the session your server minted and hands back a token. No key, no 
     Zero UI to build. We host the whole flow and send them back to `redirect_url` with `?vyt=<token>&vyc=<0|1>`. `vycheck` navigates away, so it never resolves; on the way back, `vyget()` reads the result off the URL.
 
     ```js 1. where they leave
-    import { vycheck, VerifyYouError } from "@verifyyou-sdk/client";
+    import { vycheck } from "@verifyyou-sdk/client";
 
     // `session` is the id provided by your server
     try {
       await vycheck({ session: sessionId });
     } catch (err) {
-      // Only reachable BEFORE the browser navigates away:
-      //   "network" / "timeout"  couldn't reach VerifyYou
-      //   "http"                 session expired or already used; mint a new one
-      if (err instanceof VerifyYouError) console.error("verifyyou:", err.code);
+      // Only reachable BEFORE the browser navigates away: the session expired
+      // or was already used, or we couldn't be reached. Mint a new session.
+      console.error("verifyyou:", err.message);
       throw err;
     }
 
@@ -50,7 +49,7 @@ The SDK opens the session your server minted and hands back a token. No key, no 
     Slides over your page: bottom sheet on mobile, side panel on desktop. No redirect. `vycheck` resolves in place with the result.
 
     ```js
-    import { vycheck, VerifyYouError } from "@verifyyou-sdk/client";
+    import { vycheck } from "@verifyyou-sdk/client";
 
     // `session` is the id from step 1. It runs THAT session, the one already
     // carrying your external_id and redirect_url, so there is no key and no
@@ -67,11 +66,9 @@ The SDK opens the session your server minted and hands back a token. No key, no 
         });
       }
     } catch (err) {
-      // "network" / "timeout"  couldn't reach VerifyYou; safe to retry
-      // "http"                 session expired or already used; mint a new one
-      // "bad_response"         unexpected payload; treat the attempt as failed
-      if (err instanceof VerifyYouError) console.error("verifyyou:", err.code);
-      else throw err;
+      // Session expired or already used, or we couldn't be reached.
+      // Mint a fresh session and let them try again.
+      console.error("verifyyou:", err.message);
     }
     ```
   </Tab>
@@ -79,7 +76,7 @@ The SDK opens the session your server minted and hands back a token. No key, no 
     Mounts inside your own element, like an embedded video. `vycheck` resolves in place with the result.
 
     ```js
-    import { vycheck, VerifyYouError } from "@verifyyou-sdk/client";
+    import { vycheck } from "@verifyyou-sdk/client";
 
     try {
       const { token } = await vycheck({
@@ -96,8 +93,7 @@ The SDK opens the session your server minted and hands back a token. No key, no 
         });
       }
     } catch (err) {
-      if (err instanceof VerifyYouError) console.error("verifyyou:", err.code);
-      else throw err;
+      console.error("verifyyou:", err.message);
     }
     ```
 
@@ -108,4 +104,4 @@ The SDK opens the session your server minted and hands back a token. No key, no 
   </Tab>
 </Tabs>
 
-Options and modes: [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck).
+Options and modes: [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/browser-sdk/errors).
