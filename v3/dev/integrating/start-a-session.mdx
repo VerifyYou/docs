@@ -3,7 +3,10 @@ title: "Start a session"
 description: "Mint a session on your server with your secret key."
 ---
 
-One session is one person's attempt at one verification. Create it server side. The secret key never leaves your server; the browser only ever sees the `session_id`.
+With your check configured on the dashboard, mint a session for it on your
+server and return the `session_id` to your frontend. There is no browser path
+to a session; your secret key, and the decision to spend a scan, stay server
+side.
 
 ```ts
 const VY_SK = process.env.VY_SK; // sk_test_… while building, sk_live_… to ship
@@ -18,8 +21,8 @@ const res = await fetch("https://trust.verifyyou.com/v3/initialize", {
     verification_id: "<verification_id>",
     // where they land when done
     redirect_url: "http://localhost:3000/verified",
-    // one uniqueness pool per group, so the same person can pass once in each
-    group: "spring-intake",
+    // optionally set uniqueness to be per group, so the same person can pass once in each group
+    // group: "spring-intake",
     // optionally link with your database
     // external_id: user.id,
     // link with a new person or external identifier
@@ -45,7 +48,8 @@ if (!res.ok) {
 const { session_id } = await res.json();
 ```
 
-Attach what ties the run to your records:
+A session carries at most one identifier, tying the run to whatever you
+already use for the account:
 
 | You have | Send | You get back |
 | --- | --- | --- |
@@ -55,40 +59,33 @@ Attach what ties the run to your records:
 
 ## Groups
 
-Uniqueness covers the whole verification, so once someone passes, every later run
-through that link reads as a duplicate. Reuse one link across separate
-populations and that becomes the bug: whoever passed your spring intake is not a
-duplicate when the autumn one opens, and blocking them is wrong. Send a `group`,
-your own id for it, and the run is judged only against passes carrying the same
-one, so each population gets its own "one person, once". Whatever string arrives
-is the pool, nothing to register, and leaving it off judges the run against every
-pass, as before.
+Uniqueness covers the whole verification: once someone passes, every later run
+through that check reads as the same person, and a repeat attempt reports as a
+duplicate. Sometimes that is too broad. If one check gates several distinct
+things, separate surveys or product drops for instance, send a `group` to
+scope uniqueness to each one. The same person can then pass once in
+`spring-intake` and once in `fall-intake`, but never twice in either.
 
 ## Anonymous checks
 
-A verification configured as **Anonymous** collects no email and no phone. The
-person never sees an identity step, and three things follow that are easy to
-trip over:
+A verification configured as **Anonymous** sends people straight to the check,
+with no identifier step. It fits flows where nobody returns, and it carries
+trade offs:
 
-- **Send neither `email` nor `phone`.** Neither is rejected, but either one seeds
-  the run and quietly turns it into a bound one, which is not what the
-  verification is configured to do.
-- **`identity` on the confirmation is always `null`.** Do not build a flow that
-  expects an address back, and do not ask the person for one to reconcile
-  against.
-- **There is no token-free lookup.** [`POST /v3/confirmations`](/v3/dev/spec/server-api/lookup)
-  matches on a credential, and an anonymous run binds none, so it answers
-  `404 no_settled_pass` every time. The `vyt` is the only way to read the
-  result, so do not drop it.
+- After a person's token expires, you have no identifier to look them up by.
+- Reusing the verification requires a [group](#groups). Without one, any
+  repeat attempt through it is blocked.
+
+Anonymous does not mean client side. The session is still minted on your
+server, for two reasons: a browser alone cannot flood your account with
+scans, and you choose when a check runs at all, so a request your own signals
+flag as low quality never spends one. A scan is spent deliberately.
 
 <Warning>
-  While a run carries no identifier at all, an anonymous verification meters
+  Even with no identifier on the run, an anonymous verification meters
   **one successful pass per person, for life**. If your second test run comes back
   denied, this is why. Send a [`group`](#groups) to reuse the verification, and
   the pass counts once per group instead.
 </Warning>
 
-`external_id` is the only handle an anonymous check gives you. It is how you tie
-a pass back to your own record, and how duplicates get reported against your id.
-
-Minting server side is also your rate limit and your gate. Nobody can flood your account from a browser, and you decide which requests get a scan. Full parameters and errors: [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize).
+For full parameters and errors: [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize).
