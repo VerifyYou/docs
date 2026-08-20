@@ -10,6 +10,7 @@ description: "Latest settled pass by email or phone, no token."
 <ParamField body="email" type="string">As sent to `initialize`. Exactly one of `email` or `phone`.</ParamField>
 <ParamField body="phone" type="string">Alternative.</ParamField>
 <ParamField body="verification_id" type="string (uuid)">Narrow to one verification. Omit for all of yours.</ParamField>
+<ParamField body="group" type="string">Narrow to one group, so you read where the person stands in that pool. Omit to read across every group, passes carrying none included.</ParamField>
 
 ## Response
 
