@@ -12,6 +12,7 @@ description: "Mint a session and get back session_id and the hosted URL."
 <ParamField body="external_id" type="string">Your id for this run. Duplicates are reported against it.</ParamField>
 <ParamField body="email" type="string">Bind the run to this email. The flow cannot collect a different one. One of `email` or `phone`.</ParamField>
 <ParamField body="phone" type="string">Bind the run to this phone. Same rules.</ParamField>
+<ParamField body="group" type="string">Your id for the uniqueness pool this run belongs to, so one verification can be reused across separate groups. Judged only against passes carrying the same group; omit to judge against all of them. Keep `external_id` per person rather than per group. 1 to 255 characters. See [Groups](/v3/dev/integrating/start-a-session#groups).</ParamField>
 <ParamField body="pass_params" type="object<string, string>">Extra query params echoed onto the return URL. `vy*` names are ignored.</ParamField>
 <ParamField body="config" type="object">Test key only. Per-run config override, used verbatim, never merged.</ParamField>
 

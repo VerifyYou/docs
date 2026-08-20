@@ -27,12 +27,13 @@ Once we know the person is live, we check that they're new. The face code from t
 
 A match to **this same person's own record** is recognition, not a problem. That's how returning people get through quickly and how a person with a [bound identity](/v3/concepts/identity-and-recognition) is recognized on a new device.
 
-A match to **someone else's record** is a **collision**: the same face already verified under a different person. What happens next is up to two settings on your verification:
+A match to **someone else's record** is a **collision**: the same face already verified under a different person. Faces are compared inside your company, across every verification you run. What happens on a finding is a setting on the verification:
 
 | Setting | Options | What it means |
 | --- | --- | --- |
-| **Check group** | `company` or `network` | Who the face is compared against. Company scope only checks people verified through your own verifications. Network scope checks everyone who has verified anywhere on VerifyYou. |
 | **Collision action** | `block` or `flag` | What a finding does. Block denies the verification outright. Flag lets it pass as `flagged` so you can review it, and the finding shows up in the confirmation's `reasons`. |
+
+That comparison covers the whole company by default. A [`group`](/v3/dev/integrating/start-a-session#groups) narrows it, so you can reuse one verification across separate groups and each gets its own "one person, once".
 
 One more face rule applies after sign-in: if someone signs in with their bound identity and the new capture doesn't match the face on their record, that's a **self mismatch** and it's reported the same way.
 

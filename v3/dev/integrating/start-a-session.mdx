@@ -18,6 +18,8 @@ const res = await fetch("https://trust.verifyyou.com/v3/initialize", {
     verification_id: "<verification_id>",
     // where they land when done
     redirect_url: "http://localhost:3000/verified",
+    // one uniqueness pool per group, so the same person can pass once in each
+    group: "spring-intake",
     // optionally link with your database
     // external_id: user.id,
     // link with a new person or external identifier
@@ -51,6 +53,17 @@ Attach what ties the run to your records:
 | A new signup | `email` or `phone` | The run is bound to that identity; the person cannot swap it |
 | Nothing (anonymous) | just `verification_id` | A session, and a pass with no identity attached to it |
 
+## Groups
+
+Uniqueness covers the whole verification, so once someone passes, every later run
+through that link reads as a duplicate. Reuse one link across separate
+populations and that becomes the bug: whoever passed your spring intake is not a
+duplicate when the autumn one opens, and blocking them is wrong. Send a `group`,
+your own id for it, and the run is judged only against passes carrying the same
+one, so each population gets its own "one person, once". Whatever string arrives
+is the pool, nothing to register, and leaving it off judges the run against every
+pass, as before.
+
 ## Anonymous checks
 
 A verification configured as **Anonymous** collects no email and no phone. The
@@ -70,14 +83,9 @@ trip over:
 
 <Warning>
   While a run carries no identifier at all, an anonymous verification meters
-  **one successful pass per person, for life**, ahead of any limit configured on
-  the verification. Sending an `external_id` is enough to take the run out of
-  that ceiling and restore the configured limit. If your second test run comes
-  back denied, this is why.
-
-  An option to control this is coming: check segmentation will let you group
-  the collision gate, so a pass counts within a segment you define instead of
-  once for life.
+  **one successful pass per person, for life**. If your second test run comes back
+  denied, this is why. Send a [`group`](#groups) to reuse the verification, and
+  the pass counts once per group instead.
 </Warning>
 
 `external_id` is the only handle an anonymous check gives you. It is how you tie
