@@ -1,0 +1,80 @@
+---
+title: "API changes"
+description: "What we can change without breaking you, what counts as breaking, and how you hear about it."
+---
+
+You are building against a live API. This page says what we can change underneath you, what we cannot, and how you find out.
+
+## The short version
+
+- **`/v3` keeps its shape.** We add to it. We do not remove from it or narrow it.
+- **Additive changes ship without notice.** New fields, new optional parameters, new endpoints, new values in a list.
+- **Breaking changes get a new version.** `/v3` stays available while you are on it.
+- **You hear about breaking changes before they affect you**, by email and in your shared Slack channel if you have one.
+- **Everything you can observe lands in the [changelog](/v3/changelog).**
+
+## What we can change without telling you
+
+We make these changes on an ongoing basis, so your integration has to be resilient to them.
+
+| Change | Example |
+| --- | --- |
+| A new field on a response | `declined` appearing on a [confirmation](/v3/dev/spec/server-api/confirmations) |
+| A new optional parameter on a request | `redirect_url` on [`/v3/initialize`](/v3/dev/spec/server-api/initialize) |
+| A new endpoint | [`POST /v3/confirmations`](/v3/dev/spec/server-api/lookup), the lookup by email or phone |
+| A new value in an existing list | Another entry in `reasons` |
+| A new error code for a case that already failed | A specific `4xx` where you used to get a generic one |
+
+Two habits cover most of it. Ignore fields you do not recognize, rather than rejecting a response because it grew. Treat `reasons` as an open set and route unknown values to denied, which is what the [confirmations reference](/v3/dev/spec/server-api/confirmations) tells you to do anyway.
+
+If your client rejects unknown fields, a routine additive release will look like an outage on your side.
+
+## What counts as a breaking change
+
+Anything that stops a request you send today from working, or stops a response you read today from parsing. Removing an endpoint, a field, or a parameter. Renaming any of them. Changing the type or format of an existing field. Making an optional parameter required. Dropping a value we used to return.
+
+One more belongs on that list and is easy to miss: changing what a value means while keeping its name. A field that holds its name and its type, and starts meaning something else, is the hardest change to catch from the outside. We call it out in the changelog the same way we call out a removal.
+
+## What our build enforces
+
+We keep the published shape of `/v3` recorded in our source, and our build checks every change against that record. A change that removes an endpoint, a field, or a parameter fails the build. So does one that makes an existing parameter required. Neither can merge.
+
+Editing that record is how we break a version on purpose, and our process is that it only happens when we mint the next version.
+
+The check runs on every pull request to the service behind `/v3`. It is a floor. It does not replace the notice below.
+
+## Versions and deprecation
+
+A breaking change means a new version, served alongside the old one at a new path.
+
+**We do not deprecate a version you are still on.** When `/v4` arrives, `/v3` keeps running. You move when you are ready and tell us once you have. We will ask, and we will tell you what changed and what the move costs you, but the date is yours. A version retires once every integration has left it.
+
+Individual fields and endpoints work the same way inside a version. When something is on its way out we mark it deprecated in the [OpenAPI spec](https://trust.verifyyou.com/openapi.json) and drop it from these pages, and it keeps being served. The spec is where you check whether something you depend on is still first class.
+
+## Pruning what you do not use
+
+Between versions we prune parts of the surface nobody uses in production. If your integration calls an endpoint, that endpoint stays. Where we are unsure, we leave it alone.
+
+Planning to start using something you have not called before? Tell us, and we will treat it as in use from that point.
+
+## How you hear about it
+
+The [changelog](/v3/changelog) carries what changed, what you now see or do, and why it matters. Check it first when something looks different.
+
+**For breaking changes we come to you.** Email is the default, so give us the contacts who need to know. Most teams give us a mix of engineering, product, and whoever carries support, because a change that reaches the people using your product needs to reach somebody who can act on it.
+
+If we share a Slack channel with you, we post there too, and that is usually where the conversation carries on. Email goes out whether anybody is watching that day. Your dashboard carries the same information for your workspace. Treat email as the alert and the changelog as the reference.
+
+We also know when you go live. Once you are running in production we get an alert on our side, and from that point your configuration is part of the compatibility checks we run before a release.
+
+## What we ask of you
+
+1. **Keep your contacts current.** Tell us when the right people change.
+2. **Tell us when you go to production**, and when you move between versions.
+3. **Confirm on your server.** Exchange the token with [`/v3/confirmations/{token}`](/v3/dev/spec/server-api/confirmations) using your secret key. The `vyc` value on the return URL is a UI hint and the person can edit it.
+4. **Pin your SDK version** and upgrade deliberately.
+
+<Note>
+  Something changed and you cannot find it in the changelog? Tell us. If you
+  spotted it before we published it, that is a miss on our side.
+</Note>
