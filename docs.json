@@ -172,7 +172,8 @@
                   "v3/change-policy"
                 ]
               }
-            ]
+            ],
+            "icon": "code"
           },
           {
             "tab": "Changelog",
@@ -428,10 +429,15 @@
         "href": "https://trust.verifyyou.com/openapi.json"
       },
       {
-        "label": "Website",
-        "href": "https://verifyyou.com/"
+        "label": "Dashboard",
+        "href": "https://platform.verifyyou.com/dashboard"
       }
-    ]
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Book a demo",
+      "href": "https://sales.verifyyou.com"
+    }
   },
   "contextual": {
     "options": [
