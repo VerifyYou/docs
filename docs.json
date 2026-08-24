@@ -55,6 +55,50 @@
             ]
           },
           {
+            "tab": "Dev",
+            "pages": [
+              {
+                "group": "Integrating",
+                "pages": [
+                  "v3/dev/integrating/start-a-session",
+                  "v3/dev/integrating/placing-your-check",
+                  "v3/dev/integrating/handling-results"
+                ]
+              },
+              {
+                "group": "Server API",
+                "pages": [
+                  "v3/dev/spec/server-api/authentication",
+                  "v3/dev/spec/server-api/initialize",
+                  "v3/dev/spec/server-api/confirmations",
+                  "v3/dev/spec/server-api/lock",
+                  "v3/dev/spec/server-api/lookup",
+                  "v3/dev/spec/server-api/test-confirmation-token",
+                  "v3/dev/spec/server-api/return-url",
+                  "v3/dev/spec/server-api/clients"
+                ]
+              },
+              {
+                "group": "Browser SDK",
+                "pages": [
+                  "v3/dev/spec/browser-sdk/vycheck",
+                  "v3/dev/spec/browser-sdk/vyget",
+                  "v3/dev/spec/browser-sdk/init",
+                  "v3/dev/spec/browser-sdk/vyresult",
+                  "v3/dev/spec/browser-sdk/errors"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "v3/faq",
+                  "v3/change-policy"
+                ]
+              }
+            ],
+            "icon": "code"
+          },
+          {
             "tab": "Docs",
             "icon": "book-open",
             "pages": [
@@ -130,50 +174,6 @@
               },
               "docs/glossary"
             ]
-          },
-          {
-            "tab": "Dev",
-            "pages": [
-              {
-                "group": "Integrating",
-                "pages": [
-                  "v3/dev/integrating/start-a-session",
-                  "v3/dev/integrating/placing-your-check",
-                  "v3/dev/integrating/handling-results"
-                ]
-              },
-              {
-                "group": "Server API",
-                "pages": [
-                  "v3/dev/spec/server-api/authentication",
-                  "v3/dev/spec/server-api/initialize",
-                  "v3/dev/spec/server-api/confirmations",
-                  "v3/dev/spec/server-api/lock",
-                  "v3/dev/spec/server-api/lookup",
-                  "v3/dev/spec/server-api/test-confirmation-token",
-                  "v3/dev/spec/server-api/return-url",
-                  "v3/dev/spec/server-api/clients"
-                ]
-              },
-              {
-                "group": "Browser SDK",
-                "pages": [
-                  "v3/dev/spec/browser-sdk/vycheck",
-                  "v3/dev/spec/browser-sdk/vyget",
-                  "v3/dev/spec/browser-sdk/init",
-                  "v3/dev/spec/browser-sdk/vyresult",
-                  "v3/dev/spec/browser-sdk/errors"
-                ]
-              },
-              {
-                "group": "Reference",
-                "pages": [
-                  "v3/faq",
-                  "v3/change-policy"
-                ]
-              }
-            ],
-            "icon": "code"
           },
           {
             "tab": "Changelog",
