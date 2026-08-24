@@ -1,0 +1,20 @@
+---
+title: "Exporting users"
+description: "Getting your results out as a CSV."
+---
+
+**Export** sits on a verification's own Activity tab, and offers **Copy** or **Download**. Filter first: you export what you filtered, which is the whole point of exporting rather than reading.
+
+## Export users to take action after the fact
+
+If you set **On collision** to *Allow + flag* instead of *Block*, acting on a result means acting in your own product, so the export is the handover: suspend the accounts, hold the payouts, or reconcile against your own records.
+
+## Making it reconcile
+
+Export gives you a row per person. To join those rows to your own users, give us a key going in.
+
+On the code path, attach your own `external_id` when you start the session. On the no-code import, put your columns in the CSV and we keep them on the row: the product's own example is `name,email,last_seen_ip`, so the IP you have on file comes back beside the one we saw.
+
+Without either, you are matching on whatever email or phone they gave the check, which holds until somebody used a different address with you than with us. Import what you will want to compare, because you cannot add it afterwards.
+
+**Next:** [Reading Insights](/docs/insights/reading-insights)

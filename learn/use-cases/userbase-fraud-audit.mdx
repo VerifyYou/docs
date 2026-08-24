@@ -1,0 +1,42 @@
+---
+title: "Userbase healthcheck"
+canonical: "/docs/use-cases/userbase-fraud-audit"
+"og:description": "Find the duplicate accounts already inside a userbase you have been running for years."
+"twitter:description": "Check the accounts you already have."
+keywords: ["userbase audit", "account sweep", "duplicate accounts", "multi-accounting", "time to detection", "payout fraud"]
+---
+
+Nothing in your own data proves two accounts are one person. A face does. Here's how we find the duplicates already inside your userbase with HumanCheck:
+
+1. **The check goes to accounts you already have.** Somebody who is who they say they are passes in seconds. Somebody who is not has to explain why they cannot, which your own records were never going to tell you.
+2. **Two accounts with one face come back as one person.** Whoever verified first holds that face, and the later account is tied to it, whatever email sits on it.
+3. **Everyone who passes leaves a location and a network trail.** VPN, datacenter IP, Tor exit, abuse-listed IP, TLS automation and fingerprint mismatch each land against the person, next to where they verified from, so you can hold it against the country on file.
+4. **Flag, do not block.** An audit is not a door. Set the duplicate action to allow and flag, so nobody paying you is locked out while you decide.
+5. **You act in your own system.** Export carries the results with the `external_id` you attached, so you can line a flagged person up against the account you already hold.
+
+Run it on the clock you already work to. If payouts go out on a Tuesday, an audit that lands on Wednesday cost you the week. A sweep is a snapshot. To ask the same question at the same moment forever, see [Persistent verification](/docs/use-cases/persistent-verification). For new accounts, see [Gate a signup](/docs/use-cases/signup-gate).
+
+## How you start
+
+1. Create a verification and pick the **Account Sweep** preset.
+2. Decide how results tie back to your accounts. **No code**: send to the addresses you already hold and set **Identity** to *Linked by guest*, so the email links that face to that account. **Code**: set it to *Provided by you* and [pass the identifier you already keep](/v3/dev/integrating/start-a-session).
+3. Set **On collision** to *Allow + flag*.
+4. Send from the verification's **Activity** tab. Select a first batch and **Send unsent** rather than mailing the whole userbase. There is a 500 a day cap, and each row then shows sent, opened, clicked and verified, so you can see who is avoiding it.
+5. Filter **Activity** to *Needs action*, read **Flags**, then **Export** and reconcile.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="sliders" href="/docs/verifications/configuration">
+    Set what the check does.
+  </Card>
+  <Card title="Reading Activity" icon="wave-pulse" href="/docs/activity/reading-activity">
+    Who took the check, and who came back flagged.
+  </Card>
+  <Card title="Exporting users" icon="download" href="/docs/activity/exporting-the-list">
+    The CSV, and the fields that tie back to your records.
+  </Card>
+  <Card title="Threat levels and signals" icon="chart-column" href="/docs/insights/threat-levels-and-signals">
+    What the bands and families mean.
+  </Card>
+</CardGroup>

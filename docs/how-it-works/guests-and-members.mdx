@@ -1,0 +1,36 @@
+---
+title: "Guests and members"
+description: "How we recognize somebody who comes back."
+---
+
+Everybody who takes a check is a **guest**. A guest who proves a phone or email during the check becomes a **member**, and that is what lets us know them anywhere.
+
+## Guests
+
+Known by the device ID in their browser, and nothing else. No phone, no email, no name.
+
+On that same device, inside the window you set under **Skip check on known devices**, they come straight back through. On a new device or a cleared browser we have no way to tie them to their last visit, so they take the check again. The face still matches, so if your settings only allow one pass, that second attempt is a collision rather than a welcome back.
+
+## Members
+
+Proved a phone or email during the check, with a one-time code, so ownership was established rather than typed in.
+
+That claim travels with them. On a new device their face is matched, they confirm with the same number or email, and they carry on.
+
+This is the argument for asking for one. Bind repeat visitors and they are recognised wherever they turn up; leave them anonymous and every new device looks like a new person.
+
+## What your integration sends
+
+Three ways to start a session, and each one changes what comes back.
+
+An **`external_id`**, when you already hold an account for them. Duplicates are reported against your own id, which makes results join straight onto your user table.
+
+An **email or phone**, for a new signup. The run is bound to that identity and the person cannot swap it.
+
+**Nothing**, for an anonymous check. A session and a pass, with no identity attached.
+
+## Where it stops
+
+We can tell you this is the same human as before, and whether we have seen them elsewhere in the network. We cannot tell you their name. Nothing here is an identity check. See [Cross-network recognition](/docs/how-it-works/cross-network-recognition) and [Security and privacy](/docs/how-it-works/security-and-privacy).
+
+**Next:** [Cross-network recognition](/docs/how-it-works/cross-network-recognition)

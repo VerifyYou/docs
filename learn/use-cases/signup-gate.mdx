@@ -1,0 +1,42 @@
+---
+title: "Gate a signup"
+canonical: "/docs/use-cases/signup-gate"
+"og:description": "Limit each person to one account."
+"twitter:description": "Limit each person to one account."
+keywords: ["signup gate", "duplicate accounts", "multi-accounting", "account creation fraud", "bot signups", "one account per person"]
+---
+
+There's no limit to how many emails or devices a human can own, but they cannot replace their face. Here's how we limit each person to one account with HumanCheck:
+
+1. **A live person has to be there.** A photo held up to the lens, a recorded video, or a script never gets past this one.
+2. **The first account through owns that face.** The scan becomes a face vector, a numerical representation of the face's geometry. Whoever signed up first keeps their account, and nothing here touches them again.
+3. **A second signup with that face is recognized as the same person**, whatever email or login they use this time. That holds across your other checks too.
+4. **You decide what happens to the second account.** Refuse it, and they are told an account already exists. Or let it through and have the person flagged for your team. The setting is **On collision**.
+5. **Ask for a phone or an email.** Set that way, the same person is recognized wherever they sign up from, so a new phone changes nothing. Left anonymous, recognition stays with the device they used, which suits a one-off check and not a signup.
+
+A gate only covers new signups. For the accounts you already have, see [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit).
+
+## How you start
+
+1. Create a verification and pick the **Signup Gate** preset.
+2. Set **Identity** to *Linked by guest*, which is the phone or email in point five.
+3. Set **Verification limit** to *Once per lifetime*, so one person gets one account, and **On collision** to *Block*.
+4. Paste the no-code link into your signup, or use the SDK and [confirm the result on your server](/v3/dev/integrating/handling-results).
+5. Run it on [test keys](/v3/dev/spec/server-api/authentication) first. The simulator behaves like the real check, and the test people it creates stay separate from your live records.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="sliders" href="/docs/verifications/configuration">
+    Set what the check does, including denials.
+  </Card>
+  <Card title="Integration" icon="code" href="/docs/verifications/integration">
+    The no-code link, or the SDK.
+  </Card>
+  <Card title="Reading Activity" icon="wave-pulse" href="/docs/activity/reading-activity">
+    Who reached the gate, and who was refused.
+  </Card>
+  <Card title="Guests and members" icon="users" href="/docs/how-it-works/guests-and-members">
+    How recognition carries across your checks.
+  </Card>
+</CardGroup>

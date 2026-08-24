@@ -1,9 +1,98 @@
 ---
 title: "Changelog"
-description: "What's new in the VerifyYou SDK, API, and docs."
+description: "Everything new in HumanCheck: the dashboard, the checks, the API and the SDK."
+rss: true
 ---
 
-<Update label="July 16, 2026" description="SDK 0.4.0">
+Everything new in HumanCheck. Newest first. Filter by tag to see only what applies to you.
+
+<Update tags={["Dashboard", "Checks"]} label="August 24, 2026" description="Import the users you already have, send each of them a check from the dashboard, and see who verified">
+
+One theme this month. Checking the accounts you already hold used to mean exporting a list and mailing it yourself. Now you import the list, send from the dashboard, and read the replies in the same place.
+
+## Import the people you already have
+
+**Existing users** is a new way to run a check, and you will find it under **Switch method** on any verification's Integration tab. You bring the list, rather than sharing one link and waiting to see who turns up.
+
+Paste it in or upload a CSV. Whole spreadsheet rows are fine, with or without a header, because we work out which column holds the email and keep anything else useful on the row. That last part is worth planning for. If you import the IP address you have on file, it comes back beside the one we see when that person verifies, so you can hold your record against ours. Import whatever you would want to compare later, since you cannot add it after the fact.
+
+Everyone you add gets a verification link locked to their address, so a link that leaks cannot be used by somebody else. Adding people never sends anything, which is deliberate. Sending is its own step.
+
+It is in beta while we watch how the first sweeps go. See [Integration](/docs/verifications/integration) and [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit).
+
+## Send the check, and watch what comes back
+
+Sending happens on the verification's **Activity** tab, and we host it, so there is no mail system to wire up on your side.
+
+Write your **Message** once, with the from-address shown next to it. Select the rows you want, or **Select all** on the page, then **Send unsent** goes to everybody you have added who has not been sent to yet. There is a visible daily cap, 500 emails, with a counter above the list so you always know where you are against it.
+
+Each row then tells you what happened to that person: sent, opened, clicked, verified, with the counts and how long ago. Somebody who opens it three times and never finishes is telling you something, and until now that was invisible.
+
+## Send from your own domain
+
+Your emails can go out from your own domain, so the check arrives from a name your users already recognise. It needs DNS records in place first, so plan that in before a large batch rather than the morning of. Talk to us and we will give you the exact records to add.
+
+## Identity, explained where you set it
+
+The **Identity** setting decides whether a check asks for a phone or email, or asks for neither. It now explains itself on the panel: how identity works, a worked example of each option, and a short list of which jobs suit which. Account creation, e-commerce, surveys and communities sit under one, ticketing and contest entries under another.
+
+We would still rather walk it with you. See [Configuration](/docs/verifications/configuration), or [book a demo](https://sales.verifyyou.com).
+
+## Also new
+
+- Identity now follows the integration method. On a check running from an imported list, the options that need the person to supply their own email are locked, with the reason on screen and a one-click switch to unlock them.
+
+</Update>
+
+<Update tags={["Dashboard", "Checks"]} label="July 24, 2026" description="A detailed signal breakdown, filter and export, self-serve branding, and more visibility across your dashboard">
+
+A big month, mostly pointed at one thing: showing you more of what sits behind every verification, and handing you more control over your checks.
+
+## A detailed signal breakdown on every verification
+
+Our partners told us this visibility changes how their teams handle fraud reviews, so we made it standard for every account. Every verification in your dashboard now carries a complete signal breakdown, so you see the reasoning behind a verdict, not just the verdict itself.
+
+Click into any check and you'll see the signals grouped into families, each in plain language:
+
+- **Network.** Where the session is coming from, including VPN, Tor, datacenter, and known-abuser intelligence.
+- **Automation.** How much the session looks like a real browser rather than a script, using TLS fingerprinting.
+- **Velocity.** How fast and how often activity is happening across rolling windows.
+- **Liveness.** Whether a live person was present.
+- **Identity.** Whether this face collides with or contradicts one you have seen before.
+
+Each family is capped, so no single signal decides a verdict on its own, and together they roll up into a score out of 100 where higher means safer. When a check is blocked, the breakdown tells you exactly why in plain terms: a known abuser on the network, a collision with an existing account, or suspicious velocity. Less guessing, faster reviews.
+
+See it in [Reading your dashboard](/docs/activity/reading-activity).
+
+## Filter and export your verifications
+
+You can now filter your verifications list by threat level, age, gender, and more, then export exactly what you are looking at as a CSV. It came straight out of a customer request, and it means your team can pull the slice you care about into your own tools without asking us.
+
+## Set your own branding
+
+The branding controls are yours to run now. Set your logo, company name, favicon, and the message a declined user sees, all from the dashboard, without waiting on us. See [Branding your check](/docs/verifications/branding-your-check).
+
+## A clear signal when someone drops off
+
+When a person exits a check partway through, they now land in a trackable "disqualified" state instead of disappearing as unexplained drop-off. For survey and panel teams, that turns a blind spot into a clean, countable completion signal.
+
+## Gate a survey with no integration
+
+Running a study and you don't want to wire anything up? You can now generate a batch of one-time codes in VerifyYou and paste them into your survey platform as a login gate. Each code verifies a real, unique human and works exactly once, so duplicates and professional survey-takers never reach your data. Qualtrics is supported first, with more platforms on the way.
+
+## Run the check on desktop or mobile
+
+Your users no longer have to be on a phone. The check now runs on desktop as well as mobile, so people can complete it right where they are, and a session that starts on one device can carry over to the other with live progress. The SDK embeds directly into your site, wherever your users already are.
+
+## Also new
+
+- A typical integration is down to about four steps.
+- A duplicate at one company no longer blocks that person at another company by default.
+- A full dark mode across the dashboard.
+
+</Update>
+
+<Update tags={["SDK", "API"]} label="July 16, 2026" description="SDK 0.4.0">
 
 ## Embed a server-minted session
 
@@ -25,7 +114,7 @@ The [`reasons`](/v3/dev/spec/server-api/confirmations) on a confirmation are now
 
 </Update>
 
-<Update label="July 8, 2026" description="SDK 0.2.0">
+<Update tags={["SDK", "API"]} label="July 8, 2026" description="SDK 0.2.0">
 
 ## SDK 0.2.0 is the new default
 

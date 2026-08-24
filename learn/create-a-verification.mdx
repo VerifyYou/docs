@@ -1,0 +1,27 @@
+---
+title: "Create a verification"
+---
+
+In this module we take you from an empty workspace to a check running inside your product. Our team creates your workspace and sets up the first one with you, and the wizard walks the rest in logical order:
+
+## Match your use case
+
+* Every verification carries its own configuration, so one workspace can run a strict check before a payout and a light one at signup, at the same time
+* You decide how many times one person may pass, what happens when the same human comes back, whether an age gate applies, and where people land afterwards. A low-stakes signup and a panel paying for clean data want different answers to all four
+* Start from a preset that suits the job. **Signup Gate** runs before an account is created, **Account Sweep** goes back over people who already have accounts, and **Build Your Own** starts from the defaults. [Configuration](/docs/verifications/configuration) has every setting in full
+
+## With or without credentials
+
+* This is the biggest decision. A verified human is recognized by their face plus the device they are on, and switching device breaks that link, so a phone or email re-links the same face on a new one. See [Guests and members](/docs/how-it-works/guests-and-members)
+* **Face only** is faster and collects nothing, and recognition stops at that device. It fits one-time verifications where nobody returns
+* **Face plus a phone or email** carries recognition wherever they go, which is what most use cases want
+
+## Integration
+
+* **No code** gives you a link to copy and drop into a signup, an email or a survey, and it needs no engineering time at all. See [Integration](/docs/verifications/integration)
+* **Code** puts the check inside your own product with our SDK, and your server confirms the result. Attach your own `external_id` and it comes back tied to the user record you already keep. The [quickstart](/v3/dev/integrating/start-a-session) walks that path
+* Either way, test keys run the simulator, and the test people it creates stay separate from your live records, so you can scan the QR and take it yourself before a real person does. See [test and live keys](/v3/dev/spec/server-api/authentication)
+
+Not sure which answers fit your platform? [Book a demo](https://sales.verifyyou.com) and we will set the configuration with you, live.
+
+**Next:** [Reading your results](/learn/reading-your-results)
