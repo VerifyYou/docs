@@ -1,0 +1,55 @@
+---
+title: "HumanCheck user experience"
+---
+
+<div className="vy-video">
+  <iframe
+    src="https://player.vimeo.com/video/1199440228"
+    title="HumanCheck Demo"
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+    allowFullScreen
+  />
+</div>
+
+In this module we show you what a HumanCheck feels like from the other side, the few seconds your users actually spend with us.
+
+---
+
+## Try it yourself
+
+<Card title="Take the check" icon="camera" href="https://app.verifyyou.com/verification/PsvfRgX5SEGeVMB_Prv2Aw" horizontal>
+  Run it exactly as one of your users would. It works on desktop or mobile.
+</Card>
+
+---
+
+What happens at each moment:
+
+## Opening the check
+
+* They arrive from the link you place in your signup, your app, or an email. See [Integration](/docs/verifications/integration)
+* The check opens first, before your signup form, your checkout, or whatever you are protecting
+* All it needs is a camera, so there is no document to find and nothing to fill in
+
+
+## The scan
+
+* A few seconds in the camera, with live prompts telling them what to do
+* On a desktop it runs there with the webcam, and handing off to a phone by QR code is one optional click. See [Placing your check](/v3/dev/integrating/placing-your-check)
+* You receive a verdict and never a photo
+
+
+## Pass or fail
+
+* Both outcomes are instant
+* A pass goes straight through to whatever they came for, with nothing else to do
+* A fail is a duplicate face, a replay, or a bot. They do not get through, and a new device or browser changes nothing, because we recognize the face
+
+
+## When they come back
+
+* On the same check, whether a second attempt is refused is yours to set in [configuration](/docs/verifications/configuration), from unlimited through to once in a lifetime
+* On your other checks, we recognize them and you can wave them through with no scan at all
+* Someone who comes back and passes without scanning still counts as a verification, since skipping the camera saves them friction rather than saving you verifications
+
+**Next:** [Create a verification](/learn/create-a-verification)

@@ -1,0 +1,48 @@
+---
+title: "Start guide"
+description: "How you get a workspace, and the four things to do in it."
+---
+
+Our team creates your workspace and configures your first check with you.
+
+<Steps>
+  <Step title="Talk to us">
+    [Book a demo](https://sales.verifyyou.com). We work with you to understand your use case and get you set up to start seeing value immediately.
+  </Step>
+  <Step title="We create your workspace">
+    We set it up around whatever you are gating, configure your first check, and email you an invite.
+  </Step>
+  <Step title="You invite your team">
+    From the **Team** page, once you are in. See [Team and roles](/docs/workspace/team-and-roles).
+  </Step>
+</Steps>
+
+Four things to do [once you are in](https://platform.verifyyou.com/dashboard).
+
+## Try a HumanCheck
+
+Open the verification, go to **Integration**, and use **Run a test**. It runs the real check on test data with a test identity, so nothing touches your live records. Fail it on purpose too, so you have seen what your users see when it goes wrong.
+
+## Understanding your use case
+
+Configuration allows you to adjust how the check behaves to match your use case.
+
+**What are you protecting?** Different use cases have different requirements, which we make simple to accommodate: A signup that allows one account per human refuses the second face outright. A userbase healthcheck runs over people who already have accounts, lets them all through, and tells you what it saw about each one. [Configuration](/docs/verifications/configuration) goes deeper on the concept and on which settings suit which job.
+
+Pick the preset that matches the job: **Signup Gate**, **Account Sweep**, **AI Data Labeling Fraud Audit** or **Build Your Own**.
+
+A preset is a sensible starting point for a general version of that job, not a finished setup. Two companies running signup gates often want different answers on how many times one person may pass, whether to ask for a phone or email, and what a duplicate should cost. Go through [Configuration](/docs/verifications/configuration) afterwards and make each setting match what you are actually protecting.
+
+See how common use cases work: [Gate a signup](/docs/use-cases/signup-gate), [Gate key actions](/docs/use-cases/gate-key-actions), [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit), [Persistent verification](/docs/use-cases/persistent-verification).
+
+## Start protecting your platform
+
+Choose how the check reaches people. No code gets you started with zero developer effort, so you can prove value early without interrupting your roadmap: share the verification's link, import your existing users and send each of them a request, or put one-time passwords in front of a survey. Code puts the check inside your own product with the SDK, with your server confirming the result. See [Integration](/docs/verifications/integration) for all four.
+
+## Understanding your data
+
+**Activity** lists everyone who completed the check, newest first, and opening a row gives you everything we saw about that person. **Flags** collects the people our checks caught, with the reason. **Insights** rolls all of it up across a period, so you can see the shape of your traffic rather than one person at a time.
+
+See [Reading Activity](/docs/activity/reading-activity), [Flags](/docs/insights/flags) and [Reading Insights](/docs/insights/reading-insights).
+
+**Next:** [Creating a verification](/docs/verifications/creating-a-verification)

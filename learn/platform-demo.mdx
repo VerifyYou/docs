@@ -1,0 +1,25 @@
+---
+title: "VerifyYou platform demo"
+---
+
+In this module we walk you through the VerifyYou platform, from getting started to the value of HumanCheck.
+
+## HumanCheck and the collision
+
+* A check takes seconds: open your phone, and take a selfie. We confirm a live person is there, not a photo or an injected deepfake
+* We convert facial geometry into a numbers-based representation and compare it against every check ever run
+* When that person returns on a new device behind a VPN, passive signals alone don't connect the attempts, but we still recognize the human. Both accounts are flagged, and with collision block set, the second account never opens
+
+## Shape it to your platform
+
+* A signup gate and a payout gate require different rules, and every verification carries its own, so you can run both at once. See [Create a verification](/learn/create-a-verification)
+* Somebody you already verified can come back with no scan at all, while somebody switching phones for a second account is still caught. See [Guests and members](/docs/how-it-works/guests-and-members)
+* Put the check inside your own product with our SDK, and your server confirms every result before you act on it. See [Handling results](/v3/dev/integrating/handling-results)
+
+## See what happened, and act on it
+
+* Every check is tied to passive signals, to provide a holistic picture of the user's riskiness. See [Reading your results](/learn/reading-your-results)
+* Automate Fraud Prevention by configuring the check to block duplicate accounts or by other rules, or just flag users to audit after the fact. See [Automated Fraud Prevention](/learn/taking-action-on-fraud)
+* Export the list to suspend accounts, hold payouts or reconcile against your records, tied to the `external_id` you attached. See [Exporting users](/docs/activity/exporting-the-list)
+
+**Next:** [HumanCheck user experience](/learn/what-your-users-see)

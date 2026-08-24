@@ -1,0 +1,73 @@
+---
+title: "Integration"
+description: "The four ways to put a check in front of people."
+---
+
+How the check reaches people is your choice, and you can change it whenever you like. Three of the four ways need no developer time at all, so you can prove value early without waiting on your roadmap.
+
+Each verification's **Integration** tab shows the method it is using now, and **Switch method** swaps it.
+
+<Frame caption="Switch method, with all four options.">
+  <img style={{ maxWidth: "440px", width: "100%", display: "block", margin: "0 auto" }} src="/images/dashboard/switch-method.jpg" alt="Switch method dialog listing four integration methods" />
+</Frame>
+
+## The three no-code methods
+
+No code gets you started with zero developer effort, so you can prove value early without interrupting your roadmap.
+
+**Sharing a link.** Every verification has its own link in the dashboard. Copy it and put it wherever people already go: the button on your signup page, an invite email, the top of a survey. Somebody who opens it takes the check on our hosted page, and lands wherever you set under Where people land. Nothing to build, and no change to your own code.
+
+**Existing users** (BETA). Import the people you already have, then send each of them a verification request. Paste a list or upload a CSV, and we work out which column holds the email. Everyone you add gets a link locked to their address.
+
+Adding people sends nothing. You send from the verification's **Activity** tab, and we host the sending, so there is no mail system to wire up. Each row then shows sent, opened, clicked and verified.
+
+Sending from your own domain needs DNS records in place first, so plan that in before a large batch. Talk to us and we will give you the records to add.
+
+This is the simplest no code method behind [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit).
+
+**One-time passwords.** A single-use code in front of a survey, form or study, one per person, each good once. [One-time passwords](/docs/guides/pre-generated-passwords) has the setup for four platforms.
+
+## With code
+
+The check runs inside your own product with our SDK, and your server confirms the result before you act on it. Attach your own `external_id` and every result comes back tied to the user record you already keep, which is what makes an export reconcile against your own tables.
+
+Sessions are minted on your server with a secret key, `sk_test_` or `sk_live_`. Test and live are separate partitions and cannot be mixed: a session from one reads as nonexistent under the other, so you can rehearse the whole path before a real person takes it.
+
+Three ways to place it, all through the SDK:
+
+* **Redirect.** We host the whole flow and send the person back to your `redirect_url` with the token on it
+* **Drawer.** Slides over your page: a bottom sheet on mobile, a side panel on desktop
+* **Inline.** Mounts inside your own element, like an embedded video
+
+Redirect means handling a departure and a return. Drawer and inline resolve on the page they started on.
+
+## Developer documentation
+
+Everything below is in the [developer reference](/v3/introduction), which is what your engineers work from.
+
+<CardGroup cols={2}>
+  <Card title="Start a session" icon="play" href="/v3/dev/integrating/start-a-session">
+    Mint a session on your server with your secret key, then hand the id to the front end.
+  </Card>
+  <Card title="Placing your check" icon="window" href="/v3/dev/integrating/placing-your-check">
+    Redirect, drawer or inline, with the trade-offs of each.
+  </Card>
+  <Card title="Handling results" icon="circle-check" href="/v3/dev/integrating/handling-results">
+    Confirming server side, and what to gate on.
+  </Card>
+  <Card title="Server API" icon="server" href="/v3/dev/spec/server-api/initialize">
+    Initialize, confirmations, lock, lookup, and return URL parameters.
+  </Card>
+  <Card title="Browser SDK" icon="code" href="/v3/dev/spec/browser-sdk/vycheck">
+    vycheck, vyget, init, VyResult and the error list.
+  </Card>
+  <Card title="FAQ and changelog" icon="clock-rotate-left" href="/v3/changelog">
+    What changed, and the API change policy.
+  </Card>
+</CardGroup>
+
+## Try it first
+
+**Run a test** on this tab runs the real check on test data, with a test identity you can regenerate. Take it yourself before a real person does.
+
+**Next:** [Reading Activity](/docs/activity/reading-activity)

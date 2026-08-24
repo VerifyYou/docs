@@ -1,0 +1,31 @@
+---
+title: "Intro to VerifyYou"
+---
+
+Welcome to VerifyYou! We believe that platforms should have trust at scale without compromising on security, conversion, or cost.
+
+Our HumanCheck [Proof of Human](https://www.ycombinator.com/rfs#proving-youre-human) credential allows platforms to verify a user's humanness and uniqueness, to prevent multi account abuse and AI driven fraud, while maintaining a low friction experience for unproblematic users.
+
+VerifyYou is the culmination of our CTO and co-founder [Marty Weiner](https://www.linkedin.com/in/martyweiner/)'s experience. As Pinterest's founding engineer and [Reddit's former CTO](https://techcrunch.com/2015/08/18/reddit-names-marty-weiner-founding-engineer-at-pinterest-its-first-cto/), he was motivated to build VerifyYou after years of battling bots, spam, and fraud at massive scale. Marty's thesis is that by verifying the human behind the device, fraud becomes economically disincentivized.
+
+AI has made fraud cheaper, easier, and more profitable than ever for bad actors to commit. Current fraud solutions force companies to make an impossible decision, choose passive signals and compromise on security, or choose ID based KYC and sacrifice conversion. HumanCheck is the trust layer between them.
+
+## HumanCheck
+
+We prove a user is human and unique with a simple user experience: Open your phone, and take a selfie.
+
+In the background, we compile over eighty human signals to determine if there's a live person sitting behind the device right now, not an AI injection or presentation attack.
+
+We then convert the user's facial geometry into a numbers-based representation in real time [without storing the raw photo](/docs/how-it-works/security-and-privacy), answering: "Have we seen this user before?" without compromising privacy, to ensure one account per person and recognize a good user coming back.
+
+Device and network fingerprinting, IP and geo, VPN and proxy detection are run in the background to flag high risk signals or inconsistencies which are tied to a human instead of just the device.
+
+## Platform and usage
+
+You can [put HumanCheck wherever works in your flow](/docs/verifications/integration): at signup, before checkout, payment, or prior to key actions to prevent multi account abuse, bot traffic, or as an MFA check to confirm the user logging in is the same user who signed up.
+
+Our dashboard allows you to take action on flagged users, [configure the check how you'd like to block users based on rules you set](/docs/verifications/configuration), or better understand fraud facing your platform by cross referencing your user data, such as location, or credentials such as email and phone number with ours.
+
+We calculate a [comprehensive trust score](/docs/activity/guest-profiles) based on those active and passive signals across every platform using HumanCheck. If we've seen that person [flagged somewhere else in our partner network](/docs/how-it-works/cross-network-recognition), we'll tell you.
+
+**Next:** [VerifyYou platform demo](/learn/platform-demo)

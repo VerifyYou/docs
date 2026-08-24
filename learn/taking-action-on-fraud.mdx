@@ -1,0 +1,29 @@
+---
+title: "Automated Fraud Prevention"
+---
+
+In this module we show you what to do about the people your checks catch, and most of it happens without you watching.
+
+Three ways to act:
+
+## Decide it once in configuration
+
+* When the same human verifies twice we call that a collision, and your collision setting decides what happens before anyone on your team sees it. **Block** rejects a duplicate and tells them an account already exists, and a new device with a new email does not get round it
+* **Allow + flag** lets them through and raises a flag instead, which suits partner sites and shared user pools where a duplicate is a moderation question
+* You also decide what happens when a device you already denied comes back: watch it and let the fresh check judge them, or stop it before the check runs. [Configuration](/docs/verifications/configuration) has all of it
+
+## Review what got flagged
+
+* The **Flags** tab shows everyone our system flagged, with the reason attached, scoped to your own traffic and nobody else's. See [Flags](/docs/insights/flags)
+* We check for network, geography, accounts, automation and liveness, so a clean tab means every run came through clean
+* Filter **Activity** to **Needs action** when you would rather start from whoever the check already thinks deserves attention
+
+## Act in your own product
+
+* **Export** hands you the list, so you can suspend accounts, hold payouts or reconcile against your own records. See [Exporting users](/docs/activity/exporting-the-list)
+* Results carry the `external_id` you attached, so you can line a flagged person up against the user you already have. See [Handling results](/v3/dev/integrating/handling-results)
+* One person wrongly refused is worth handling directly, and your VerifyYou contact can help. If the same kind of refusal keeps arriving, change the setting rather than handling each person, since a pattern usually means the check is tuned wrong
+
+Fraudsters change tactics, so revisit your limit and your collision action as your traffic changes. [Book a demo](https://sales.verifyyou.com) and we will tune the check with you.
+
+**Next:** [Signup gate](/learn/use-cases/signup-gate)
