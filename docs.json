@@ -1,174 +1,446 @@
 {
-    "$schema": "https://mintlify.com/docs.json",
-    "theme": "mint",
-    "name": "VerifyYou",
-    "colors": {
-        "primary": "#16A34A",
-        "light": "#FFFFFF",
-        "dark": "#000000"
-    },
-    "fonts": {
-        "family": "Inter"
-    },
-    "favicon": "/favicon.svg",
-    "logo": {
-        "light": "/logo/light.svg",
-        "dark": "/logo/dark.svg"
-    },
-    "navigation": {
-        "versions": [
-            {
-                "version": "v3",
-                "default": true,
-                "tabs": [
-                    {
-                        "tab": "Dev",
-                        "pages": [
-                            {
-                                "group": "Integrating",
-                                "pages": [
-                                    "v3/dev/integrating/start-a-session",
-                                    "v3/dev/integrating/placing-your-check",
-                                    "v3/dev/integrating/handling-results"
-                                ]
-                            },
-                            {
-                                "group": "Server API",
-                                "pages": [
-                                    "v3/dev/spec/server-api/authentication",
-                                    "v3/dev/spec/server-api/initialize",
-                                    "v3/dev/spec/server-api/confirmations",
-                                    "v3/dev/spec/server-api/lock",
-                                    "v3/dev/spec/server-api/lookup",
-                                    "v3/dev/spec/server-api/test-confirmation-token",
-                                    "v3/dev/spec/server-api/return-url",
-                                    "v3/dev/spec/server-api/clients"
-                                ]
-                            },
-                            {
-                                "group": "Browser SDK",
-                                "pages": [
-                                    "v3/dev/spec/browser-sdk/vycheck",
-                                    "v3/dev/spec/browser-sdk/vyget",
-                                    "v3/dev/spec/browser-sdk/init",
-                                    "v3/dev/spec/browser-sdk/vyresult",
-                                    "v3/dev/spec/browser-sdk/errors"
-                                ]
-                            },
-                            {
-                                "group": "Reference",
-                                "pages": [
-                                    "v3/faq",
-                                    "v3/change-policy",
-                                    "v3/changelog"
-                                ]
-                            }
-                        ]
-                    }
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "VerifyYou",
+  "colors": {
+    "primary": "#16A34A",
+    "light": "#FFFFFF",
+    "dark": "#000000"
+  },
+  "fonts": {
+    "family": "Inter"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navigation": {
+    "versions": [
+      {
+        "version": "v3",
+        "default": true,
+        "tabs": [
+          {
+            "tab": "Home",
+            "icon": "house",
+            "pages": [
+              "index"
+            ]
+          },
+          {
+            "tab": "Learn",
+            "icon": "graduation-cap",
+            "pages": [
+              {
+                "group": "Getting started",
+                "pages": [
+                  "learn/intro-to-verifyyou",
+                  "learn/platform-demo",
+                  "learn/what-your-users-see",
+                  "learn/create-a-verification",
+                  "learn/reading-your-results",
+                  "learn/taking-action-on-fraud"
                 ]
-            },
-            {
-                "version": "v2",
-                "tabs": [
-                    {
-                        "tab": "Docs",
-                        "groups": [
-                            {
-                                "group": "v2 (legacy)",
-                                "pages": [
-                                    "v2/quickstart",
-                                    "v2/authentication",
-                                    "v2/external-ids",
-                                    "v2/testing",
-                                    "v2/uniqueness-regions"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "tab": "API Reference",
-                        "openapi": "v2/openapi.yaml"
-                    }
+              },
+              {
+                "group": "Use cases",
+                "pages": [
+                  "learn/use-cases/signup-gate",
+                  "learn/use-cases/gate-key-actions",
+                  "learn/use-cases/userbase-fraud-audit",
+                  "learn/use-cases/persistent-verification"
                 ]
-            },
-            {
-                "version": "v1",
-                "tabs": [
-                    {
-                        "tab": "Docs",
-                        "groups": [
-                            {
-                                "group": "v1 (legacy)",
-                                "pages": [
-                                    "v1/index",
-                                    "v1/quickstart",
-                                    "v1/webhooks"
-                                ]
-                            }
-                        ]
-                    }
+              }
+            ]
+          },
+          {
+            "tab": "Docs",
+            "icon": "book-open",
+            "pages": [
+              "docs/index",
+              "docs/get-started/getting-access",
+              {
+                "group": "Verifications",
+                "pages": [
+                  "docs/verifications/creating-a-verification",
+                  "docs/verifications/configuration",
+                  "docs/verifications/branding-your-check",
+                  "docs/verifications/integration"
                 ]
-            }
+              },
+              {
+                "group": "Activity",
+                "pages": [
+                  "docs/activity/reading-activity",
+                  "docs/activity/guest-profiles",
+                  "docs/activity/exporting-the-list"
+                ]
+              },
+              {
+                "group": "Insights",
+                "pages": [
+                  "docs/insights/reading-insights",
+                  "docs/insights/flags",
+                  "docs/insights/threat-levels-and-signals"
+                ]
+              },
+              {
+                "group": "Workspace",
+                "pages": [
+                  "docs/workspace/team-and-roles"
+                ]
+              },
+              {
+                "group": "Concepts",
+                "pages": [
+                  "docs/how-it-works/guests-and-members",
+                  "docs/how-it-works/cross-network-recognition"
+                ]
+              },
+              {
+                "group": "Security",
+                "pages": [
+                  "docs/how-it-works/security-and-privacy"
+                ]
+              },
+              {
+                "group": "Use cases",
+                "pages": [
+                  "docs/use-cases/signup-gate",
+                  "docs/use-cases/gate-key-actions",
+                  "docs/use-cases/userbase-fraud-audit",
+                  "docs/use-cases/persistent-verification"
+                ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
+                  {
+                    "group": "One-time passwords",
+                    "pages": [
+                      "docs/guides/pre-generated-passwords",
+                      "docs/guides/qualtrics",
+                      "docs/guides/alchemer",
+                      "docs/guides/google-forms",
+                      "docs/guides/tally"
+                    ]
+                  }
+                ]
+              },
+              "docs/glossary"
+            ]
+          },
+          {
+            "tab": "Dev",
+            "pages": [
+              {
+                "group": "Integrating",
+                "pages": [
+                  "v3/dev/integrating/start-a-session",
+                  "v3/dev/integrating/placing-your-check",
+                  "v3/dev/integrating/handling-results"
+                ]
+              },
+              {
+                "group": "Server API",
+                "pages": [
+                  "v3/dev/spec/server-api/authentication",
+                  "v3/dev/spec/server-api/initialize",
+                  "v3/dev/spec/server-api/confirmations",
+                  "v3/dev/spec/server-api/lock",
+                  "v3/dev/spec/server-api/lookup",
+                  "v3/dev/spec/server-api/test-confirmation-token",
+                  "v3/dev/spec/server-api/return-url",
+                  "v3/dev/spec/server-api/clients"
+                ]
+              },
+              {
+                "group": "Browser SDK",
+                "pages": [
+                  "v3/dev/spec/browser-sdk/vycheck",
+                  "v3/dev/spec/browser-sdk/vyget",
+                  "v3/dev/spec/browser-sdk/init",
+                  "v3/dev/spec/browser-sdk/vyresult",
+                  "v3/dev/spec/browser-sdk/errors"
+                ]
+              },
+              {
+                "group": "Reference",
+                "pages": [
+                  "v3/faq",
+                  "v3/change-policy"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Changelog",
+            "icon": "list",
+            "pages": [
+              "v3/changelog"
+            ]
+          }
         ]
-    },
-    "redirects": [
-        {
-            "source": "/v3/introduction",
-            "destination": "/v3/dev/integrating/start-a-session"
-        },
-        {
-            "source": "/v3/concepts/accounts-vs-guests",
-            "destination": "/v3/concepts/identity-and-recognition"
-        },
-        {
-            "source": "/v3/concepts/members-vs-guests",
-            "destination": "/v3/concepts/identity-and-recognition"
-        },
-        {
-            "source": "/v3/api/initialize",
-            "destination": "/v3/dev/spec/server-api/initialize"
-        },
-        {
-            "source": "/v3/api/confirmations",
-            "destination": "/v3/dev/spec/server-api/confirmations"
-        },
-        {
-            "source": "/v3/openapi",
-            "destination": "/v3/dev/spec/server-api/authentication"
-        },
-        {
-            "source": "/v3/sdk/init",
-            "destination": "/v3/dev/spec/browser-sdk/init"
-        },
-        {
-            "source": "/v3/sdk/vycheck",
-            "destination": "/v3/dev/spec/browser-sdk/vycheck"
-        },
-        {
-            "source": "/v3/sdk/vyget",
-            "destination": "/v3/dev/spec/browser-sdk/vyget"
-        }
-    ],
-    "navbar": {
-        "links": [
-            {
-                "label": "OpenAPI spec",
-                "href": "https://trust.verifyyou.com/openapi.json"
-            },
-            {
-                "label": "Website",
-                "href": "https://verifyyou.com/"
-            }
+      },
+      {
+        "version": "v2",
+        "tabs": [
+          {
+            "tab": "Docs",
+            "groups": [
+              {
+                "group": "v2 (legacy)",
+                "pages": [
+                  "v2/quickstart",
+                  "v2/authentication",
+                  "v2/external-ids",
+                  "v2/testing",
+                  "v2/uniqueness-regions"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API Reference",
+            "openapi": "v2/openapi.yaml"
+          }
         ]
-    },
-    "contextual": {
-        "options": [
-            "copy"
+      },
+      {
+        "version": "v1",
+        "tabs": [
+          {
+            "tab": "Docs",
+            "groups": [
+              {
+                "group": "v1 (legacy)",
+                "pages": [
+                  "v1/index",
+                  "v1/quickstart",
+                  "v1/webhooks"
+                ]
+              }
+            ]
+          }
         ]
+      }
+    ]
+  },
+  "redirects": [
+    {
+      "source": "/v3/introduction",
+      "destination": "/v3/dev/integrating/start-a-session"
     },
-    "footer": {
-        "socials": {
-            "linkedin": "https://www.linkedin.com/search/results/all/?keywords=verifyyou&origin=RICH_QUERY_SUGGESTION&heroEntityKey=urn%3Ali%3Aorganization%3A105571405&position=0"
-        }
+    {
+      "source": "/v3/concepts/accounts-vs-guests",
+      "destination": "/v3/concepts/identity-and-recognition"
+    },
+    {
+      "source": "/v3/concepts/members-vs-guests",
+      "destination": "/v3/concepts/identity-and-recognition"
+    },
+    {
+      "source": "/v3/api/initialize",
+      "destination": "/v3/dev/spec/server-api/initialize"
+    },
+    {
+      "source": "/v3/api/confirmations",
+      "destination": "/v3/dev/spec/server-api/confirmations"
+    },
+    {
+      "source": "/v3/openapi",
+      "destination": "/v3/dev/spec/server-api/authentication"
+    },
+    {
+      "source": "/v3/sdk/init",
+      "destination": "/v3/dev/spec/browser-sdk/init"
+    },
+    {
+      "source": "/v3/sdk/vycheck",
+      "destination": "/v3/dev/spec/browser-sdk/vycheck"
+    },
+    {
+      "source": "/v3/sdk/vyget",
+      "destination": "/v3/dev/spec/browser-sdk/vyget"
+    },
+    {
+      "source": "/learn/taking-action-on-bad-actors",
+      "destination": "/learn/taking-action-on-fraud"
+    },
+    {
+      "source": "/learn/reviewing-suspicious-activity",
+      "destination": "/learn/reading-your-results"
+    },
+    {
+      "source": "/learn/your-first-verification",
+      "destination": "/learn/create-a-verification"
+    },
+    {
+      "source": "/learn/configuring-a-verification",
+      "destination": "/learn/create-a-verification"
+    },
+    {
+      "source": "/learn",
+      "destination": "/learn/intro-to-verifyyou"
+    },
+    {
+      "source": "/concepts",
+      "destination": "/docs"
+    },
+    {
+      "source": "/concepts/index",
+      "destination": "/docs"
+    },
+    {
+      "source": "/concepts/how-it-works",
+      "destination": "/docs/how-it-works/guests-and-members"
+    },
+    {
+      "source": "/concepts/what-we-store",
+      "destination": "/docs/how-it-works/security-and-privacy"
+    },
+    {
+      "source": "/concepts/security-and-privacy",
+      "destination": "/docs/how-it-works/security-and-privacy"
+    },
+    {
+      "source": "/guides",
+      "destination": "/docs"
+    },
+    {
+      "source": "/guides/index",
+      "destination": "/docs"
+    },
+    {
+      "source": "/guides/getting-access",
+      "destination": "/docs/get-started/getting-access"
+    },
+    {
+      "source": "/guides/configuring-your-verification",
+      "destination": "/docs/verifications/configuration"
+    },
+    {
+      "source": "/guides/branding-your-check",
+      "destination": "/docs/verifications/branding-your-check"
+    },
+    {
+      "source": "/guides/cross-network-verification",
+      "destination": "/docs/how-it-works/cross-network-recognition"
+    },
+    {
+      "source": "/guides/glossary",
+      "destination": "/docs/glossary"
+    },
+    {
+      "source": "/guides/set-it-up-yourself/market-research/overview",
+      "destination": "/docs/guides/pre-generated-passwords"
+    },
+    {
+      "source": "/guides/set-it-up-yourself/market-research/qualtrics",
+      "destination": "/docs/guides/qualtrics"
+    },
+    {
+      "source": "/guides/set-it-up-yourself/market-research/alchemer",
+      "destination": "/docs/guides/alchemer"
+    },
+    {
+      "source": "/guides/set-it-up-yourself/market-research/google-forms",
+      "destination": "/docs/guides/google-forms"
+    },
+    {
+      "source": "/learn/respondent-experience",
+      "destination": "/learn/what-your-users-see"
+    },
+    {
+      "source": "/learn/getting-access",
+      "destination": "/docs/get-started/getting-access"
+    },
+    {
+      "source": "/learn/configuring-your-verification",
+      "destination": "/docs/verifications/configuration"
+    },
+    {
+      "source": "/learn/branding-your-check",
+      "destination": "/docs/verifications/branding-your-check"
+    },
+    {
+      "source": "/learn/cross-network-verification",
+      "destination": "/docs/how-it-works/cross-network-recognition"
+    },
+    {
+      "source": "/learn/glossary",
+      "destination": "/docs/glossary"
+    },
+    {
+      "source": "/learn/how-it-works",
+      "destination": "/docs/how-it-works/guests-and-members"
+    },
+    {
+      "source": "/learn/what-we-store",
+      "destination": "/docs/how-it-works/security-and-privacy"
+    },
+    {
+      "source": "/learn/security-and-privacy",
+      "destination": "/docs/how-it-works/security-and-privacy"
+    },
+    {
+      "source": "/learn/reading-your-dashboard",
+      "destination": "/guides/reading-your-dashboard"
+    },
+    {
+      "source": "/guides/set-it-up-yourself/market-research/tally",
+      "destination": "/docs/guides/tally"
+    },
+    {
+      "source": "/docs/use-cases/survey-gate/overview",
+      "destination": "/docs/guides/pre-generated-passwords"
+    },
+    {
+      "source": "/docs/use-cases/pre-generated-passwords",
+      "destination": "/docs/guides/pre-generated-passwords"
+    },
+    {
+      "source": "/docs/workspace/keys",
+      "destination": "/docs/verifications/integration"
+    },
+    {
+      "source": "/docs/verifications/invites",
+      "destination": "/docs/verifications/creating-a-verification"
+    },
+    {
+      "source": "/docs/how-it-works/how-the-check-works",
+      "destination": "/docs/how-it-works/guests-and-members"
+    },
+    {
+      "source": "/docs/how-it-works/what-we-store",
+      "destination": "/docs/how-it-works/security-and-privacy"
+    },
+    {
+      "source": "/docs/get-started/your-first-verification",
+      "destination": "/docs/get-started/getting-access"
     }
+  ],
+  "navbar": {
+    "links": [
+      {
+        "label": "OpenAPI spec",
+        "href": "https://trust.verifyyou.com/openapi.json"
+      },
+      {
+        "label": "Website",
+        "href": "https://verifyyou.com/"
+      }
+    ]
+  },
+  "contextual": {
+    "options": [
+      "copy"
+    ]
+  },
+  "footer": {
+    "socials": {
+      "linkedin": "https://www.linkedin.com/search/results/all/?keywords=verifyyou&origin=RICH_QUERY_SUGGESTION&heroEntityKey=urn%3Ali%3Aorganization%3A105571405&position=0"
+    }
+  }
 }
