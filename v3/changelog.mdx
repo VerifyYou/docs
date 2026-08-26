@@ -3,7 +3,23 @@ title: "Changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
-<Update label="August 26, 2026" description="Embedded flow">
+<Update label="August 26, 2026, 21:30 UTC" description="Reliability">
+
+## Embedded flows complete on Safari
+
+A person who opened your embedded flow in Safari, on an iPhone or a Mac, could tap Accept on the consent step and get nowhere. Safari keeps no cookies for a page shown inside another site, so every tap arrived as a brand new visit. The flow now carries the person's session for the life of the page whether or not the browser keeps the cookie. Nothing to change on your side, and nothing to upgrade: it works with the SDK version you already run.
+
+## The phone that scans the desktop QR code is never refused
+
+A small share of phones that scanned the QR code on the desktop flow were told the code had already been used on another device. The page was claiming the code twice from the same phone. It claims once now, and a second scan from the same phone resumes where it left off. A different phone opening a used code is still refused, as before.
+
+## The consent step recovers instead of stalling
+
+When a session has moved on since the page loaded, the consent step now refreshes itself and asks for one more tap, with a note saying why. Before, the tap did nothing.
+
+</Update>
+
+<Update label="August 26, 2026, 16:57 UTC" description="Embedded flow">
 
 ## No redirect URL needed for embedded flows
 
