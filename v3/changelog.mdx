@@ -3,6 +3,20 @@ title: "Changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
+<Update label="August 26, 2026" description="Embedded flow">
+
+## No redirect URL needed for embedded flows
+
+If you open a verification with [`vycheck({ session, mode: "iframe" })`](/v3/dev/spec/browser-sdk/vycheck), you no longer have to pass a `redirect_url` to [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize). The embedded flow never leaves your page: when the person finishes, the result arrives through the `vycheck()` promise and your `onComplete` callback, and you [confirm the token](/v3/dev/spec/server-api/confirmations) on your server as before.
+
+- Applies to the drawer and to `display: "inline"`.
+- A `redirect_url` you do pass still wins, and still comes back with `?vyt=…&vyc=…` appended.
+- Nothing to upgrade: this is a platform change, and it works with the SDK version you already run.
+
+Previously, a session minted without a redirect stopped on the verdict screen and the promise never resolved. Redirect mode is unchanged: it navigates away, so it still needs somewhere to send the person back to.
+
+</Update>
+
 <Update label="July 16, 2026" description="SDK 0.4.0">
 
 ## Embed a server-minted session
