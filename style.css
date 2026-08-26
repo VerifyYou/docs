@@ -1,0 +1,8 @@
+/* Mintlify includes every .css in the content directory on every page.
+   The assistant's floating "Ask a question…" bar (⌘I) doubles the navbar's
+   Ask Assistant button; hide the bar, keep the button. The class is
+   Mintlify's own hook (chat-assistant-*), not a utility class, so it is the
+   least likely selector to churn — still, re-check after Mintlify updates. */
+.chat-assistant-floating-input {
+  display: none;
+}
