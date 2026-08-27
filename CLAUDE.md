@@ -3,7 +3,7 @@
 Public Mintlify docs site (docs.json + MDX under v1/ v2/ v3/). `mint dev` to
 preview; `mint broken-links` and `mint validate` before pushing.
 
-Two skills govern work here. Load them before editing, not after:
+Three skills govern work here. Load them before editing, not after:
 
 - **`.claude/skills/dev-docs/SKILL.md`**: read before touching `v3/dev/` or
   `docs.json`. The reader, the page architecture, what each Integrating page
@@ -12,6 +12,10 @@ Two skills govern work here. Load them before editing, not after:
 - **`.claude/skills/david-docs-voice/SKILL.md`**: read before writing any
   prose a customer reads. Voice and claim gates. Repo override: the person
   being verified is a "person" (never guest, member, or user).
+- **`.claude/skills/changelog/SKILL.md`**: read before adding or editing an
+  entry in `v3/changelog.mdx`. The postmortem trap that makes fix entries leak
+  internals, how much weight an item earns, date and time grouping in
+  `<Update>`, and what to verify in the source before describing a fix.
 
 `.claude/agents/technical-writer.md` is a reference for coverage checklists on
 reference pages.
