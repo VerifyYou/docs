@@ -3,33 +3,25 @@ title: "Changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
-<Update label="August 26, 2026, 21:30 UTC" description="Reliability">
+<Update label="August 26, 2026" description="Embedded flow">
 
-## Embedded flows complete on Safari
+## Reliability fixes in the hosted flow <span className="changelog-stamp">21:30 UTC</span>
 
-A person who opened your embedded flow in Safari, on an iPhone or a Mac, could tap Accept on the consent step and get nowhere. Safari keeps no cookies for a page shown inside another site, so every tap arrived as a brand new visit. The flow now carries the person's session for the life of the page whether or not the browser keeps the cookie. Nothing to change on your side, and nothing to upgrade: it works with the SDK version you already run.
+Three fixes to the flow itself. Nothing to change on your side, and nothing to upgrade: they work with the SDK version you already run.
 
-## The phone that scans the desktop QR code is never refused
+- An embedded flow in Safari, on iPhone and on Mac, could stop at the consent step. It completes.
+- A phone scanning the desktop QR code could be told the code was already used on another device. Scanning again from the same phone now resumes where it left off. A different phone opening a used code is still refused, as before.
+- The consent step could stall instead of telling the person what happened. It now refreshes and asks for one more tap, with a note saying why.
 
-A small share of phones that scanned the QR code on the desktop flow were told the code had already been used on another device. The page was claiming the code twice from the same phone. It claims once now, and a second scan from the same phone resumes where it left off. A different phone opening a used code is still refused, as before.
+## No redirect URL needed for embedded flows <span className="changelog-stamp">16:57 UTC</span>
 
-## The consent step recovers instead of stalling
-
-When a session has moved on since the page loaded, the consent step now refreshes itself and asks for one more tap, with a note saying why. Before, the tap did nothing.
-
-</Update>
-
-<Update label="August 26, 2026, 16:57 UTC" description="Embedded flow">
-
-## No redirect URL needed for embedded flows
-
-If you open a verification with [`vycheck({ session, mode: "iframe" })`](/v3/dev/spec/browser-sdk/vycheck), you no longer have to pass a `redirect_url` to [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize). The embedded flow never leaves your page: when the person finishes, the result arrives through the `vycheck()` promise and your `onComplete` callback, and you [confirm the token](/v3/dev/spec/server-api/confirmations) on your server as before.
+Open a verification with [`vycheck({ session, mode: "iframe" })`](/v3/dev/spec/browser-sdk/vycheck) and you no longer have to pass a `redirect_url` to [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize). The embedded flow never leaves your page: when the person finishes, the result arrives through the `vycheck()` promise and your `onComplete` callback, and you [confirm the token](/v3/dev/spec/server-api/confirmations) on your server as before.
 
 - Applies to the drawer and to `display: "inline"`.
-- A `redirect_url` you do pass still wins, and still comes back with `?vyt=…&vyc=…` appended.
-- Nothing to upgrade: this is a platform change, and it works with the SDK version you already run.
+- A `redirect_url` you do pass still wins, and still comes back with `?vyt=…&vyc=…` appended. If you were only passing one to keep an embed working, you can drop it.
+- Nothing to upgrade. It works with the SDK version you already run.
 
-Previously, a session minted without a redirect stopped on the verdict screen and the promise never resolved. Redirect mode is unchanged: it navigates away, so it still needs somewhere to send the person back to.
+Redirect mode is unchanged. It navigates away, so it still needs somewhere to send the person back to.
 
 </Update>
 

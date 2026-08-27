@@ -6,3 +6,17 @@
 .chat-assistant-floating-input {
   display: none;
 }
+
+/* Changelog: the <Update> label groups by day, so entries from two releases on
+   the same day carry their own time next to the heading. currentColor +
+   opacity keeps it muted in both themes without hardcoding a palette token
+   Mintlify might rename. */
+.changelog-stamp {
+  margin-left: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: currentColor;
+  opacity: 0.55;
+  vertical-align: middle;
+  white-space: nowrap;
+}
