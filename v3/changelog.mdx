@@ -5,13 +5,13 @@ description: "What's new in the VerifyYou SDK, API, and docs."
 
 <Update label="August 26, 2026" description="Embedded flow">
 
-## Reliability fixes in the hosted flow <span className="changelog-stamp">21:30 UTC</span>
+## Reliability fixes <span className="changelog-stamp">21:30 UTC</span>
 
-Three fixes to the flow itself. Nothing to change on your side, and nothing to upgrade: they work with the SDK version you already run.
+- An older phone scanning the desktop QR code could be told the code was already used on another device. It now resumes where it left off. A different phone opening a used code is still refused.
+- The consent step could do nothing at all for a person whose session had died. It now refreshes and asks for one more tap.
+- Embedded flows now complete inside a native app webview.
 
-- An embedded flow in Safari, on iPhone and on Mac, could stop at the consent step. It completes.
-- A phone scanning the desktop QR code could be told the code was already used on another device. Scanning again from the same phone now resumes where it left off. A different phone opening a used code is still refused, as before.
-- The consent step could stall instead of telling the person what happened. It now refreshes and asks for one more tap, with a note saying why.
+Nothing to upgrade. All three work with the SDK version you already run.
 
 ## No redirect URL needed for embedded flows <span className="changelog-stamp">16:57 UTC</span>
 
