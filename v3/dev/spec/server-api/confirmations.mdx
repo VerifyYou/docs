@@ -13,7 +13,7 @@ description: "Exchange a vyt token for the authoritative verdict."
 
 <ResponseField name="verified" type="boolean">Gate on this. `true` only when approved and not locked.</ResponseField>
 <ResponseField name="status" type='"approved" | "denied"'>Approved with `reasons` is "flagged".</ResponseField>
-<ResponseField name="reasons" type="string[]">`collision_company`, `identity_mismatch`, `external_identity_mismatch`, `duplicate_account`, `linked_denial`, `limit_reached`, `face_self_mismatch`, `age_blocked`, `guest_declined`, `no_invite`. Open set; route unknown values to denied.</ResponseField>
+<ResponseField name="reasons" type="string[]">`collision_company`, `identity_mismatch`, `external_identity_mismatch`, `duplicate_account`, `linked_denial`, `limit_reached`, `face_self_mismatch`, `age_blocked`, `guest_declined`, `no_invite`, `usage_cap_exceeded`. Open set; route unknown values to denied.</ResponseField>
 <ResponseField name="declined" type="boolean">The person chose not to scan. Denied, but not failed.</ResponseField>
 <ResponseField name="group" type="string | null">The pool the run was judged in, when `initialize` was called with a [`group`](/v3/dev/integrating/start-a-session#groups). `null` otherwise.</ResponseField>
 
