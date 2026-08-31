@@ -66,6 +66,14 @@ things, separate surveys or product drops for instance, send a `group` to
 scope uniqueness to each one. The same person can then pass once in
 `spring-intake` and once in `fall-intake`, but never twice in either.
 
+Sometimes one pool needs to see another. To keep everyone who already passed
+`spring-intake` out of a follow-up, mint the follow-up's sessions with its own
+`group` plus `include_groups: ["spring-intake"]`. History in an included group
+counts against the run exactly as its own would: whether a hit denies the
+person or only flags the pass follows the verification's settings, and the
+confirmation's `groups` field names the pools the hit came from. The run still
+settles into its own group. An included pool is read, never written.
+
 ## Anonymous checks
 
 A verification configured as **Anonymous** sends people straight to the check,
