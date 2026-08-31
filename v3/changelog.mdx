@@ -3,6 +3,20 @@ title: "Changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
+<Update label="August 31, 2026" description="Groups">
+
+## One group can now see another
+
+[Groups](/v3/dev/integrating/start-a-session#groups) scope uniqueness to a pool, and until now every pool was sealed off from the others. [`POST /v3/initialize`](/v3/dev/spec/server-api/initialize) now takes `include_groups`: other groups whose history also counts against the run. To keep everyone who already passed `spring-intake` out of a follow-up, mint the follow-up's sessions with their own `group` plus `include_groups: ["spring-intake"]`.
+
+- A hit in an included group behaves exactly like one in the run's own pool: it denies the person or flags the pass, following the verification's settings.
+- The confirmation now carries [`groups`](/v3/dev/spec/server-api/confirmations), the pools the `reasons` came from, on flagged passes too. It reads `[]` when there is nothing to report.
+- The run still settles into its own group. An included pool is read, never written.
+
+Nothing to upgrade. Both fields work with the SDK version you already run, and runs that pass neither field are unchanged.
+
+</Update>
+
 <Update label="August 26, 2026" description="Embedded flow">
 
 ## Reliability fixes <span className="changelog-stamp">21:30 UTC</span>
