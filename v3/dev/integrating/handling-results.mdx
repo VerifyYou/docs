@@ -31,6 +31,7 @@ Never trust the client result alone. The token (`vyt`) is proof, not a verdict; 
 
     return { allowed: true };
     ```
+
   </Tab>
   <Tab title="Without a token">
     ```ts
@@ -60,14 +61,15 @@ Never trust the client result alone. The token (`vyt`) is proof, not a verdict; 
     const { verified, status, reasons } = await res.json();
     return { allowed: verified, status, reasons };
     ```
+
   </Tab>
 </Tabs>
 
 <Note>
   The token-free read needs a credential to match on. An **anonymous**
   verification binds none, so it answers `404 no_settled_pass` every time. On
-  those checks the `vyt` is your only route to the verdict. See
-  [Anonymous checks](/v3/dev/integrating/start-a-session#anonymous-checks).
+  those checks the `vyt` is your only route to the verdict. See [Anonymous
+  checks](/v3/dev/integrating/start-a-session#anonymous-checks).
 </Note>
 
 **With the token** is the stronger check: it proves this run just finished, names exactly one pass, and puts no email in your request logs. **Without a token** is a recovery path: it answers whether the email or phone has verified, and lets a returning person skip another redirect. What it cannot tell you is whether they just did a check.
@@ -76,7 +78,7 @@ We report `verified: true | false`. Pass or fail is your decision, and routing l
 
 - Gate on `verified`. `vyc` in the URL is a UI hint.
 - Fail closed on `404` or `410` from the token exchange, or a timeout: start a fresh session and try again.
-- A `404` from the token-free lookup isn't a broken session, just no confirmed pass yet — don't retry it in a loop. If the account is at its [daily usage cap](/v3/faq#what-happens-if-we-exceed-our-daily-limit), retries keep failing until it resets.
+- A `404` from the token-free lookup isn't a broken session, just no confirmed pass yet — don't retry it in a loop. If the account reached its [daily verification limit](/v3/faq#what-happens-if-we-exceed-our-daily-verification-limit), retries keep failing until it resets.
 - Test keys read test runs only. Never point a live action at a test key.
 - Consume each token once. Prefer your own idempotency over [lock](/v3/dev/spec/server-api/lock) unless you mean one pass per human, ever.
 - Strip `vyt` and `vyc` from the URL after handoff.
