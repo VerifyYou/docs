@@ -31,7 +31,6 @@ Never trust the client result alone. The token (`vyt`) is proof, not a verdict; 
 
     return { allowed: true };
     ```
-
   </Tab>
   <Tab title="Without a token">
     ```ts
@@ -49,7 +48,7 @@ Never trust the client result alone. The token (`vyt`) is proof, not a verdict; 
     if (res.status === 404) {
       // no_settled_pass: no confirmed pass to report — either this credential
       // has never finished a run with you, or its last run was refused at
-      // your account's daily usage cap (no run is recorded to look up either way)
+      // your account's daily verification limit (no run is recorded to look up either way)
       return { allowed: false, status: "none", reasons: [] };
     }
     if (!res.ok) {
@@ -61,15 +60,14 @@ Never trust the client result alone. The token (`vyt`) is proof, not a verdict; 
     const { verified, status, reasons } = await res.json();
     return { allowed: verified, status, reasons };
     ```
-
   </Tab>
 </Tabs>
 
 <Note>
   The token-free read needs a credential to match on. An **anonymous**
   verification binds none, so it answers `404 no_settled_pass` every time. On
-  those checks the `vyt` is your only route to the verdict. See [Anonymous
-  checks](/v3/dev/integrating/start-a-session#anonymous-checks).
+  those checks the `vyt` is your only route to the verdict. See
+  [Anonymous checks](/v3/dev/integrating/start-a-session#anonymous-checks).
 </Note>
 
 **With the token** is the stronger check: it proves this run just finished, names exactly one pass, and puts no email in your request logs. **Without a token** is a recovery path: it answers whether the email or phone has verified, and lets a returning person skip another redirect. What it cannot tell you is whether they just did a check.

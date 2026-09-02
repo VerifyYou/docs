@@ -13,57 +13,59 @@ description: "Common questions about verifying, keys, returning people, and data
     both pass.
   </Accordion>
 
-<Accordion title="Can I trust the ?vyc value on the return URL?">
-  No. Treat it as a UI hint only. Anyone can edit a URL. Always send the `vyt`
-  token to your backend and [confirm it](/v3/dev/spec/server-api/confirmations)
-  with your secret key. That result is authoritative.
-</Accordion>
+  <Accordion title="Can I trust the ?vyc value on the return URL?">
+    No. Treat it as a UI hint only. Anyone can edit a URL. Always send the
+    `vyt` token to your backend and
+    [confirm it](/v3/dev/spec/server-api/confirmations) with your secret key. That result is
+    authoritative.
+  </Accordion>
 
-<Accordion title="Which key do I use where?">
-  The **secret key** (`sk_…`) stays on your server. It mints sessions at
-  initialize and confirms tokens. The browser needs no key at all: it opens the
-  session your server minted with `vycheck({session})`. Publishable keys
-  (`pk_…`) are deprecated. Never ship a secret key to the client.
-</Accordion>
+  <Accordion title="Which key do I use where?">
+    The **secret key** (`sk_…`) stays on your server. It mints sessions at
+    initialize and confirms tokens. The browser needs no key at all: it opens
+    the session your server minted with `vycheck({ session })`. Publishable
+    keys (`pk_…`) are deprecated. Never ship a secret key to the client.
+  </Accordion>
 
-<Accordion title="How do test and live modes work?">
-  Each key comes in a test and a live flavor (`sk_test_…` / `sk_live_…`). Test
-  keys run the simulator and create test people, isolated from live records.
-  Build against them freely. Switch to the live key to verify real people.
-</Accordion>
+  <Accordion title="How do test and live modes work?">
+    Each key comes in a test and a live flavor (`sk_test_…` / `sk_live_…`).
+    Test keys run the simulator and create test people, isolated from live
+    records. Build against them freely. Switch to the live key to verify real
+    people.
+  </Accordion>
 
-<Accordion title="Why did a returning person get blocked?">
-  Most often it's an **anonymous person** whose device ID is gone: they cleared
-  the browser, switched devices, or used a private window. They look new, but
-  their face is still on record, so they collide with their own earlier
-  verification. Bind repeat visitors to a [verified phone or
-  email](/v3/concepts/identity-and-recognition) so they can be recognized and
-  re-linked instead of blocked.
-</Accordion>
+  <Accordion title="Why did a returning person get blocked?">
+    Most often it's an **anonymous person** whose device ID is gone: they
+    cleared the browser, switched devices, or used a private window. They look
+    new, but their face is still on record, so they collide with their own
+    earlier verification. Bind repeat visitors to a
+    [verified phone or email](/v3/concepts/identity-and-recognition) so they
+    can be recognized and re-linked instead of blocked.
+  </Accordion>
 
-<Accordion title="Does a person have to verify every time?">
-  No. Within your verification's skip window, someone who already passed
-  completes almost instantly. A person with a **bound identity** is also
-  recognized on new devices: their face is matched and they sign back in with
-  their number or email to re-assert their claim. An anonymous person is
-  recognized only by the device ID in their browser, so they re-verify more
-  often. See [Returning people](/v3/concepts/returning-users).
-</Accordion>
+  <Accordion title="Does a person have to verify every time?">
+    No. Within your verification's skip window, someone who already passed
+    completes almost instantly. A person with a **bound identity** is also
+    recognized on new devices: their face is matched and they sign back in
+    with their number or email to re-assert their claim. An anonymous person
+    is recognized only by the device ID in their browser, so they re-verify
+    more often. See [Returning people](/v3/concepts/returning-users).
+  </Accordion>
 
-<Accordion title="What if the person is on a desktop?">
-  The flow runs in place with their webcam. If they'd rather use their phone,
-  one click shows a QR code that moves the same session to their phone's
-  browser, and the desktop follows along in realtime and returns to your site
-  automatically when they finish. See [Humanness and
-  uniqueness](/v3/concepts/humanness-and-uniqueness#any-device-including-desktop).
-</Accordion>
+  <Accordion title="What if the person is on a desktop?">
+    The flow runs in place with their webcam. If they'd rather use their phone,
+    one click shows a QR code that moves the same session to their phone's
+    browser, and the desktop follows along in realtime and returns to your site
+    automatically when they finish. See
+    [Humanness and uniqueness](/v3/concepts/humanness-and-uniqueness#any-device-including-desktop).
+  </Accordion>
 
-<Accordion title="How do I tie a verification to my own account records?">
-  Pass `external_id` (and optionally `phone`/`email`) at
-  [initialize](/v3/dev/spec/server-api/initialize) from your server. Duplicates
-  are reported against your id. See [Account
-  linking](/v3/advanced/account-linking).
-</Accordion>
+  <Accordion title="How do I tie a verification to my own account records?">
+    Pass `external_id` (and optionally `phone`/`email`) at
+    [initialize](/v3/dev/spec/server-api/initialize) from your server.
+    Duplicates are reported against your id. See
+    [Account linking](/v3/advanced/account-linking).
+  </Accordion>
 
   <Accordion title="I have a one-time form and don't want resubmissions. What do I use?">
     Usually **not** lock. Use your own idempotency on the submission so the same
@@ -77,17 +79,16 @@ description: "Common questions about verifying, keys, returning people, and data
     just the token in your hand: their future passes on this verification come back
     denied too, and **there is no unlock**. After locking,
     `GET /v3/confirmations/{token}` returns `verified: false`.
-
   </Accordion>
 
-<Accordion title="What happens if we exceed our daily verification limit?">
-  Every account has a default daily limit on verifications (66k). Once it's
-  spent, runs come back denied with [`reasons:
-  ["usage_cap_exceeded"]`](/v3/dev/spec/server-api/confirmations) for the rest
-  of the day; it resets at 00:00 UTC. This is about your account, not the person
-  being verified. Expecting high traffic due to a launch, a campaign, or general
-  traffic?[Contact us](mailto:support@verifyyou.com) beforehand so we can size
-  the limit with you.
-</Accordion>
+  <Accordion title="What happens if we exceed our daily verification limit?">
+    Every account has a default daily limit on verifications (66k). Once it's
+    reached, runs come back denied with
+    [`reasons: ["usage_cap_exceeded"]`](/v3/dev/spec/server-api/confirmations)
+    for the rest of the day; it resets at 00:00 UTC. This is about your account,
+    not the person being verified. Expecting high traffic due to a launch, a
+    campaign, or general traffic? [Contact us](mailto:support@verifyyou.com)
+    beforehand so we can size the limit with you.
+  </Accordion>
 
 </AccordionGroup>
