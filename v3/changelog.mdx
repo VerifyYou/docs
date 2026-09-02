@@ -3,6 +3,19 @@ title: "Changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
+<Update label="September 2, 2026" description="Usage caps">
+
+## A new denial reason: `usage_cap_exceeded`
+
+Every account has a default daily limit on verifications (66k). A run that lands after the day's limit is spent now comes back denied with [`reasons: ["usage_cap_exceeded"]`](/v3/dev/spec/server-api/confirmations) instead of reaching the verification step.
+
+- The limit resets daily at 00:00 UTC. Don't retry a capped run in a loop; it fails the same way until then.
+- If you need your daily usage cap adjusted due to a launch, campaign or general traffic, [contact us](mailto:support@verifyyou.com) so we can adjust your limits.
+
+Nothing to upgrade. This works with the SDK version you already run.
+
+</Update>
+
 <Update label="August 31, 2026" description="Groups">
 
 ## One group can now see another
