@@ -1,0 +1,89 @@
+---
+title: "Qualtrics setup"
+description: "Put HumanCheck in front of your Qualtrics study. Five steps, no code."
+icon: "sliders"
+---
+
+
+<Steps>
+  <Step title="Create your study">
+    In Qualtrics, exactly as you normally would.
+    1. Build your study as usual. Your questions stay exactly where they are.
+    2. You add the gate in the **Survey Flow**, not on a page, so nothing about your instrument changes.
+
+    <p className="vy-have"><strong>You now have:</strong> a normal Qualtrics study.</p>
+  </Step>
+  <Step title="Connect your study in VerifyYou">
+    In your [VerifyYou dashboard](https://platform.verifyyou.com/dashboard/verifications), open a verification and go to the **Integration** tab.
+    1. Make sure the method is **One-time passwords**. If it is set to something else, click **Switch method** and choose it.
+    2. Under **Your survey platform**, pick **Qualtrics**.
+    3. Paste your **Qualtrics survey link**.
+    4. Set **how many one-time passwords** you need, one per expected respondent. You can always generate more later.
+    5. Click **Connect survey**. We generate your passwords and hand back your study link.
+
+    <p className="vy-have"><strong>You now have:</strong> your <strong>study link</strong> (share this one, not your Qualtrics link) and your <strong>one-time passwords</strong>. Click **Copy list** to copy them for the next step.</p>
+
+    <Frame caption="Your VerifyYou dashboard: the Integration tab on One-time passwords. Pick your platform, paste your survey link, and Connect.">
+      <img src="/images/vy-integration-connect.png" alt="VerifyYou Integration tab, connect a survey platform" />
+    </Frame>
+    <Frame caption="After you connect: the study link to share, and your one-time passwords to Copy list.">
+      <img src="/images/vy-study-link-ready.png" alt="VerifyYou study link ready with copy list" />
+    </Frame>
+  </Step>
+  <Step title="Create a contact list and paste your passwords">
+    In Qualtrics's **Contacts** (called **XM Directory** on newer accounts).
+    1. Create a new contact list and choose **Manual input**.
+    2. Paste the one-time passwords you copied into the **External data reference** column, one per row. That column is the passcode slot: paste them under any other field and the gate will not pick them up.
+
+    <p className="vy-have"><strong>You now have:</strong> a contact list where each code sits in External data reference and can authenticate exactly once.</p>
+
+    <Frame caption="Qualtrics's own UI: your one-time passwords pasted into the External data reference column of a contact list.">
+      <img src="/images/qualtrics-contacts.png" alt="Qualtrics contact list manual input, External data reference column" />
+    </Frame>
+  </Step>
+  <Step title="Add the gate in Survey Flow">
+    Open your study's **Survey Flow**.
+    1. Add a **Set Embedded Data** element at the very top, with the single field `vypw` and no value. Qualtrics fills it from each respondent's link, their documented [query-string mechanism](https://www.qualtrics.com/support/survey-platform/survey-module/survey-flow/standard-elements/passing-information-through-query-strings/), so it should read "Value will be set from Panel or URL."
+    2. Add an **Authenticator** beneath it, which shows as **Branch on Successful Authentication**. Set **Authentication Type** to **Contact**, authenticate using **the contact list you just created**, set the authentication field to **External Data Reference**, tick **Pre-fill**, and enter `vypw`. Leave **"Allow authenticating respondents to retake authenticated section"** unchecked, which is the default: that is what makes each code one-time.
+    3. Put your survey blocks inside the authentication branch.
+    4. Add a second **Branch** ending in its own **End of Survey**, for anyone who does not authenticate. Qualtrics records a failed authentication as a complete by default, so this branch is what keeps failed and duplicate visitors out of your data.
+
+    Qualtrics's own [Authenticator](https://www.qualtrics.com/support/survey-platform/survey-module/survey-flow/advanced-elements/authenticator/) enforces the gate, and with Pre-fill a respondent with the right credentials "never even sees the authenticator."
+
+    <p className="vy-have"><strong>You now have:</strong> a gate that opens itself for verified respondents and routes everyone else to a screen-out.</p>
+
+    <Frame caption="Qualtrics's own UI: Survey Flow with Set Embedded Data (vypw) at the top and a Branch on Successful Authentication below it.">
+      <img src="/images/qualtrics-add-authenticator.png" alt="Qualtrics Survey Flow with embedded data and authentication branch" />
+    </Frame>
+
+    <Frame caption="Qualtrics's own UI: the authentication field set to External Data Reference, with Pre-fill ticked and pointed at vypw.">
+      <img src="/images/qualtrics-prefill.png" alt="Qualtrics authentication field, External Data Reference with Pre-fill" />
+    </Frame>
+  </Step>
+  <Step title="Share your VerifyYou link, not your Qualtrics link">
+    The link you hand out is the **study link from VerifyYou** (the `app.verifyyou.com/verification/...` one, from **Copy** in the dashboard), never your Qualtrics link. This is the whole point: the VerifyYou link sends every respondent through the face check first, then redirects the verified ones into your Qualtrics study with their one-time password already attached. Anyone who opens the raw Qualtrics link skips the check, so only ever share the VerifyYou link, in your panel, your sample provider, or your invite email.
+
+    <p className="vy-have"><strong>You now have:</strong> a fielded study where everyone who reaches your questions came through the check. That's the whole setup.</p>
+  </Step>
+</Steps>
+
+<Note>
+**License note.** Free Qualtrics accounts do not include contact lists, so this flow needs a standard or university license, which is what most institutions provide. If the Authenticator element does not appear in your Survey Flow options, your Qualtrics brand administrator can enable it.
+</Note>
+
+## What happens next
+
+<div className="grid md:grid-cols-2 gap-5 mt-6">
+  <a href="/learn/what-your-users-see" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="mobile-screen" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="mobile-screen" iconType="light" size={22} /></span>
+    <span className="vy-card-title">What your respondent sees</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">See exactly what your respondent sees.</span>
+  </a>
+  <a href="/docs/guides/pre-generated-passwords" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="layer-group" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="layer-group" iconType="light" size={22} /></span>
+    <span className="vy-card-title">The same mechanism, any platform</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Alchemer and Qualtrics today. The same pattern works anywhere.</span>
+  </a>
+</div>

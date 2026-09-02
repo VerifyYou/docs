@@ -1,0 +1,142 @@
+---
+title: "Configuration"
+description: "How to make HumanCheck work for your use case."
+---
+
+{/*
+RESHAPED 2026-08-21, James: walk every setting, simply, as concisely as possible. The previous
+version led with a concept essay and finished with three worked jobs, and the settings themselves
+were grouped rather than listed, so two of the eight only appeared inside another one's section.
+Now all eight get their own heading, in the order the tab shows them, each with its default and
+its options.
+
+CUT for concision: the defaults table (every section now names its own default, so the table
+repeated the page), the "what are you protecting" essay (down to two sentences at the top), and
+"three jobs, three answers" (the use-case pages are the worked jobs).
+
+KEPT VERBATIM, James's wording from docs/get-started/your-first-verification.mdx. If these change
+there, change them here:
+  Configuration allows you to adjust how the check behaves to match your use case.
+  Start from what you are protecting and how you want it to behave ... (the whole lead
+    paragraph, rewritten by James 21 Aug. His two examples both turn on how many times one
+    person may pass, which walks straight into Verification limit. Mine contrasted a gate
+    against a healthcheck, which is a different axis and left the first section unprepared.)
+  How many times should each person be allowed to pass on one verification?
+  Is the user tied to a credential like an email or phone number, or not?
+  What should a second attempt under an alias cost them?
+
+RE-CHECKED ON SCREEN 2026-08-21, and the tab has changed since the 19 Aug scan:
+  - **"After a denial" is gone.** Seven panels now: Identity, Verification limit, Skip check on
+    known devices, On collision, Returning denied people, Age gate, Where people land. The
+    section documenting No way back / Sign in as owner has been removed rather than left to rot.
+    ⚠️ ASK ZEEK whether the behaviour moved or went. If a denied person still has a route back,
+    it needs documenting wherever it now lives.
+    RESOLVED 2026-09-02: it moved. James's demo screenshot of the On collision panel shows
+    AFTER A DENIAL inside that panel, with No way back (default) and Sign in as owner. Documented
+    under On collision below, wording held close to the panel's own copy.
+  - **Where people land** contains a field labelled **Redirect URL**, which is why James asked
+    for the rename. The panel keeps its name in the first line so a reader can find it on the
+    tab.
+  - **Identity can be locked by the integration method.** On a check seeded from an imported
+    list, Linked by guest and Anonymous show as Locked with "Invites always supply the claim",
+    and the panel offers Switch to a shared link / one-time passwords / code.
+  - The Identity panel now carries its own in-product explainer, a "what this looks like"
+    walkthrough and a "when to use each" list. Our wording and theirs agree, which is worth
+    keeping true.
+
+Panels, options and defaults from DASHBOARD_REFERENCE.md, in tab order. The age gate warning is
+claim-gated. Do not soften it.
+*/}
+
+Configuration allows you to adjust how the check behaves to match your use case. Every verification carries its own, so a strict check before a payout and a light one at signup run at the same time.
+
+Understanding what your check protects is step one to configuring your check to behave how you need it to. For example, a signup that allows one account per human refuses the same human the second time, which you set in **Verification limit** by choosing *Once per lifetime*. A weekly payout cadence may want to allow each person through once per week, which is **Verification limit** on *Once per period* with the period set to weekly.
+
+Our HumanCheck wizard walks you through the whole configuration, and we are here to help you get started on a check for your use case. If you would like a hand, [book a demo](https://sales.verifyyou.com) and we will walk through it with you.
+
+## Identity
+
+<Frame caption="The Identity panel, with the three access types.">
+  <img src="/images/dashboard/configuration-identity.jpg" alt="Configuration tab, Identity panel with three access types" />
+</Frame>
+
+Is the user tied to a credential like an email or phone number, or not?
+
+* **Linked by guest**, the default. Asks for a phone or email, so we know the same person when they switch device
+* **Anonymous.** Asks for neither. Recognition stays with the device they used
+* **Provided by you.** Takes an identifier from your own system, which the person cannot change. Code path only
+
+Your integration method decides which of the three you can pick, and the tab says so. A check running on a shared link cannot use *Provided by you*, because there is nothing to pass a claim in from. A check that seeds every person from a list you imported can only use *Provided by you*, because the claim is already supplied. Either way the panel offers to switch method.
+
+## Verification limit
+
+How many times should each person be allowed to pass on one verification? It counts successful passes, not attempts.
+
+* **Once per lifetime**, the default. A permanent decision, like opening an account
+* **Once per period.** Something recurring, like a weekly payout
+* **A few per period.** A set number of passes inside the period you choose, then nothing until it resets
+* **Unlimited.** A checkout or a login, where you only need a live human present
+
+<Note>
+  Uniqueness covers a whole verification, so once somebody passes, every later run through that check is the same person to us. When one check gates several separate things, your integration sends a **group** to keep them apart. See [start a session](/v3/dev/integrating/start-a-session).
+</Note>
+
+## Skip check on known devices
+
+Off by default. Turn it on and somebody returning inside a window you set passes without scanning.
+
+A silent pass still counts as a verification. Skipping changes what the person experiences, not what the check records.
+
+## On collision
+
+<Frame caption="The On collision panel: the action on a duplicate, a worked example, and what a denied person can do next.">
+  <img src="/images/dashboard/on-collision.png" alt="The On collision panel, showing Block and Allow + flag, the Maria worked example, when to use each, and the After a denial options" />
+</Frame>
+
+What should a second attempt under an alias cost them?
+
+* **Block**, the default. Rejects the duplicate and tells them an account already exists
+* **Allow + flag.** Lets them through and raises a flag for your team. Suits shared user pools, where a duplicate is a judgement call
+
+The same panel sets what a denied person can do next, under **After a denial**:
+
+* **No way back**, the default. The denial is final: they see the denied screen and exit
+* **Sign in as owner.** The denied screen offers to prove they own the original account. A code goes to the email already on file, shown masked and never typed in, and passing it lets them continue as that identity
+
+## Returning denied people
+
+What happens when a device you already denied comes back.
+
+* **Observe**, the default. Records the retry as a prior-denial flag and lets the fresh check judge them, which keeps the evidence
+* **Block at the door.** Stops the device before the check runs. Cheaper, and it also stops the wrong person when a device is shared
+
+## Age gate
+
+Set a minimum estimated age to get through the check. Off by default. The estimate comes from the face scan, with no document to upload, and the thresholds are 13, 16, 18 or 21 and over, or one you set.
+
+<Warning>
+  The check returns an estimated age range, not a precise year. Ranges span several years and accuracy is lowest near common thresholds. It is not legally sufficient for regulated products such as alcohol, gambling or firearms. Pair it with proper ID verification for those.
+</Warning>
+
+## Redirect URL
+
+Where people are redirected after the check is completed. It sits inside the **Where people land** panel. Left on Default, they see the finish screen with the verdict and a done button. Set a URL and they land there instead.
+
+It saves on its own, straight away. It is not part of the **Save changes** button at the top of the tab.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Start guide" icon="rocket" href="/docs/get-started/getting-access">
+    Which of these to answer first.
+  </Card>
+  <Card title="Gate a signup" icon="door-closed" href="/docs/use-cases/signup-gate">
+    A worked job, end to end.
+  </Card>
+  <Card title="Guests and members" icon="users" href="/docs/how-it-works/guests-and-members">
+    What recognition means, and where it stops.
+  </Card>
+  <Card title="Branding your check" icon="palette" href="/docs/verifications/branding-your-check">
+    Set the name and logo people see.
+  </Card>
+</CardGroup>

@@ -1,0 +1,51 @@
+---
+title: "Branding your check"
+description: "How to make the check align with your brand."
+---
+
+{/*
+REWORKED 2026-08-21. Was 917 words for a tab with three controls on it, and three things on it
+were wrong rather than merely long.
+
+CORRECTED 2026-08-21, James: "The person taking the check sees your name on it, not ours" is
+false. They do see ours: the check runs on our hosted page and the flow is visibly VerifyYou. The
+line also used the not-X-but-Y construction. The page now says the tab sets what they see of you,
+which is true and claims nothing about what they do not see.
+
+CORRECTED, all against DASHBOARD_REFERENCE.md:
+  1. "Tell your VerifyYou contact and we will update it for you" is out of date. Branding is its
+     own tab with Discard and Save changes on it, and the customer edits it. Drift items 3 and 4.
+  2. "Pre-check message", described as a toggle plus custom copy, is not on the tab. The scan
+     found company name, logo, and the decline banner under advanced options, and nothing else.
+     Removed rather than softened: documenting a control that is not there is the fastest way to
+     lose a reader.
+  3. "The allow decline setting" is not a separate setting. The decline banner IS the opt-out:
+     it "adds an opt-out option to the modal" and "returns a declined event to your product".
+  Also cut: a 120-word "About VerifyYou" section, which is marketing boilerplate on a page about
+  a settings tab, and a card pointing at /guides/reading-your-dashboard, which is not in the nav.
+
+"Pre-check modal" is kept because it is the product's own word for the screen the name appears
+on.
+*/}
+
+The **Branding** tab allows you to make the check match your brand. Three controls.
+
+<Frame caption="The Branding tab: company name, logo, and the decline banner under advanced options.">
+  <img src="/images/dashboard/branding-tab.png" alt="The Branding tab, showing the company name field, the logo upload, and the decline banner toggle under advanced options" />
+</Frame>
+
+**Company name** is required. It fills the pre-check modal: "Verifying you for [name]". Use the name your users already know. If your product name and your legal entity differ, use the product name.
+
+**Logo** is optional. Without one, the check shows a monogram built from the first letter of your company name, so it never looks unfinished.
+
+**Decline banner** sits under advanced options. Turning it on adds an opt-out to the modal and returns a declined event to your product, so somebody who would rather not verify has a way out and you find out they took it.
+
+Changes save from this tab. They can take a few minutes to appear on live and in-progress verifications, so a check somebody is halfway through may still show the old name.
+
+<Note>
+  Where people land after the check is set on [Configuration](/docs/verifications/configuration), not here.
+</Note>
+
+None of this changes what you receive. Whatever branding a check carries, you get back a verdict, never a face, a name or an image. See [Security and privacy](/docs/how-it-works/security-and-privacy).
+
+**Next:** [Integration](/docs/verifications/integration)

@@ -1,0 +1,80 @@
+---
+title: "Guests and members"
+description: "How we recognize somebody who comes back."
+---
+
+{/*
+REMADE 2026-08-21 at James's request, grounded in the dev docs rather than in our own pages.
+
+THE THING THE OLD VERSION GOT WRONG, and it was flagged as unresolved for two days: matching a
+face and recognizing a returning person are different questions, and the previous page ran them
+together. docs.verifyyou.com/v3/faq settles it:
+  - bound identity: "A person with a bound identity is also recognized on new devices: their face
+    is matched and they sign back in with their number or email"
+  - anonymous: "An anonymous person is recognized only by the device ID in their browser, so they
+    re-verify more often"
+  - and the consequence: clear the browser, change device or use a private window and they look
+    like a new person, and a collision is what happens when the same face passes a check twice
+  - the recommendation, verbatim: "Bind repeat visitors to a verified phone or email so they can
+    be recognized and re-linked instead of blocked."
+So Grant and the dashboard blurb were both right and were answering different questions. The face
+always matches, which is why a duplicate is caught on any device. Being WAVED THROUGH is what
+needs the device or the bound identity, and without one a returning person is blocked rather than
+recognized. That is the sentence a customer needs and no page carried it.
+
+From docs.verifyyou.com/v3/dev/integrating/start-a-session, the three ways a session starts:
+  external_id  "Duplicates reported against your id"
+  email/phone  "The run is bound to that identity; the person cannot swap it"
+  anonymous    "A session, and a pass with no identity attached to it"
+Also: "one successful pass per person, for life" is the default, and `group` scopes uniqueness.
+
+⚠️ TERMINOLOGY COLLISION, for James and Zeek. "Member" means two things in the product today. Here
+it means a guest who has bound a phone or email. On the Team page it means one of your colleagues
+with dashboard access, and the list there is headed MEMBERS. One of the two should change.
+
+⚠️ docs/glossary.mdx still says "Guest records expire over time", which is a retention claim and
+gate 2 forbids it. Fix that entry.
+
+REWORKED AGAIN 2026-08-21, James. "How reliably somebody is recognized" is gone: reliability is
+not the variable and the heading made the product sound flaky. What actually varies is whether we
+have anything to recognise them BY on a new device, which is a consequence of the setting they
+chose, not of the matching working better or worse. The page now separates the two questions
+outright, because running them together is what made every earlier draft read as hedging.
+
+CUT 2026-08-21, James: the "Two different questions" section. It set up a distinction the two
+sections underneath already demonstrate: Guests explains that the face still matches on a new
+device but there is nothing to tie them to their last visit, and Members explains what changes
+when there is. Stating the frame first and then showing it twice was one pass too many.
+*/}
+
+Everybody who takes a check is a **guest**. A guest who proves a phone or email during the check becomes a **member**, and that is what lets us know them anywhere.
+
+## Guests
+
+Known by the device ID in their browser, and nothing else. No phone, no email, no name.
+
+On that same device, inside the window you set under **Skip check on known devices**, they come straight back through. On a new device or a cleared browser we have no way to tie them to their last visit, so they take the check again. The face still matches, so if your settings only allow one pass, that second attempt is a collision rather than a welcome back.
+
+## Members
+
+Proved a phone or email during the check, with a one-time code, so ownership was established rather than typed in.
+
+That claim travels with them. On a new device their face is matched, they confirm with the same number or email, and they carry on.
+
+This is the argument for asking for one. Bind repeat visitors and they are recognised wherever they turn up; leave them anonymous and every new device looks like a new person.
+
+## What your integration sends
+
+Three ways to start a session, and each one changes what comes back.
+
+An **`external_id`**, when you already hold an account for them. Duplicates are reported against your own id, which makes results join straight onto your user table.
+
+An **email or phone**, for a new signup. The run is bound to that identity and the person cannot swap it.
+
+**Nothing**, for an anonymous check. A session and a pass, with no identity attached.
+
+## Where it stops
+
+We can tell you this is the same human as before, and whether we have seen them elsewhere in the network. We cannot tell you their name. Nothing here is an identity check. See [Cross-network recognition](/docs/how-it-works/cross-network-recognition) and [Security and privacy](/docs/how-it-works/security-and-privacy).
+
+**Next:** [Cross-network recognition](/docs/how-it-works/cross-network-recognition)

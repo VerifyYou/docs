@@ -1,0 +1,46 @@
+---
+title: "Gate key actions"
+canonical: "/docs/use-cases/gate-key-actions"
+"og:description": "Put a check in front of a checkout, a payout or a survey completion."
+"twitter:description": "A check on the action itself."
+keywords: ["checkout gate", "payout gate", "survey gate", "limited drop", "step-up verification", "action gating"]
+---
+
+{/*
+LITERAL COPY of docs/use-cases/gate-key-actions.mdx. THE DOCS PAGE IS THE SOURCE.
+*/}
+
+You verify somebody once, at signup. The money moves later, and usually more than once. Here's how we put a check on the moment itself with HumanCheck:
+
+1. **The check runs at the action, not at signup.** The account already exists. The check sits in front of the checkout, the payout, the survey completion or the drop, and the action completes once it settles.
+2. **People you have already verified are recognized.** Most of them go through without scanning again, so the friction lands on the people you have not seen before.
+3. **The limit matches the action.** *Once per lifetime* for something meant to go once per person, *once per period* for a weekly payout, *unlimited* for a checkout where you only need a live human present.
+4. **Put it where the incentive is.** A face scan in front of a one dollar survey costs you completes, because there is another survey paying a dollar that does not ask. The same scan in front of the payout does not, because the person is about to be paid and has a reason to finish it.
+5. **The outcome is yours to set.** *Block* turns the second attempt away. *Allow + flag* lets it through and records it for your team.
+
+This covers the action. For the account behind it, see [Gate a signup](/docs/use-cases/signup-gate).
+
+## How you start
+
+1. Create a verification for the action. One workspace runs several at once, each with its own settings, so a payout gate can be strict while a checkout stays light.
+2. Set **Verification limit** to match the action.
+3. Set **On collision** to *Block* where one per person is the rule, or *Allow + flag* where a duplicate is a judgement call.
+4. Put it in the flow. Paste the no-code link, or use the SDK and [confirm the result on your server](/v3/dev/integrating/handling-results) before the action completes.
+5. Run it on [test keys](/v3/dev/spec/server-api/authentication) first, and watch the completion rate on the first batch before you widen it.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="One-time passwords" icon="clipboard-list" href="/docs/guides/pre-generated-passwords">
+    A worked example, with setup for four survey platforms.
+  </Card>
+  <Card title="Configuration" icon="sliders" href="/docs/verifications/configuration">
+    Set what the check does.
+  </Card>
+  <Card title="Integration" icon="code" href="/docs/verifications/integration">
+    The no-code link, or the SDK.
+  </Card>
+  <Card title="Guests and members" icon="users" href="/docs/how-it-works/guests-and-members">
+    How recognition carries across your checks.
+  </Card>
+</CardGroup>

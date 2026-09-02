@@ -1,0 +1,104 @@
+---
+title: "Tally setup"
+description: "Put HumanCheck in front of your Tally form. Five steps, no code."
+icon: "clipboard-list"
+---
+
+
+Tally cannot ask an outside service anything while a respondent is looking at your form, so nothing inside Tally can tell a real password from an invented one. No form builder setting does this: the form password is a single shared secret, and the duplicate rule only asks whether a value has been seen before, never whether it is one of ours. So HumanCheck holds the line in three places instead of one.
+
+The check happens on our side, before anyone reaches your form. Your form turns away anyone arriving without a password that looks like one of ours, and Tally's own duplicate rule makes sure no password is spent twice. Then, on our side again, anything that reached your results with a password we never issued is removed. Only the last of those knows what your real passwords are, which is why it is the one that decides what stays.
+
+<Note>
+  Somebody who skipped the check can still open your form and press submit. What they cannot do is leave a trace in your data or get paid for it. If you need unverified people to be unable to load the page at all, [Qualtrics](/docs/guides/qualtrics) and [Alchemer](/docs/guides/alchemer) can do that and Tally cannot. Tally does have a password setting that hides the form until a password is typed, but it is one password for the whole study rather than one per person, and it cannot be filled in from a link, so it costs every respondent a copy and paste. Ask us if your link is going somewhere public and it is worth the trade.
+</Note>
+
+<Steps>
+  <Step title="Build your form">
+    In Tally, exactly as you normally would, with two additions.
+    1. Type `/hidden` anywhere in the editor to insert a **Hidden field** block, and name the field `vypw`, in lower case. This is where each respondent's password arrives from their link. Tally's [hidden fields](https://tally.so/help/hidden-fields) are case sensitive, so the spelling has to match exactly.
+    2. Add a **Short answer** question called **Verification code** as the first question, and mark it **Required**. Underneath it, write something like "Filled in automatically, please leave this alone."
+    3. Click the handle to the left of that question, switch on **Default answer**, and pick the `vypw` hidden field from the dropdown. This is the step that makes the whole thing invisible: the password fills the box on its own, and a verified respondent types nothing.
+    4. Put a **page break** straight after it, so the code box is alone on page one and your questions start on page two. Tally only acts on a page jump when somebody presses Next, so the screen-out in the next step will not fire unless the code box has a page of its own.
+    5. At the end of the form, add two **thank you** pages: first the one people see when they finish, then a second one saying they need to start from their invitation link. Order matters, the first thank you page is where a normal finisher lands.
+    6. Click **Publish**.
+
+    The visible question is doing real work. A hidden field on its own can be left empty by anyone who opens your form directly, and Tally will accept that submission, and the next one, and the one after that. A required question cannot be left empty.
+
+    <p className="vy-have"><strong>You now have:</strong> a form whose first question is a code box that fills itself in.</p>
+  </Step>
+  <Step title="Turn away anything that is not a password">
+    Two settings, both free, both in your published form.
+    1. On the **Verification code** question, add conditional logic: **if** the answer **does not start with** `vyp_`, **jump to** the second thank you page, the one about starting from the invitation link. Anyone who wandered in without a password stops there instead of filling in your study.
+    2. In **Settings**, under **Access**, turn on **Prevent duplicate submissions** and choose the **Verification code** question as the unique identifier. Not IP address and not Respondent ID: those can be worked around by switching network or browser.
+
+    Tally's [duplicate rule](https://tally.so/help/prevent-duplicate-submissions) now runs on their servers before a response is stored, so Tally turns away a second attempt carrying a spent password with "Form submission not accepted. It looks like you have already filled out this form." What it does not do is check that a password came from us, because Tally has no way to know what your passwords are. That is the next two steps.
+
+    One thing to expect in your results: somebody who is screened out here still leaves a row, carrying whatever they typed in the code box and none of your survey answers. It is removed in step four, and until then it is obvious what it is.
+
+    <p className="vy-have"><strong>You now have:</strong> a form that accepts each password exactly once and turns away anything that is not shaped like one.</p>
+  </Step>
+  <Step title="Connect your study in VerifyYou">
+    In your [VerifyYou dashboard](https://platform.verifyyou.com/dashboard/verifications), open a verification and go to the **Integration** tab.
+    1. Make sure the method is **One-time passwords**. If it is set to something else, click **Switch method** and choose it.
+    2. Set **how many one-time passwords** you need. Ask for at least twenty percent more than the respondents you expect. Passwords cost nothing, and running out mid-study screens out real people.
+    3. Send us your Tally form link. We give you back a **gate link** for this study. That is where we hand a verified respondent their password.
+    4. Set the destination for verified people to that **gate link**.
+
+    <p className="vy-have"><strong>You now have:</strong> your <strong>study link</strong>, which is the one you share, and a gate link doing the handover.</p>
+  </Step>
+  <Step title="Connect the webhook">
+    In your published form's **Integrations** tab.
+    1. Find **Webhooks** and click **Connect**.
+    2. Paste the **endpoint URL** we gave you with your gate link.
+    3. Paste the **signing secret** we gave you alongside it. That secret is how the endpoint knows a submission really came from your form.
+    4. Save.
+
+    Tally now tells us about every submission as it lands, and this is the step that checks a password against the ones we actually issued. A submission carrying a real, unused password is left alone. One carrying a password we never issued is removed from your results, and so is one that arrived with no password at all. [Webhooks](https://tally.so/help/webhooks) are free on every Tally plan.
+
+    <p className="vy-have"><strong>You now have:</strong> a study where a response has to arrive with a password we issued in order to stay in your results.</p>
+  </Step>
+  <Step title="Share your VerifyYou link, not your Tally link">
+    The link you hand out is the **study link from VerifyYou** (the `app.verifyyou.com/verification/...` one, from **Copy** in the dashboard), never your Tally link. This is the whole point: the VerifyYou link sends every respondent through the face check first, then redirects the verified ones into your Tally form with their one-time password already attached. Anyone who opens the raw Tally link skips the check, so only ever share the VerifyYou link, in your panel, your sample provider, or your invite email.
+
+    <p className="vy-have"><strong>You now have:</strong> a fielded study where everyone who reaches your questions came through the check. That's the whole setup.</p>
+  </Step>
+</Steps>
+
+## Two settings worth leaving alone
+
+Keep **partial submissions** off, so an abandoned attempt does not sit in your results looking like a response. And if you know the size of your sample, set a **submission limit** to match the number of passwords you asked for, so a study that has finished closes itself rather than collecting stragglers.
+
+## When something looks wrong
+
+<AccordionGroup>
+  <Accordion title="Real respondents are being told they have already filled out the form">
+    Two passwords ended up the same, or somebody is on a link they already used. Check the **Prevent duplicate submissions** setting is pointed at `vypw` and not at Respondent ID, which would block a second person on a shared computer.
+  </Accordion>
+  <Accordion title="Responses are arriving with the code box empty">
+    The hidden field is spelled differently from the one on the link. It has to be exactly `vypw`, in lower case. Tally hidden fields are case sensitive, so `VYPW` or `vyPW` silently collects nothing, and the default answer on your Verification code question then has nothing to copy.
+  </Accordion>
+  <Accordion title="Nothing is being removed from my results">
+    The webhook is not connected, or it is connected without the signing secret. Open the **Integrations** tab, click the clock icon next to your webhook, and look at the events log: it shows every request and the response it got back.
+  </Accordion>
+  <Accordion title="I have run out of passwords mid-study">
+    Ask us for more and we add them to the same pool. Nothing about your form changes, and the respondents already holding a password keep it.
+  </Accordion>
+</AccordionGroup>
+
+## What happens next
+
+<div className="grid md:grid-cols-2 gap-5 mt-6">
+  <a href="/learn/what-your-users-see" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="mobile-screen" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="mobile-screen" iconType="light" size={22} /></span>
+    <span className="vy-card-title">What your respondent sees</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">See exactly what your respondent sees.</span>
+  </a>
+  <a href="/docs/guides/pre-generated-passwords" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="layer-group" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="layer-group" iconType="light" size={22} /></span>
+    <span className="vy-card-title">The same mechanism, any platform</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Tally today. The same pattern works anywhere.</span>
+  </a>
+</div>

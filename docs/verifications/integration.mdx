@@ -1,0 +1,148 @@
+---
+title: "Integration"
+description: "The four ways to put a check in front of people."
+---
+
+{/*
+REWRITTEN 2026-08-21 from the Switch method dialog on a live verification, at James's request to
+list every option. The previous version said "two ways", no code or code, which is what the
+wizard offers at step 2. The Integration tab offers four, and three of them are no code.
+
+CODE SECTION, 2026-08-21. James asked whether the code path is "either redirect or SDK". It is
+neither of those as an either/or: docs.verifyyou.com/v3/dev/integrating/placing-your-check names
+three placements, Redirect, Drawer and Inline, and all three run through the SDK. Redirect is a
+placement, not the alternative to it. Section renamed from "The code method" to "With code",
+matching the dialog's own label, and a Developer documentation card row added at his request,
+built from the real section list in docs.verifyyou.com/llms.txt rather than invented.
+
+OPENER REWRITTEN 2026-08-21, James flagged it as unchanged. It was: "Every verification has an
+Integration tab. It shows the method in use, and Switch method changes it. You can switch back at
+any time." Three sentences of furniture, opening on a tab rather than on the decision, and it was
+the one paragraph on this page that never carried the no-code framing he asked to be baked in.
+
+KEYS SECTION REMOVED 2026-08-21, James asked me to confirm it or drop it. It could not survive
+confirmation: it said "publishable keys run in the browser", and
+docs.verifyyou.com/v3/dev/spec/server-api/authentication says publishable keys are DEPRECATED and
+that sessions are minted server-side with a secret key. What is confirmable, the sk_test_ and
+sk_live_ partitions that cannot be mixed, moved into the code section as he suggested.
+
+⚠️ METHOD NAME, three versions of it. The 19 Aug scan recorded **Academic Research**. It was
+briefly written here as Pre-generated passwords. James's screenshot on 21 Aug shows the product
+now says **One-time passwords**, "Gate a survey, form, or study with single-use codes". The
+dashboard label wins anywhere a reader has to find it on screen, which is this page and all four
+setup guides. The docs section is now One-time passwords too.
+
+DNS: sending from your own domain needs records in place. Stated at the level we can stand behind
+and pointed at us, since nobody here has the record list.
+
+Quoted verbatim from the dialog ("Pick how people start this verification. You can switch back
+any time."):
+  Sharing a link       No-code          Chosen during setup. Share your link below.
+  Existing users       No-code, BETA    Import your users, then send each a verification request.
+  One-time passwords   No-code          Gate a survey, form, or study with single-use codes.
+  With code                             Built into your product with the SDK and API.
+  (the third row read "Academic Research / Gate your survey with one-time passwords" on 19 Aug)
+
+EXISTING USERS was not in the 19 Aug scan at all and is the biggest of the four for the
+healthcheck use case. Its Add people panel says, verbatim: "Paste your list or upload a CSV,
+whole spreadsheet rows are fine, with or without a header. We work out which column holds the
+email and keep anything else useful on the row, like an IP address, so you can compare it against
+what we see when they verify. Everyone you add gets a verification link locked to their address.
+Adding people never sends anything."
+
+That last sentence matters and is written into the page: adding is not sending. Sending happens
+from Activity.
+
+HOSTED SENDING, added 2026-08-21 at James's request, checked on the Activity header: **Message**
+(edit the copy), the from address beside it, **Send unsent · N**, and a counter reading
+"0 / 500 emails sent today". The 500 is what one Basic workspace shows, so the page says the cap
+exists and points at the counter rather than printing a number that may be per plan. Confirm with
+Zeek whether it varies, then it can say the number.
+
+The row then carries per-recipient state: "Sent 5d ago · verified 5d ago · 1 click", with an
+opens count beside it.
+
+⚠️ The product's own test panel uses the word the claim gates ban, in the sentence beginning
+"Run the real check in a ...". Our copy says test keys and the simulator instead, which is why
+this page reads as it does. The in-product string is the one that should change. Do not quote it
+here: the claims check blocks the word whether it is used or quoted, which has now caught me
+twice.
+
+Also noted: "Lands on" is editable from this tab as well as from Configuration. Branding says the
+redirect is set on Configuration, which is true and no longer the whole story.
+
+DNS SENTENCE UPDATED 2026-08-28. It said "Talk to us and we will give you the records to add",
+written when nobody here had seen the record list. James's Senders-panel screenshot shows the
+records in the product (TXT and CNAME rows, Live/Pending, Re-check), so the sentence now points
+there. Same change adds the link to the new Existing users setup guide, written that day from
+his walkthrough.
+*/}
+
+How the check reaches people is your choice, and you can change it whenever you like. Three of the four ways need no developer time at all, so you can prove value early without waiting on your roadmap.
+
+Each verification's **Integration** tab shows the method it is using now, and **Switch method** swaps it.
+
+<Frame caption="Switch method, with all four options.">
+  <img style={{ maxWidth: "440px", width: "100%", display: "block", margin: "0 auto" }} src="/images/dashboard/switch-method.jpg" alt="Switch method dialog listing four integration methods" />
+</Frame>
+
+## The three no-code methods
+
+No code gets you started with zero developer effort, so you can prove value early without interrupting your roadmap.
+
+**Sharing a link.** Every verification has its own link in the dashboard. Copy it and put it wherever people already go: the button on your signup page, an invite email, the top of a survey. Somebody who opens it takes the check on our hosted page, and lands wherever you set under Where people land. Nothing to build, and no change to your own code.
+
+**Existing users** (BETA). Import the people you already have, then send each of them a verification request. Paste a list or upload a CSV, and we work out which column holds the email. Everyone you add gets a link locked to their address.
+
+Adding people sends nothing. You send from the verification's **Activity** tab, and we host the sending, so there is no mail system to wire up. Each row then shows sent, opened, clicked and verified.
+
+Sending from your own domain needs DNS records in place first, so plan that in before a large batch. The records to add are in the **Senders** panel on the Activity tab, next to the address your invites leave from.
+
+This is the simplest no code method behind [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit), and [Existing users setup](/docs/guides/existing-users) walks the flow end to end.
+
+**One-time passwords.** A single-use code in front of a survey, form or study, one per person, each good once. [One-time passwords](/docs/guides/pre-generated-passwords) has the setup for four platforms.
+
+## With code
+
+The check runs inside your own product with our SDK, and your server confirms the result before you act on it. Attach your own `external_id` and every result comes back tied to the user record you already keep, which is what makes an export reconcile against your own tables.
+
+Sessions are minted on your server with a secret key, `sk_test_` or `sk_live_`. Test and live are separate partitions and cannot be mixed: a session from one reads as nonexistent under the other, so you can rehearse the whole path before a real person takes it.
+
+Three ways to place it, all through the SDK:
+
+* **Redirect.** We host the whole flow and send the person back to your `redirect_url` with the token on it
+* **Drawer.** Slides over your page: a bottom sheet on mobile, a side panel on desktop
+* **Inline.** Mounts inside your own element, like an embedded video
+
+Redirect means handling a departure and a return. Drawer and inline resolve on the page they started on.
+
+## Developer documentation
+
+Everything below lives at [docs.verifyyou.com](/v3/dev/integrating/start-a-session), which is the reference your engineers work from.
+
+<CardGroup cols={2}>
+  <Card title="Start a session" icon="play" href="/v3/dev/integrating/start-a-session">
+    Mint a session on your server with your secret key, then hand the id to the front end.
+  </Card>
+  <Card title="Placing your check" icon="window" href="/v3/dev/integrating/placing-your-check">
+    Redirect, drawer or inline, with the trade-offs of each.
+  </Card>
+  <Card title="Handling results" icon="circle-check" href="/v3/dev/integrating/handling-results">
+    Confirming server side, and what to gate on.
+  </Card>
+  <Card title="Server API" icon="server" href="/v3/dev/spec/server-api/initialize">
+    Initialize, confirmations, lock, lookup, and return URL parameters.
+  </Card>
+  <Card title="Browser SDK" icon="code" href="/v3/dev/spec/browser-sdk/vycheck">
+    vycheck, vyget, init, VyResult and the error list.
+  </Card>
+  <Card title="FAQ and changelog" icon="clock-rotate-left" href="/v3/changelog">
+    What changed, and the API change policy.
+  </Card>
+</CardGroup>
+
+## Try it first
+
+**Run a test** on this tab runs the real check on test data, with a test identity you can regenerate. Take it yourself before a real person does.
+
+**Next:** [Reading Activity](/docs/activity/reading-activity)

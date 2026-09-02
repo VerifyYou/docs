@@ -1,0 +1,56 @@
+---
+title: "Reading Activity"
+description: "The record of everyone who completed a check."
+---
+
+{/*
+REWRITTEN 2026-08-21 after the second dashboard scan, at James's direction: the page said what
+the screen contains and never said when you would reach for anything on it.
+
+The scan changed what is true here. The 26 filter options were recorded as "Filter" before, and
+the two Activity screens are not the same screen: workspace has no Needs action, no export, no
+row selection and no email sending. Both are now described as what they are.
+
+Each filter section answers "why would somebody use this", which is the thing James said was
+missing. The scenarios are real ones from the Snorkel calls, and each is attributed
+where it came from. James cut three invented heuristics off Reading Insights on 21 August; the
+rule now is that an interpretation goes in only if a customer said it. "A single VPN means
+little, most people who use one use it for everything" went the same way. Nobody measured it.
+
+NEEDS ACTION removed from the body 2026-08-21, James asked whether it is real. The control does
+exist, on a verification's own Activity tab, but nothing on screen or in any source states what it
+selects, so every sentence we wrote about it described it without defining it. Better absent than
+vague. Put it back when Zeek says what the rule is.
+*/}
+
+**Activity** is the record of everyone who completed a verification, most recent first.
+
+[**Workspace Activity**](https://platform.verifyyou.com/dashboard/activity) covers every check you run. A row gives you the identifier they gave, or *No identifier given*, the time, a trust band, a trust score out of 100, the result, and a `TEST` badge if it came from test keys. The row menu opens that person's profile.
+
+**A verification's own Activity tab** adds the working controls: **Needs action**, **Export**, row selection, rows per page, and sending the check by email. Go here when you are working a list. Go to workspace Activity when you are looking somebody up.
+
+<Frame caption="A verification's own Activity tab. Filter and Export sit above the list.">
+  <img src="/images/dashboard/activity-filter-export.png" alt="A verification's Activity tab, with the Filter and Export controls highlighted above the list of people" />
+</Frame>
+
+## Looking up individual users
+
+Search by email or phone.
+
+The support case: somebody says they cannot get in. The row tells you what actually happened, because a denial carries its reason. `limit reached` means your own verification limit fired and they have already passed once. A liveness failure means the camera never confirmed a live person, and trying again in better light might work. Two different answers to give them.
+
+The investigation case: you have seen something odd on your own platform from one account and you want to know what we saw. Search the identifier, open the person, and hold what we have against what you have, the location, the devices, and the history of every run they appear in.
+
+## Filtering users
+
+The **Filter** opens 26 fields, and they fall into four groups worth knowing.
+
+**Where they came from**: Country, Region, City, Platform, Device type, Browser. Reach for these when you have a picture of where your real people are. If your panel is US-based and a cluster of sessions arrives from one city you have never recruited in, that is worth pulling out on its own, even before anything is flagged.
+
+**How they arrived**: VPN, Datacenter IP, Tor exit, Known abuser IP, TLS automation, TLS / UA mismatch, TLS client. Augie at Snorkel uses these to catch people who pass the check and still cannot hide their infrastructure: a cluster of accounts on datacenter IPs, when real people are working from laptops at home.
+
+**What the check saw**: Threat level, Face collision, Face collisions, Liveness denied, Liveness failure reason, Liveness attempts, Liveness confidence, Age low, Age high, Gender confidence. **Face collisions** is the one to start from on any audit. A collision is the same human passing a check twice, and [Configuration](/docs/verifications/configuration) decides what happens when one is found.
+
+**Housekeeping**: Environment separates test traffic from live, and **Conflicts with** pulls up the records that clash with a given one.
+
+**Next:** [Comprehensive trust score](/docs/activity/guest-profiles)

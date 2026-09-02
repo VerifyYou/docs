@@ -1,0 +1,94 @@
+---
+title: "Security and privacy"
+description: "Information for a security review."
+---
+
+{/*
+REWORKED 2026-08-21. Was 820 words, nine headings and twenty-two components, a heading every 91
+words. Every claim-gated sentence below is kept word for word. What went was structure and
+duplication.
+
+CUT:
+  - "Security reviews and documentation" at the top and "Get our documentation" at the bottom
+    said the same thing twice, in the same page. Merged into one.
+  - "How the check works", a three-step walk with vycheck(), POST /v3/initialize and the vyt/vyc
+    token detail. That is docs/how-it-works/how-the-check-works plus the dev docs, and repeating
+    it here meant three places to keep in step.
+  - "Human only overrides", claiming a real person wrongly denied "can be cleared by a human on
+    your team, with the override scoped to your workspace". Override was not on screen in the
+    19 Aug scan (drift item 8), so this described a control nobody can find. Removed rather than
+    softened.
+  - A card link to /learn/security-and-friction, which is not in the nav.
+
+Role names: settled 2026-08-21, Member and Admin, confirmed on the Team page. The cut card was
+right about the names.
+
+CUT 2026-08-21, James: the whole "Keys and result integrity" section and the "Shared
+responsibility" table. Keys are docs/verifications/integration.mdx, which has them with the test
+and live pairs. Server-side confirmation is the dev docs, docs.verifyyou.com/v3/dev/integrating/
+handling-results. The shared responsibility table read as a contract nobody signed, and every row
+on our side was a generic assurance while every row on theirs is covered by the pages that teach
+those things.
+
+PII LINE ADDED 2026-08-21, James's wording, one typo fixed ("our" to "out"). A standalone PII
+article was written and then deleted at his call; this line carries it instead, which is right,
+because the audience for the choice is the person running the security review.
+
+⚠️ ONE WORD FOR DAVID OR COUNSEL: "liability". Telling a customer they can choose their level of
+liability is a claim about their legal exposure rather than about our product. It is a normal
+thing vendors say about data minimisation and it is James's own sentence, so it stands, but it is
+the sort of line worth having somebody sign off before this publishes. The safe alternative, if
+anybody objects, is "so you choose how much personal data you take on".
+
+WHAT THE DELETED ARTICLE CARRIED THAT NOTHING NOW DOES: anonymous is not no-data. The face vector
+still exists in anonymous mode and is treated as sensitive biometric data, because without it we
+could not tell a returning person from a new one. docs/how-it-works/what-we-store says the face
+vector persists and why, so the fact is on the site, but the specific misreading, "no PII" taken
+to mean "no biometric", is no longer addressed anywhere. Worth a sentence somewhere if a customer
+ever asks.
+
+CUT, same day: "What your systems receive" and the whole "What we keep" section. Both were
+docs/how-it-works/what-we-store said again in a graver voice, and every claim-gated sentence in
+them survives there word for word: the face vector wording, "we do not store images", "treated as
+sensitive biometric data", and the list of what the business never receives. Nothing left the
+site. One routing line points a reviewer at that page.
+
+The page is now what it should have been from the start: we do not publish the security detail,
+here is how to get it, and here is where the data questions are answered.
+
+Also cut, same day: "We keep what it takes to return a verdict and to recognize a unique human,
+and not more." A reassurance with no content, on a page read by people whose job is to check
+claims. The section keeps its heading and the Note under it, which points at the binding source
+and the deletion route. docs/how-it-works/what-we-store answers what we keep in detail.
+
+What is left is what only this page can answer: what a reviewer receives, what we keep, and how
+to reach the security team.
+
+DE-SLOPPED 2026-08-21, James. What went, and why:
+  - "This page is the reviewer's view." Meta-commentary about the page rather than content.
+  - "we would rather walk you through the detail than have you piece it together from a summary
+    page." Negative parallelism, and an excuse for the page not carrying the detail.
+  - "so your systems have no reason to hold any of them." A decorative inference tacked onto a
+    fact that stood on its own.
+  - "you carry far less personal data than a government-ID check would leave you holding." A
+    sales comparison on a security page, and "far less" is unmeasured. Now says the concrete
+    version: no ID documents or images in your systems to secure.
+  - "Retention differs by data type." Says nothing a reviewer can use, and the privacy policy
+    line immediately after it is the real answer.
+
+DO NOT EDIT the security@verifyyou.com paragraph, the face vector wording, or the "not KYC"
+line without reading claim-gates.md first. Gate 3 makes that email address the only answer we
+give on certification, and there is a dollar figure attached to gate 2.
+*/}
+
+We answer one question: is there a real, unique, live human on the other end. We hold as little about that person as we can while doing it.
+
+We let you opt in or out of PII, so you choose your level of liability. **Identity** on each verification decides whether the check asks for a phone or email or asks for neither. Contact our team for more on what that means for your setup, and see [Configuration](/docs/verifications/configuration).
+
+## Security documentation
+
+Our current security documentation is available on request, and we will work through your vendor questionnaire with you. Tell us what your review needs at [security@verifyyou.com](mailto:security@verifyyou.com).
+
+To report a vulnerability, use the same address, and give us a reasonable window to fix it before any public disclosure.
+
+**Next:** [Gate a signup](/docs/use-cases/signup-gate)

@@ -1,0 +1,48 @@
+---
+title: "Cross-network recognition"
+description: "Recognizing somebody who verified on another platform."
+---
+
+{/*
+REWORKED 2026-08-21. Was 641 words and named three things that do not exist.
+
+REMOVED, and do not put back without Zeek:
+  1. "Collision scope", with network and company options. There is no such control. The
+     Configuration panels are listed in DASHBOARD_REFERENCE.md and this is not among them.
+  2. "Skip re-verify". The real setting is "Skip check on known devices".
+  3. "Guest records expire over time." A retention claim, and claim gate 2 forbids any retention
+     window not taken from the privacy policy.
+  4. A three-card row (Frictionless / Re-verify on a cadence / Re-verify every time) presented as
+     settings. Those are outcomes of the verification limit, and Configuration owns it.
+  5. A link to /learn/why-humancheck, which is not in the nav.
+
+This page is exactly the case the claim gates warn about: cross-network is sold in the present
+tense, and a technical reader who goes looking for a partner count or a flagged-elsewhere signal
+will not find one in the dashboard today. Write the capability. Do not invent the UI for it.
+
+CUT 2026-08-21, James, and he had to ask twice. I removed the "How reliably somebody is
+recognized" framing from guests-and-members and reported it as done without checking whether the
+same heading existed anywhere else. It did, here. Reliability is not the variable and the wording
+made the product sound unreliable for something the customer chose;
+docs/how-it-works/guests-and-members owns the guest-against-member difference in full.
+*/}
+
+Every HumanCheck runs on one shared network. When somebody passes a check on any platform using HumanCheck, their face vector is on the network, so the next platform can recognise that person and see if they have been flagged. Every platform that joins makes the network of verified humans stronger, and everyone in it better protected.
+
+## What it gives you
+
+* A person verified elsewhere can be recognized on your check without scanning again
+* You still get the same verdict, a real and unique human, without paying for their friction
+* If we have seen that person flagged somewhere else in the network, we tell you
+
+## What decides how much they are asked
+
+Your own configuration decides. Whether a recognized person walks straight through, re-verifies on a cadence, or scans every time comes from your **Verification limit** and **Skip check on known devices**. See [Configuration](/docs/verifications/configuration).
+
+A stricter setting on your platform changes nothing about anyone else's, and theirs changes nothing about yours.
+
+<Note>
+  Skipping the scan saves the person friction, not you a verification. A returning guest who passes without scanning still counts as one.
+</Note>
+
+**Next:** [Security and privacy](/docs/how-it-works/security-and-privacy)
