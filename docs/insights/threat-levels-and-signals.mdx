@@ -1,0 +1,56 @@
+---
+title: "Threat levels and signals"
+description: "How the trust score and the threat bands relate."
+---
+
+{/*
+Written 2026-08-21. OPENER, 2026-08-21, James: "We measure two things, and they point in opposite directions" is out.
+It announced that something was coming instead of saying it, and "point in opposite directions"
+is a stock figure standing in for the actual fact. The page now opens on the two scales
+themselves, so a reader who stops after two sentences already has the answer.
+
+This page exists because of drift item 9 in DASHBOARD_REFERENCE.md: the
+person view scores Trust out of 100 where higher is better, Insights speaks in threat bands
+where higher is worse, and a reader meets both. Fixing the product would beat explaining it.
+Until then, explaining it beats leaving somebody to work it out.
+
+⚠️ TAXONOMY, confirm with Zeek. Two lists are in circulation, and drift item 10 records both.
+  live product, from the Flags empty state, and what this page uses:
+    network / geography / accounts / automation / liveness
+  older material:
+    network / velocity / automation / liveness / identity
+Do not blend them. A third list exists and is a different thing again: the signal groups on a
+person, documented on docs/activity/guest-profiles.
+*/}
+
+A person carries a trust score out of 100, where a high number is good. Insights sorts the same sessions into threat bands, where a high band is bad. They measure the same thing from opposite ends.
+
+## The trust score
+
+Everyone starts at 100. Anything suspicious we detect during the check subtracts from it, and the size of the deduction follows how suspicious the thing is. A clean run keeps its 100. A run arriving through a datacenter IP on a face that is already on two other accounts does not.
+
+So the score is a summary of what we found, not a judgement of the person, and it is worth reading as a prompt: the lower it goes, the more there is to look at. Your configuration decides whether they passed or failed. The score does not.
+
+## The threat bands
+
+The same sessions, grouped for the population view: **Low**, **Moderate**, **Elevated**, **High**. Higher means more of concern, which runs the opposite way to the score.
+
+A person with a high trust score sits in a low threat band. Both describe the same run.
+
+## The threat families
+
+**Top threat signals** on Insights groups what fired into five families.
+
+**Network** is where the connection came from: a VPN, a datacenter, a Tor exit, an IP already known for abuse.
+
+**Geography** is where they appear to be, and whether that fits what you or we expected.
+
+**Accounts** is one face turning up on more than one account. This is the family people act on most.
+
+**Automation** is whether the session behaves like a real browser or like a script, read from how the connection presents itself.
+
+**Liveness** is the capture itself: failed attempts, low confidence, a screen held up to the camera.
+
+Which family dominates tells you what you are dealing with, and it is a different question from how much of it there is.
+
+**Next:** [Team and roles](/docs/workspace/team-and-roles)

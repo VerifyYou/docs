@@ -1,0 +1,157 @@
+---
+title: "Gate a signup"
+"og:description": "Limit each person to one account."
+"twitter:description": "Limit each person to one account."
+keywords: ["signup gate", "duplicate accounts", "multi-accounting", "account creation fraud", "bot signups", "one account per person"]
+---
+
+{/*
+DOCS USE CASE, complete draft. Written by hand with James, 2026-08-21.
+FIRST PAGE ON THE ARC, so this one is the template the other three copy.
+Slug stays /docs/use-cases/signup-gate so nothing already linked breaks. Title changed from
+"Signup gate" to the verb form, so this page and its Learn counterpart carry different jobs:
+Learn answers why, Docs answers how.
+
+ARC CUT DOWN, 2026-08-21, James's call mid-draft. The six-heading Stytch arc was written out in
+full and came to 698 words after two trimming passes. He cut it to two sections and a 400 word
+ceiling: exactly how the gate protects a signup, then exactly how you start. IA_PLAN.md is
+updated to match, so the other three pages copy this shape rather than the long one.
+
+What the cut dropped, and where it went:
+  - What you are protecting, and the KYC boundary -> docs/how-it-works already carries it
+  - What your user experiences                    -> learn/what-your-users-see, with the video
+  - What you see afterwards                       -> the Reading Activity card in Next steps
+  - The audit boundary                            -> kept, one line, because it stops somebody
+                                                     buying a gate to clean an existing userbase
+
+SCORE against the revised rubric in IA_PLAN.md: 14 of 16. Ships at 14.
+  1 outcome stated before the product      2  no opening paragraph at all now. The
+                                             subtitle carries it: limit each person to one
+                                             account. James cut the opening in two passes,
+                                             and the page is better for it, since the subtitle
+                                             was already saying what those sentences argued for
+  2 lead section, How you start, Next steps  2  the lead section lost its heading on
+                                             2026-08-21, so the page opens straight into the
+                                             mechanism. The frontmatter description went with
+                                             it, both James's call
+  3 controls named as the dashboard does  2  caveat below
+  4 numbered, one action per step         2  third pass on section one. v1 walked our own
+                                             pipeline. v2 walked the attack. Both described
+                                             what happens without showing why it holds, which
+                                             is what James meant by unconvincing.
+                                             v3 is the chain Grant walked Blake through on the
+                                             Site Check call, 21 Aug, and it is sourced from
+                                             that transcript rather than from our docs:
+                                               - the face is the anchor and every credential,
+                                                 device and login ties back to it
+                                               - the FIRST person to pass claims the face and is
+                                                 never touched again. That was missing entirely
+                                                 and it is the fact that makes the rest make
+                                                 sense
+                                               - anybody later with that face ties back to the
+                                                 claim, whatever identifier they arrive with
+                                               - the claim is not scoped to one check
+                                               - a new device is the real gap, closed by asking
+                                                 for a phone or email
+                                             The opening line is James's, supplied verbatim
+                                             2026-08-21: no limit to how many emails or devices
+                                             a human can own, but they cannot replace their
+                                             face. Do not rewrite it. It OPENS the argument the
+                                             section then makes, which is the only way an
+                                             aphorism is allowed to stand (tells rule 13). It
+                                             also drops the "anchors on the face" clause the
+                                             earlier version carried; points 2 and 3 do that
+                                             work instead
+  5 length under 400                      2  337 words, well under
+
+VOCABULARY PASS, 2026-08-21, James's call. Section one now talks in accounts and signups, the
+words a product owner already uses, and the product's own terms appear only where the reader
+clicks them. "Collision" survives once, named as the setting in point four, because that is the
+label on the Configuration panel and check 3 requires the control be named as the dashboard
+names it. Blake made the same point about "collision" reading internal on the Site Check call,
+and solved it on the marketing site by calling it a safe user check. Docs and marketing can
+diverge here: marketing needs a term with no history, docs needs the word next to the toggle.
+  6 onward links, no call to action       2
+  7 ai-tells CLEAN, claims check passes   2
+  8 voice matches the surface             0  see below. Scored zero rather than argued away,
+                                             since check 8 is what keeps the site sounding
+                                             like one product
+
+SEO, after the frontmatter `description` was cut on 2026-08-21. Verified against the running
+preview rather than assumed:
+  - "og:description" and "twitter:description" DO render as real meta tags without bringing the
+    subtitle back. Both are set above. That covers link previews and social cards.
+  - <meta name="description"> does NOT. Mintlify emits it only from `description`, which is the
+    same field that prints the subtitle, so it is both or neither. Confirmed by curling this
+    page against docs/index, which has one.
+  - `keywords` is documented as a frontmatter field but produced no meta tag on the dev server.
+    Left in place; re-check on a real deploy.
+  - THE REAL COST is llms.txt. Mintlify builds each page's line there from `description`, so
+    this page will be listed for AI assistants with no summary at all. llms.txt is not served by
+    the dev server, so that could not be tested locally.
+  - Full fix, if the llms.txt entry matters more than the clean top of page: put `description`
+    back and accept the subtitle. There is no per-page way to keep one without the other, and
+    hiding it in style.css would hide it on every page, not just this one.
+
+OPEN, for James:
+  - ⚠️ CLAIM CONFLICT, worth an answer from Grant or Zeek before this ships. Point five used to
+    say a new phone breaks the link and is the one route through. James caught it. Grant, on the
+    Site Check call 21 Aug, describes the opposite: the face is what we match, so the same face
+    on a new device is recognized as a duplicate attempt, and the identifier exists so a genuine
+    returning person is recognized as themselves instead of colliding. But the dashboard's own
+    Identity blurb reads the other way: "A verified human is recognized by their face plus the
+    device they're on. If they switch devices, adding a phone or email is how their face gets
+    re-linked." learn/create-a-verification.mdx repeats the dashboard version, so if Grant is
+    right that page needs the same fix. Point five is now written to only what both accounts
+    agree on: Linked by guest means recognition travels, Anonymous means it stays with the
+    device.
+  - This page says "guest" where the earlier draft said "your user". david-docs-voice reserves
+    guests for the people being verified and bans "users" for them, so the site agrees with
+    itself now, but the heading you approved in the arc said "What your user experiences". Say
+    which wins and check 8 goes back to 2.
+  - "Allow + flag" is the dashboard's label. learn/taking-action-on-fraud.mdx says "Allow and
+    flag". The dashboard wins unless the label changed.
+  - Step 5 says test keys and the simulator, which is the wording the claim gates require.
+    The banned synonym for it is not used anywhere on the page.
+
+Settings quoted from DASHBOARD_REFERENCE.md rather than from our own docs:
+  Identity: Linked by guest (default) / Anonymous / Provided by you
+  Verification limit: Once per lifetime (default) / Once per period / A few per period / Unlimited
+  On collision: Block (default) / Allow + flag
+  Preset: Signup Gate, step 2 of the wizard
+*/}
+
+There's no limit to how many emails or devices a human can own, but they cannot replace their face. Here's how we limit each person to one account with HumanCheck:
+
+1. **A live person has to be there.** A photo held up to the lens, a recorded video, or a script never gets past this one.
+2. **The first account through owns that face.** The scan becomes a face vector, a numerical representation of the face's geometry. Whoever signed up first keeps their account, and nothing here touches them again.
+3. **A second signup with that face is recognized as the same person**, whatever email or login they use this time. That holds across your other checks too.
+4. **You decide what happens to the second account.** Refuse it, and they are told an account already exists. Or let it through and have the person flagged for your team. The setting is **On collision**.
+5. **Ask for a phone or an email.** Set that way, the same person is recognized wherever they sign up from, so a new phone changes nothing. Left anonymous, recognition stays with the device they used, which suits a one-off check and not a signup.
+
+A gate only covers new signups. For the accounts you already have, see [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit).
+
+## How you start
+
+1. Create a verification and pick the **Signup Gate** preset.
+2. Set **Identity** to *Linked by guest*, which is the phone or email in point five.
+3. Set **Verification limit** to *Once per lifetime*, so one person gets one account, and **On collision** to *Block*.
+4. Paste the no-code link into your signup, or use the SDK and confirm the result on your server.
+5. Run it on test keys first. The simulator behaves like the real check, and the test people it creates stay separate from your live records.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="sliders" href="/docs/verifications/configuration">
+    Set what the check does, including denials.
+  </Card>
+  <Card title="Integration" icon="code" href="/docs/verifications/integration">
+    The no-code link, or the SDK.
+  </Card>
+  <Card title="Reading Activity" icon="wave-pulse" href="/docs/activity/reading-activity">
+    Who reached the gate, and who was refused.
+  </Card>
+  <Card title="Guests and members" icon="users" href="/docs/how-it-works/guests-and-members">
+    How recognition carries across your checks.
+  </Card>
+</CardGroup>

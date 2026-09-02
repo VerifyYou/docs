@@ -1,0 +1,80 @@
+---
+title: "Alchemer setup"
+description: "Put HumanCheck in front of your Alchemer study. Five steps, no code."
+icon: "sliders"
+---
+
+
+<Steps>
+  <Step title="Create your study">
+    In Alchemer, exactly as you normally would, with one difference.
+    1. Build your study as usual.
+    2. Leave **page 1 empty**: your questions start on page 2. Page 1 is where the gate goes.
+
+    <p className="vy-have"><strong>You now have:</strong> a normal Alchemer study with an empty first page.</p>
+  </Step>
+  <Step title="Connect your study in VerifyYou">
+    In your [VerifyYou dashboard](https://platform.verifyyou.com/dashboard/verifications), open a verification and go to the **Integration** tab.
+    1. Make sure the method is **One-time passwords**. If it is set to something else, click **Switch method** and choose it.
+    2. Under **Your survey platform**, pick **Alchemer**.
+    3. Paste your **Alchemer survey link**, the share link from your study.
+    4. Set **how many one-time passwords** you need, one per expected respondent. You can always generate more later.
+    5. Click **Connect survey**. We generate your passwords and hand back your study link.
+
+    <p className="vy-have"><strong>You now have:</strong> your <strong>study link</strong> (share this one, not your Alchemer link) and your <strong>one-time passwords</strong>. Click **Copy list** to copy them for the next step.</p>
+
+    <Frame caption="Your VerifyYou dashboard: the Integration tab on One-time passwords. Pick your platform, paste your survey link, and Connect.">
+      <img src="/images/vy-integration-connect.png" alt="VerifyYou Integration tab, connect a survey platform" />
+    </Frame>
+    <Frame caption="After you connect: the study link to share, and your one-time passwords to Copy list.">
+      <img src="/images/vy-study-link-ready.png" alt="VerifyYou study link ready with copy list" />
+    </Frame>
+  </Step>
+  <Step title="Add your passwords to Alchemer">
+    On **page 1** of your study.
+    1. Click **Add New: Action** and pick **Login/Password**.
+    2. Choose **"Individual (one-time) passwords that deactivate after use."**
+    3. Paste your password list, one per line, and save. Keep this action alone on page 1.
+
+    Alchemer's own [Login/Password action](https://help.alchemer.com/help/login-password-action) enforces the gate before your first question shows.
+
+    <p className="vy-have"><strong>You now have:</strong> a study that refuses anyone without a valid, unused password.</p>
+
+    <Frame caption="Alchemer's own UI: the one-time password mode, pasted one per line.">
+      <img src="/images/alchemer-login-editor-2.png" alt="Alchemer one-time passwords editor" />
+    </Frame>
+  </Step>
+  <Step title="Set the password to fill itself in">
+    In the same Login/Password action.
+    1. Open the **Display** tab.
+    2. Set **Pre-populate Password** to the merge code `[url("vypw")]` and click **Save Action**.
+
+    <p className="vy-have"><strong>You now have:</strong> a gate that opens itself for verified respondents. The password lands in the box on its own.</p>
+
+    <Frame caption="Alchemer's own UI: Pre-populate Password set to the merge code above, so the password fills itself in.">
+      <img src="/images/alchemer-prepopulate.png" alt="Alchemer pre-populate password setting" />
+    </Frame>
+  </Step>
+  <Step title="Share your VerifyYou link, not your Alchemer link">
+    The link you hand out is the **study link from VerifyYou** (the `app.verifyyou.com/verification/...` one, from **Copy** in the dashboard), never your Alchemer link. This is the whole point: the VerifyYou link sends every respondent through the face check first, then redirects the verified ones into your Alchemer study with their one-time password already attached. Anyone who opens the raw Alchemer link skips the check, so only ever share the VerifyYou link, in your panel, your sample provider, or your invite email.
+
+    <p className="vy-have"><strong>You now have:</strong> a fielded study where everyone who reaches your questions came through the check. That's the whole setup.</p>
+  </Step>
+</Steps>
+
+## What happens next
+
+<div className="grid md:grid-cols-2 gap-5 mt-6">
+  <a href="/learn/what-your-users-see" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="mobile-screen" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="mobile-screen" iconType="light" size={22} /></span>
+    <span className="vy-card-title">What your respondent sees</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">See exactly what your respondent sees.</span>
+  </a>
+  <a href="/docs/guides/pre-generated-passwords" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="layer-group" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="layer-group" iconType="light" size={22} /></span>
+    <span className="vy-card-title">The same mechanism, any platform</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">Alchemer today. The same pattern works anywhere.</span>
+  </a>
+</div>

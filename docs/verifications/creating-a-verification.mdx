@@ -1,0 +1,43 @@
+---
+title: "Creating a verification"
+description: "Get a verification live in just a few clicks."
+---
+
+{/*
+Written 2026-08-21 from DASHBOARD_REFERENCE.md, which walked the wizard on screen. Short on
+purpose: every step here has a page of its own, and this page's job is to say what the step is
+for so nobody has to guess mid-wizard. Drift item 5 in the reference: the old guides page
+described a three-field form. This replaces it.
+*/}
+
+Creating a verification is simple, and you can create as many as you like for different use cases on your platform. Each one carries its own settings, so a strict check before a payout and a light one at signup run side by side.
+
+Start from [**New verification**](https://platform.verifyyou.com/dashboard/verifications?new=true) on the Verifications page. Five steps, in this order.
+
+<Frame caption="The Verifications page. New verification, top right, starts the wizard.">
+  <img src="/images/dashboard/new-verification.png" alt="The Verifications page, with the New verification button highlighted top right" />
+</Frame>
+
+<Steps>
+  <Step title="Get started">
+    A short orientation to what you are about to set up. Nothing to fill in, so click through it.
+  </Step>
+  <Step title="Pick your check">
+    Choose a preset: **Signup Gate**, **Account Sweep**, **AI Data Labeling Fraud Audit** or **Build Your Own**. Then choose your integration method, **No-code** for a link you share, or **Code** for the SDK.
+  </Step>
+  <Step title="Branding">
+    Company name, which people see as "Verifying you for [name]". A logo is optional. See [Branding your check](/docs/verifications/branding-your-check).
+  </Step>
+  <Step title="Tune your check">
+    We make tuning the check for your use case easy with [Configuration](/docs/verifications/configuration), which sets how the check behaves: Can the same human pass twice? Do returning users under a different account get allowed, blocked, or flagged for your team's review? Do you tie each human to an email, phone number, or neither?
+
+    Questions like these all have a simple solution. [Book a demo](https://sales.verifyyou.com) to walk through this with our team.
+  </Step>
+  <Step title="Integrate">
+    No code or code, based on your resource allocation and your use case. No code gets you started with zero developer effort, so you can prove value early without interrupting your roadmap. See [Integration](/docs/verifications/integration).
+  </Step>
+</Steps>
+
+The preset only sets the starting point. Everything it chose stays editable on the Configuration tab afterwards, and saving there applies to the live check straight away.
+
+**Next:** [Configuration](/docs/verifications/configuration)
