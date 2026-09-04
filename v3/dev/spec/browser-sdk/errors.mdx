@@ -24,6 +24,16 @@ The common failure is opening the session: a non-2xx rejects with `VerifyYou: in
 
 Closing a drawer or inline embed without finishing **resolves** with `{ token: null, verified: false, vyc: null }`. Check for a missing `token`; do not rely on `catch`.
 
+## An unregistered origin is not a rejection either
+
+Call `vycheck({ mode: "iframe" })` from an origin we have not allowlisted and the browser refuses the frame
+before any of our code runs. There is nothing to reject. The iframe stays blank, the promise never settles,
+and `catch` never fires.
+
+You will see a browser message in the frame saying `app.verifyyou.com` refused to connect, and a
+`frame-ancestors` violation in the console. That is a setup step you have not done yet, not a fault in your
+code. See [Register your embedding origin](/v3/dev/integrating/placing-your-check#register-your-embedding-origin).
+
 ## Redirect mode never rejects after navigation
 
 In redirect mode `vycheck()` navigates the page away, so its promise never settles and nothing after it runs. Error handling for that path belongs on the return page, around `vyget()` and your own confirmation call.
