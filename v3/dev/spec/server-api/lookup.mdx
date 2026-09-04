@@ -16,6 +16,10 @@ description: "Latest settled pass by email or phone, no token."
 
 Same shape as [`GET /v3/confirmations/{token}`](/v3/dev/spec/server-api/confirmations).
 
+**Note**: querying a user who verified while you were over your [daily
+verification limit](/v3/faq#what-happens-if-we-exceed-our-daily-verification-limit) returns `404 no_settled_pass` if they've never verified
+with you before, or returns their last verification status if they have.
+
 ## Errors
 
 | Status | `detail` | When |
