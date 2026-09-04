@@ -9,6 +9,13 @@ npm install @verifyyou-sdk/client
 
 The SDK opens the session your server minted and hands back a token. No key, no `init()`. It is not a router: put `vycheck()` on the action only humans should do, and send the token with that action.
 
+<Warning>
+  Drawer and inline mode put the check in an iframe on your page, and that only works from an origin you
+  have registered with us. Register yours before you build against them:
+  [Register your embedding origin](#register-your-embedding-origin). Redirect mode does not
+  require origin registration.
+</Warning>
+
 <Tabs>
   <Tab title="Redirect">
     Zero UI to build. We host the whole flow and send them back to `redirect_url` with `?vyt=<token>&vyc=<0|1>`. `vycheck` navigates away, so it never resolves; on the way back, `vyget()` reads the result off the URL.
@@ -103,5 +110,47 @@ The SDK opens the session your server minted and hands back a token. No key, no 
     ```
   </Tab>
 </Tabs>
+
+## Register your embedding origin
+
+Send us every origin you embed from and we add it to the allowlist. Drawer and inline mode need this.
+Redirect mode does not, because it navigates instead of framing.
+
+The page that frames a check can position it, resize it, and draw over it, so that page is part of the
+security boundary. We decide which pages are allowed to be it. The permitted origins go in a
+[`frame-ancestors`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors)
+policy on our side and the browser enforces it. Anything not on the list is refused. Nothing you pass from
+the browser can widen it, which is what makes it worth having.
+
+Registering is one step per origin, not one per session. Send us the following through
+[support](https://verifyyou.com/support):
+
+- Every origin you frame from, across every environment. Production, staging, preview and QA hosts all
+  count separately.
+- An origin is scheme, host and port with no path and no trailing slash. `https://app.example.com` is an
+  origin. `https://app.example.com/` is not.
+- Any host on a port other than 443, because `https://app.example.com` covers 443 only.
+- Which origins are temporary, so we can take them off again.
+
+You can ask for a wildcard on your own domain, like `https://*.example.com`, instead of listing hosts. It
+covers subdomains only, so add `https://example.com` separately if you frame from the bare domain.
+
+Send us your origins ahead of the launch that needs them. Registration is a change on our side rather
+than something that takes effect the moment you ask.
+
+<Note>
+  A registered origin is a different thing from your `redirect_url`. Registering one does not register the
+  other.
+</Note>
+
+## Camera and microphone
+
+The check needs both, and in an iframe your page controls whether it gets them. The SDK sets
+`allow="camera; microphone"` on the iframe it creates. A
+[`Permissions-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy) header
+on your own page still wins over that, so if you send one, delegate both features to
+`https://app.verifyyou.com`.
+
+Get this wrong and the flow loads, looks right, then fails at the moment it tries to capture.
 
 Options and modes: [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/browser-sdk/errors).

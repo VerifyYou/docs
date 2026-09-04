@@ -37,6 +37,12 @@ interface VyCheckHandle extends Promise<VyResult> {
 
 Any of these can be set once with [`init()`](/v3/dev/spec/browser-sdk/init) instead.
 
+<Note>
+  `iframe` works only from an origin registered with us. From any other origin the browser refuses the
+  frame and the promise never settles. See
+  [Register your embedding origin](/v3/dev/integrating/placing-your-check#register-your-embedding-origin).
+</Note>
+
 ## Returns
 
 | Mode | Behavior | Promise |
