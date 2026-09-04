@@ -26,7 +26,7 @@ Closing a drawer or inline embed without finishing **resolves** with `{ token: n
 
 ## An unregistered origin is not a rejection either
 
-Call `vycheck({ mode: "iframe" })` from an origin we have not allowlisted and the browser refuses the frame
+Call `vycheck({ session, mode: "iframe" })` from an origin we have not allowlisted and the browser refuses the frame
 before any of our code runs. There is nothing to reject. The iframe stays blank, the promise never settles,
 and `catch` never fires.
 
