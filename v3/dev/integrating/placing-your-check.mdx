@@ -132,6 +132,12 @@ Registering is one step per origin, not one per session. Send us the following t
 - Any host on a port other than 443, because `https://app.example.com` covers 443 only.
 - Which origins are temporary, so we can take them off again.
 
+If you are not sure which of your hosts to send, open the page where the check appears and read
+`window.location.origin` in your browser console. That string is the value, character for character.
+Take it from the running page rather than from what a host is called. A host named `api` can still be
+the one serving the page that frames the check, and the browser reports the page it loaded, never the
+server your own code talks to.
+
 You can ask for a wildcard on your own domain, like `https://*.example.com`, instead of listing hosts. It
 covers subdomains only, so add `https://example.com` separately if you frame from the bare domain.
 
