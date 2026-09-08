@@ -1,0 +1,107 @@
+---
+title: "Existing users setup"
+description: "Verify the people you already have, by email. Five steps, no code."
+icon: "envelope"
+---
+
+{/*
+WRITTEN 2026-08-28 from James's live walkthrough of the flow (five annotated screenshots of the
+kindly-dormouse verification on platform.verifyyou.com) plus the 21 Aug dashboard scan in
+DASHBOARD_REFERENCE.md, which carries the Add people panel copy and the Switch method dialog
+verbatim. Format mirrors the four one-time-password guides exactly, at James's request.
+
+UI facts taken from the screenshots, not memory: the Senders panel ("The addresses your invites
+leave from", Add sender, "Confirmed. Ready to send", the TXT and CNAME rows with Live/Pending
+and Re-check, "Publish these records to send from your own domain (optional)"); the send dialog
+("Send to 1 people?", "Each person gets a verification link locked to their address",
+Recipients / From / Message with the Initial invite dropdown and Edit); the Activity header
+(the address chip beside Send unsent, the sent-today counter).
+
+The second Message option: James says the dropdown offers an initial invite or a
+re-verification message. Only "Initial invite" is visible in his screenshot, so the prose
+names the first and describes the second without quoting a label.
+
+The default invite copy in the send dialog uses a phrase the claim gates ban, so the guide
+describes the message rather than quoting it. Same reason this page never quotes the test
+panel.
+
+The daily send cap: the Activity header shows "0 / 500 emails sent today" on this workspace.
+Per the integration.mdx note, the number may be per plan, so the Note points at the counter
+and prints no number. Confirm with Zeek before ever printing one.
+
+SCREENSHOTS PENDING. James's captures are of the live workspace with his real address, and the
+images/dashboard/README.md rule is demo workspace only. Wanted shots are listed in that README.
+Until they land, only switch-method.jpg (already shot) is on the page.
+*/}
+
+<Steps>
+  <Step title="Create your verification">
+    In your [VerifyYou dashboard](https://platform.verifyyou.com/dashboard/verifications), if you already have a verification you want to use, skip to step 2.
+    1. Click **New verification** and pick your check. [Creating a verification](/docs/verifications/creating-a-verification) walks the wizard, and [Configuration](/docs/verifications/configuration) explains each setting.
+    2. Choose **No code** when the wizard asks how the check will reach people.
+    3. Add your logo and company name so the check carries your brand. [Branding your check](/docs/verifications/branding-your-check) shows what each part controls.
+    4. Continue through to **Integration**.
+
+    <p className="vy-have"><strong>You now have:</strong> a live verification, branded as yours.</p>
+  </Step>
+  <Step title="Switch the method to Existing users">
+    On the verification's **Integration** tab.
+    1. Click **Switch method** and choose **Existing users**.
+    2. Set where people land after they verify, under **Lands on**, with **Edit**. If you leave it unset, people see the default finish screen.
+
+    <p className="vy-have"><strong>You now have:</strong> the import view, ready to take your list.</p>
+
+    <Frame caption="Switch method: pick Existing users. You can switch back any time.">
+      <img style={{ maxWidth: "440px", width: "100%", display: "block", margin: "0 auto" }} src="/images/dashboard/switch-method.jpg" alt="Switch method dialog with Existing users selected" />
+    </Frame>
+  </Step>
+  <Step title="Add your people">
+    In the **Add people** panel on the same tab.
+    1. Paste your list, or click **Upload CSV**. Whole spreadsheet rows are fine, with or without a header: we work out which column holds the email and keep anything else useful on the row, like an IP address, so you can compare it against what we see when they verify.
+    2. Click **Add people**.
+
+    Each person you add gets a verification link locked to their address. Adding people never sends anything, so you can build the list over several sittings and send once, when you are ready.
+
+    <p className="vy-have"><strong>You now have:</strong> your people imported, each with their own locked link, and nothing sent.</p>
+  </Step>
+  <Step title="Link the address your invites leave from">
+    Under **Recently added**, click **View all** to open the verification's **Activity** tab.
+    1. Click the address shown in the header, next to **Send unsent**. The **Senders** panel opens.
+    2. Add your address with **Add sender** and confirm it. When it reads **Confirmed. Ready to send**, you can send.
+    3. To send from your own domain, publish the TXT and CNAME records shown under **Your own domain** with your DNS provider, then click **Re-check**. Each record flips to **Live** once it is seen. You can send before the records are live, and having them in place keeps your invites out of spam, so plan this in before a large batch.
+
+    <p className="vy-have"><strong>You now have:</strong> a confirmed From address your invites will leave from.</p>
+  </Step>
+  <Step title="Send, and watch the results come in">
+    On the **Activity** tab, with your people listed.
+    1. Select the people to invite, or use **Send unsent** to reach everyone you have not contacted yet.
+    2. Click **Send**. The dialog shows who is getting it and the address it leaves from.
+    3. Pick the message under **Message**: **Initial invite** for a first ask, or the re-verification message for people you are inviting back. **Edit** opens the copy so you can make it yours.
+    4. Confirm the send.
+
+    We host the sending, so there is no mail system on your side to wire up. Each row on Activity then shows sent, opened, clicked and verified as people come through, and [Reading Activity](/docs/activity/reading-activity) covers what to do with what arrives.
+
+    <p className="vy-have"><strong>You now have:</strong> invites out, and results arriving on Activity as each person verifies. That's the whole setup.</p>
+  </Step>
+</Steps>
+
+<Note>
+**Beta note.** Existing users is in beta. Hosted sending also has a daily cap, and the counter on the Activity header shows where you stand against it today.
+</Note>
+
+## What happens next
+
+<div className="grid md:grid-cols-2 gap-5 mt-6">
+  <a href="/docs/activity/reading-activity" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="list-check" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="list-check" iconType="light" size={22} /></span>
+    <span className="vy-card-title">Reading Activity</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">The record of everyone who completed a check.</span>
+  </a>
+  <a href="/docs/use-cases/userbase-fraud-audit" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="user-check" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="user-check" iconType="light" size={22} /></span>
+    <span className="vy-card-title">Userbase healthcheck</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">The use case this method was built for.</span>
+  </a>
+</div>

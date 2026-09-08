@@ -1,0 +1,170 @@
+---
+title: "Start guide"
+description: "How you get a workspace, and the four things to do in it."
+---
+
+{/*
+REWORKED 2026-08-21. Was 652 words and 14 components; James called it out by name.
+
+Why it was long: it predated Your first verification and Configuration, so it had absorbed both
+of their jobs. Now that they exist, this page only has to answer one question, how do I get a
+workspace, and it hands the rest over.
+
+Fixes beyond the cut:
+  - "in test mode" corrected to "on test keys". Drift item 11: the product says test keys in
+    wizard step 1 and on the Integration tab. The docs said test mode.
+  - Four card links pointed at pages that are not in the nav: /learn/why-humancheck,
+    /learn/pricing, /guides/reading-your-dashboard, /learn/what-humancheck-is. Replaced with
+    pages that exist in the structure. Pricing has no home yet, which is a live problem recorded
+    in PAGE_AUDIT.md.
+
+CUT 2026-08-21, James: the "What to have ready" list and the "Then what" paragraph. Both were
+this page answering questions that belong to other pages. What to have ready is a conversation
+we have on the call, not a checklist a reader needs before they can read on, and Then what is
+docs/get-started/your-first-verification in miniature. A fourth step now hands the reader to
+Creating a verification instead, so the page is four steps and stops.
+
+ROLE NAMES: settled 2026-08-21 by looking. The Team page invite selector defaults to Member and
+existing members show Admin, so the old wording here was right, and docs/workspace/team-and-roles
+now names them. What a Member cannot do is still unstated anywhere on screen and stays unwritten.
+*/}
+
+{/*
+REWRITTEN 2026-08-21. James: the Configuration step was one sentence pointing at another page,
+and the decision it names is the one thing a first-time reader cannot look up, because it depends
+on what they are protecting rather than on what the product does.
+
+JAMES'S VERSION, applied 2026-08-21. He rewrote this section and sent it back; his wording is in
+verbatim. What changed from mine, and why his is better:
+  - "Configuration allows you to adjust how the check behaves" replaced my longer opener.
+  - The question headings are his: "How many times should each person be allowed to pass on one
+    verification" (tightened by James again on 21 Aug, from "How often": the setting is a count
+    rather than a frequency, and "on one verification" is the scope that actually applies, since
+    uniqueness covers a verification and not the whole workspace), "Is the
+    user tied to a credential like an email or phone number, or not", "What should a second
+    attempt under an alias cost them". Mine were vaguer. "Under an alias" in particular says what
+    a collision actually is, which none of my drafts managed.
+  - "Three questions, each one a panel" is gone, correctly: there are four items now and the
+    first is not a panel.
+  - He sketched the "What are you protecting" item as a note to me and I wrote it out. His
+    example, a signup against a userbase healthcheck, is the right one because the two behave in
+    opposite directions rather than at different strengths.
+Do not rewrite his headings.
+
+CUT BACK 2026-08-21, James: this section keeps only the "what are you protecting" paragraph, plus
+why that matters and how we accommodate it. The three question-and-panel items and the worked
+signup/payout example moved out. They were duplicating docs/verifications/configuration.mdx,
+which carries the same three questions as its section leads and is the page this one points at.
+This page is now the shallow one and stays that way.
+
+REWRITTEN AGAIN the same hour, James: my "why it matters" and "how we accommodate it" paragraphs
+carried two negative parallelisms back to back, "is not a weaker check, it is a different one"
+and "a few settings rather than a build", plus an abstract gerund as subject ("Accommodating it
+is"). Rule 1 and rule 13, in the section arguing for care.
+
+CUT AGAIN, same hour: both replacement paragraphs went too. They were padding.
+  - "Set a healthcheck up like a signup gate and it turns away people who are already paying you"
+    invented a failure the reader has not had, to justify advice they were already taking.
+  - "You do not have to build any of this. Each verification holds its own settings, so your
+    payout check can be strict while your signup check stays light" is Configuration's own second
+    sentence, repeated. Reassurance against a worry nobody raised, then a duplicate.
+James asked how we accommodate different use cases simply. The answer is the presets, and neither
+paragraph mentioned them. One sentence now does the whole job.
+
+CUT: "Same product, opposite behaviour." A verbless fragment summarising the two examples
+directly above it. This is the move david-docs-voice names explicitly: a model closes a list and
+then writes a summary sentence under it, because to a model the list was the point. Skip the
+summary sentence. The two examples say it.
+
+NOTE FOR WHOEVER MAINTAINS THE SCANNER: ai-tells.mjs reported CLEAN on that text. It does not
+catch "is not X, it is Y" when the halves are separated by a comma and a pronoun. James caught it
+by reading. Worth a pattern.
+
+James, same day, extended the opener to "...to match your use case" and added "Different use
+cases have different requirements, which we make simple to accommodate:" ahead of the two
+examples. Two typos fixed in his text and nothing else: "use case have" to "use cases have",
+"acconmodate" to "accommodate". The opener on docs/verifications/configuration.mdx was changed to
+match, since these two lines are meant to be the same sentence in two places.
+
+CUT 2026-08-21, James: "The answer changes what the check does, not just how strict it is." It
+was a claim about the two examples that follow, made before the reader had met them, and it used
+the not-just-X construction the tells rules ban. The examples make the point on their own.
+
+CUT 2026-08-21, James: the "the rest arrive on defaults" paragraph. It listed three settings this
+page had chosen not to cover, then reassured the reader about a decision they had not made yet.
+Configuration owns all of it, and the section already links there twice.
+
+The three questions are the honest decision procedure. Each maps to one panel, and the mapping is
+the point: a reader who knows what they are protecting can answer all three without reading
+Configuration first. Depth stays on Configuration.
+
+NOT CLAIMED: what each preset sets. The presets exist (Signup Gate, Account Sweep, AI Data
+Labeling Fraud Audit, Build Your Own) and the wizard offers them, but nobody here has recorded
+which values each one applies. So this page says a preset answers the three questions for you and
+does not say with what. Confirm with Zeek, then it can.
+
+Defaults are quoted from DASHBOARD_REFERENCE.md: Returning denied people is Observe, Age gate is
+off. ("After a denial" was in that list until 21 Aug, when it turned out to have gone from the
+tab. Nothing on this page mentions it now.)
+*/}
+
+{/*
+MERGED 2026-08-24, James: "merge getting access and your first verification into just Get
+started". The two pages opened on the same sentence, which was the tell that they were one page.
+Getting access carried how a workspace appears; Your first verification carried what to do in it.
+
+Slug kept as /docs/get-started/getting-access because it had the most inbound links (docs.json,
+index.mdx, docs/index.mdx, team-and-roles, learn/pricing, guides/reading-your-dashboard) and only
+the title changes. /docs/get-started/your-first-verification redirects here.
+
+The old step 4, "Configure and integrate", was dropped rather than carried over: on a merged page
+the two sections below it, Understanding your use case and Start protecting your platform, do
+that job and link the same two pages. The no-code framing James asked to be baked in survives in
+Start protecting your platform.
+
+The "Get started" nav group now holds one page, so it is a bare entry in the Docs tab instead.
+*/}
+
+Our team creates your workspace and configures your first check with you.
+
+<Steps>
+  <Step title="Talk to us">
+    [Book a demo](https://sales.verifyyou.com). We work with you to understand your use case and get you set up to start seeing value immediately.
+  </Step>
+  <Step title="We create your workspace">
+    We set it up around whatever you are gating, configure your first check, and email you an invite.
+  </Step>
+  <Step title="You invite your team">
+    From the **Team** page, once you are in. See [Team and roles](/docs/workspace/team-and-roles).
+  </Step>
+</Steps>
+
+Four things to do [once you are in](https://platform.verifyyou.com/dashboard).
+
+## Try a HumanCheck
+
+Open the verification, go to **Integration**, and use **Run a test**. It runs the real check on test data with a test identity, so nothing touches your live records. Fail it on purpose too, so you have seen what your users see when it goes wrong.
+
+## Understanding your use case
+
+Configuration allows you to adjust how the check behaves to match your use case.
+
+**What are you protecting?** Different use cases have different requirements, which we make simple to accommodate: A signup that allows one account per human refuses the second face outright. A userbase healthcheck runs over people who already have accounts, lets them all through, and tells you what it saw about each one. [Configuration](/docs/verifications/configuration) goes deeper on the concept and on which settings suit which job.
+
+Pick the preset that matches the job: **Signup Gate**, **Account Sweep**, **AI Data Labeling Fraud Audit** or **Build Your Own**.
+
+A preset is a sensible starting point for a general version of that job, not a finished setup. Two companies running signup gates often want different answers on how many times one person may pass, whether to ask for a phone or email, and what a duplicate should cost. Go through [Configuration](/docs/verifications/configuration) afterwards and make each setting match what you are actually protecting.
+
+See how common use cases work: [Gate a signup](/docs/use-cases/signup-gate), [Gate key actions](/docs/use-cases/gate-key-actions), [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit), [Persistent verification](/docs/use-cases/persistent-verification).
+
+## Start protecting your platform
+
+Choose how the check reaches people. No code gets you started with zero developer effort, so you can prove value early without interrupting your roadmap: share the verification's link, import your existing users and send each of them a request, or put one-time passwords in front of a survey. Code puts the check inside your own product with the SDK, with your server confirming the result. See [Integration](/docs/verifications/integration) for all four.
+
+## Understanding your data
+
+**Activity** lists everyone who completed the check, newest first, and opening a row gives you everything we saw about that person. **Flags** collects the people our checks caught, with the reason. **Insights** rolls all of it up across a period, so you can see the shape of your traffic rather than one person at a time.
+
+See [Reading Activity](/docs/activity/reading-activity), [Flags](/docs/insights/flags) and [Reading Insights](/docs/insights/reading-insights).
+
+**Next:** [Creating a verification](/docs/verifications/creating-a-verification)

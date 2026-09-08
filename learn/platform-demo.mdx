@@ -1,0 +1,87 @@
+---
+title: "VerifyYou platform demo"
+---
+
+{/*
+LEARN MODULE, DRAFT. In docs.json nav, not deployed.
+
+v4 2026-08-19, James's text, applied verbatim. Style: OVERVIEW (see learn-article-voice).
+Title changed by James from "HumanCheck platform demo" to "VerifyYou platform demo".
+
+FLAGGED TO JAMES, applied as written rather than corrected:
+  1. "Export users to take action on bad actors" replaced the Override bullet. The demo
+     script's own blocker note (Aug 10) records that the Export control does not fire in the
+     browser, with neither a dialog nor a download. The underlying export exists as a CSV. guides/
+     reading-your-dashboard already describes Export as working, so the site is consistent
+     with itself either way, but this is the claim to confirm before publish.
+  2. Dangling reference. The last bullet says "when one override becomes a pattern", but the
+     bullet that introduced Override was the one Export replaced. A reader now meets "override"
+     cold. Either restore an Override bullet or reword the last one.
+  3. The Flags page and the Accounts tab remain absent on purpose. Both were disabled on Aug 10.
+
+Article 1's Next link still reads "HumanCheck platform demo". Updated to match this title.
+
+v5, 2026-08-19: cut from 395 words to a short high-level page with link-outs, at James's
+request. When this was written it was the only module, so it summarised the whole track. Now
+that Create a verification, Reading your results and Taking action on bad actors all exist, its
+Getting started, Configuration, Understanding your data and Taking action sections were saying
+what those modules say at more length. All four are gone, replaced by one set of pointers.
+
+What stays is the collision, because it is the spine of the video and no other module tells it
+as a story.
+
+v7: three sections, at James's request. v6 split the capabilities across five headings, which
+made the page look longer than it read. The capabilities are unchanged, grouped now as the
+video's own arc: what a check is, what you shape, what you see and do. Each line still says
+what you can do and why it matters, and links to the module covering how.
+
+Body is James's, from his pass over the Google Doc on 2026-08-19. Two bullets he rewrote
+outright rather than adjusted, and both were mine failing the same way: "Every check arrives
+with the signals behind it, so a refusal is something you can audit rather than a yes or no you
+take on trust", and "The rule acts at the moment it matters, so nobody has to be online for a
+duplicate to be turned away". Both read well and told a reader nothing they could act on. His
+versions name the thing (passive signals, configuring the check to block duplicate accounts).
+That failure is now rule 14 in learn-article-voice.
+
+He also set a link convention here: "See [Page name]" rather than a bare link, so a scanning
+reader knows the link is the deeper read rather than a definition.
+
+"Automate Fraud Prevention" is capitalised as he wrote it. If that is not a product term it
+should be lower case; left as-is pending his call.
+
+Video: EMBEDDED 2026-08-27. vimeo.com/1221938937 (unlisted, h=1d8a737951 kept in the src).
+Ammar to camera plus screen capture. Placed under the opening frame, same .vy-video wrapper
+as what-your-users-see; Vimeo's fixed 640x360 would overflow on a phone.
+*/}
+
+<div className="vy-video">
+  <iframe
+    src="https://player.vimeo.com/video/1221938937?h=1d8a737951"
+    title="VerifyYou platform demo"
+    referrerPolicy="strict-origin-when-cross-origin"
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+    allowFullScreen
+  />
+</div>
+
+In this module we walk you through the VerifyYou platform, from getting started to the value of HumanCheck.
+
+## HumanCheck and the collision
+
+* A check takes seconds: open your phone, and take a selfie. We confirm a live person is there, not a photo or an injected deepfake
+* We convert facial geometry into a numbers-based representation and compare it against every check ever run
+* When that person returns on a new device behind a VPN, passive signals alone don't connect the attempts, but we still recognize the human. Both accounts are flagged, and with collision block set, the second account never opens
+
+## Shape it to your platform
+
+* A signup gate and a payout gate require different rules, and every verification carries its own, so you can run both at once. See [Create a verification](/learn/create-a-verification)
+* Somebody you already verified can come back with no scan at all, while somebody switching phones for a second account is still caught. See [Guests and members](/docs/how-it-works/guests-and-members)
+* Put the check inside your own product with our SDK, and your server confirms every result before you act on it. See [Handling results](/v3/dev/integrating/handling-results)
+
+## See what happened, and act on it
+
+* Every check is tied to passive signals, to provide a holistic picture of the user's riskiness. See [Reading your results](/learn/reading-your-results)
+* Automate Fraud Prevention by configuring the check to block duplicate accounts or by other rules, or just flag users to audit after the fact. See [Automated Fraud Prevention](/learn/taking-action-on-fraud)
+* Export the list to suspend accounts, hold payouts or reconcile against your records, tied to the `external_id` you attached. See [Exporting users](/docs/activity/exporting-the-list)
+
+**Next:** [HumanCheck user experience](/learn/what-your-users-see)

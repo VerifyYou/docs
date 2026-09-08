@@ -7,3 +7,6 @@ node_modules/
 # Draft content
 drafts/
 *.draft.mdx
+
+# Internal notes shipped alongside content
+images/dashboard/README.md

@@ -1,0 +1,84 @@
+---
+title: "Reading Insights"
+description: "Outcomes and threat activity across a period."
+---
+
+{/*
+REWRITTEN 2026-08-21 after the second scan. Was a list of what is on the screen. Now each block
+says what question it answers and what a movement in it means, which is what James asked for.
+
+NEW AND IMPORTANT: the all-time warning. The page header says "Everything follows the selected
+period" and two cards then say "all time" in their own subtitles, Liveness Pass Rate ("2 of 2
+people, all time") and the People panel. Somebody comparing one against the other draws a wrong
+conclusion. Product should fix it; until then the docs say it.
+
+CORRECTED 2026-08-21 after checking the demo, and this page was wrong in three places:
+  1. "Top threat families" is now **Top threat signals**, subtitled "What's firing across scored
+     sessions, most common first. Each row opens the matching flags list."
+  2. This page said there is no way to click a figure and see the people behind it. There is.
+     Every row in that panel opens the matching flags list, and a **Go to flags** button sits
+     beside it. Augie asked for this on 11 August; it shipped and nobody told the docs.
+  3. **Top bad actors** exists and was documented nowhere: the riskiest flagged people, lowest
+     trust first, with result, family tags and trust score.
+The only figure that does NOT open into people is the risk flags panel, which the page now says
+instead.
+
+ALSO CUT 2026-08-21, James: "this is the panel to know cold". An idiom borrowing the authority of
+an expert who has done this for years. Now says look at it when nothing is wrong, which is the
+same advice with somebody performing it.
+
+CUT 2026-08-21, James: a paragraph claiming a falling liveness rate is "usually not fraud, it is
+lighting, cameras, or a change in who you are sending". Nobody has measured that. It was a
+causal claim about the product's own numbers, invented to sound useful, and it would have been
+read as something we know.
+
+ALL OF THAT SPECIES NOW CUT, 2026-08-21, after James caught three in a row:
+  - "a liveness rate that drops is usually not fraud, it is lighting, cameras..."
+  - "one high-band day is noise, three in a row after a campaign launched is the campaign"
+  - "movement matters more than the level. VPN share going from four percent to twenty-three..."
+Each was an invented operating heuristic written to answer "why would somebody use this". Nobody
+has measured any of them. They read as things we know, which is worse than saying nothing.
+
+HEADINGS, 2026-08-21, James: "Is the check working" is out. A docs page should not raise the
+possibility that our own product is broken, and a question heading invites the reader to wonder.
+"How much of it is worth worrying about" went with it, same hedge family as "worth a look".
+
+THE RULE THIS PAGE NOW FOLLOWS: say what a number counts and where to go next with it. An
+interpretation only goes in if it comes from a real customer call, and then say whose. The
+grounded ones are on docs/activity/reading-activity.mdx: the datacenter-IP point and the
+unfamiliar-city point are both Augie at Snorkel, 11 August.
+*/}
+
+[**Insights**](https://platform.verifyyou.com/dashboard/insights) is an aggregated view of all the people running through your verification flows. Activity shows you one person at a time; this shows you the shape of everybody.
+
+The period picker at the top drives the charts and counts.
+
+<Frame caption="The top of Insights: the three outcome cards, then threat levels over time.">
+  <img src="/images/dashboard/insights-overview.png" alt="The Insights page, showing the Settled Passes, Liveness Pass Rate and Elevated Risk cards above the threat levels chart" />
+</Frame>
+
+## Outcomes
+
+**Settled Passes** counts every run that reached a decision in the period. It is your volume: what the check actually processed.
+
+**Liveness Pass Rate** is the share who proved a live face on capture. Watch it for friction rather than fraud. When it falls, the usual causes are lighting, cameras and where your traffic is coming from.
+
+**Elevated Risk** is how many people scored into the elevated or high bands, shown against the number of scored passes so you read it as a share of your traffic rather than a raw count.
+
+## Threat activity
+
+**Threat levels over time** stacks your scored sessions by day in four bands from Low to High, so you can see whether a bad day is a spike or a trend.
+
+**Top threat signals** shows what is firing most across scored sessions. Accounts dominating means the same people are coming back. Automation dominating means scripts. Network dominating means proxies and datacenter traffic. Each row opens the matching flags list, and **Go to flags** takes you to all of them.
+
+**Top bad actors** ranks the riskiest flagged people, lowest trust first, each with their result, the families they tripped and their score. When you want a list of people to work rather than a number, start here.
+
+## Who is arriving
+
+**Session attributes** gives the top five countries, platforms, device types and browsers. Look at it when nothing is wrong, so you know what your normal looks like. If your traffic is normally ninety percent one country, the week it is not is the week to look.
+
+**People** covers capture outcomes and the estimates we make: liveness passed against failed, an age range, gender.
+
+**Risk flags** gives the share of people arriving with each of VPN, Datacenter IP, Tor exit, Abuse-listed IP, TLS automation and Fingerprint mismatch raised. This is the one panel where a number does not open into people, so take the finding into [Activity](/docs/activity/reading-activity) and filter for the same thing.
+
+**Next:** [Threat levels and signals](/docs/insights/threat-levels-and-signals)

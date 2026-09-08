@@ -1,0 +1,59 @@
+---
+title: "Exporting users"
+description: "Getting your results out as a CSV."
+---
+
+{/*
+SECTION REPLACED 2026-08-21 with James's copy. His is better because it names the setting that
+creates the need: an export is the handover only when you chose Allow + flag over Block. Mine
+said "nothing in the dashboard blocks anybody", which is both vaguer and half wrong, since Block
+does exactly that at the check.
+
+Two changes to his sentence: an object added, "if you set **On collision** to", which his draft
+left out; and the control named *Allow + flag*, the dashboard's own label, rather than "Allow and
+flag". Say if you want his wording back.
+
+CUT 2026-08-21, James: "A pattern that works". Fourth of the invented heuristics, same species as
+the three he cut off Reading Insights. "Fifty rows and not five thousand" is a made-up
+illustration of advice nobody here has tested.
+
+HE ALSO CALLED THE WHOLE PAGE WEAK, and he is right. It is weak for one reason: it cannot say
+what is in the export. Strip the invented advice and the external_id argument that Integration
+already makes, and what remains is a page about a control whose output is undocumented. It gets
+strong the moment somebody pastes the header row.
+
+⚠️ THE GAP ON THIS PAGE, 2026-08-21. James asked how you actually reconcile, and his hunch was
+right: you import attributes. That half is now written and is grounded in the Existing users
+import panel, whose own example row is `name,email,last_seen_ip`.
+
+WHAT IS STILL MISSING: the export's column list. Nobody here has seen it. The Export control
+offers Copy and Download, and I did not download a file from James's account without asking. Until
+somebody pastes the header row, this page must not claim which fields come back. Ask James to hit
+Export, Copy on any verification and paste the first line, then this section can name the columns
+and the page is finished.
+
+RETITLED "Exporting users" 2026-08-21, James. Slug stays /docs/activity/exporting-the-list so
+nothing already linked breaks.
+
+REWRITTEN 2026-08-21 after the second scan, which corrected two things.
+  1. Export lives on a verification's own Activity tab, not on workspace Activity. The old page
+     implied workspace.
+  2. Export offers Copy or Download, which was not recorded before.
+Also adds the reason somebody exports at all, which the previous version assumed.
+*/}
+
+**Export** sits on a verification's own Activity tab, and offers **Copy** or **Download**. Filter first: you export what you filtered, which is the whole point of exporting rather than reading.
+
+## Export users to take action after the fact
+
+If you set **On collision** to *Allow + flag* instead of *Block*, acting on a result means acting in your own product, so the export is the handover: suspend the accounts, hold the payouts, or reconcile against your own records.
+
+## Making it reconcile
+
+Export gives you a row per person. To join those rows to your own users, give us a key going in.
+
+On the code path, attach your own `external_id` when you start the session. On the no-code import, put your columns in the CSV and we keep them on the row: the product's own example is `name,email,last_seen_ip`, so the IP you have on file comes back beside the one we saw.
+
+Without either, you are matching on whatever email or phone they gave the check, which holds until somebody used a different address with you than with us. Import what you will want to compare, because you cannot add it afterwards.
+
+**Next:** [Reading Insights](/docs/insights/reading-insights)

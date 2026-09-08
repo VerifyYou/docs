@@ -1,0 +1,64 @@
+---
+title: "Reading your results"
+---
+
+{/*
+LEARN MODULE, article 5. Style: OVERVIEW. v2, 2026-08-19.
+
+MERGED: absorbed "Reviewing suspicious activity" at James's direction. That module straddled
+two jobs, reading the dashboard and acting on what it says. This page now owns the reading, and
+the new final module owns the acting.
+
+Written from DASHBOARD_REFERENCE.md, the screen by screen scan.
+
+THE CONTRADICTION THIS PAGE STILL CARRIES: a person scores Trust out of 100 where higher is
+better, Insights charts threat bands where higher is worse. A reader meets both screens, so
+section three explains the relationship. Fixing the product would beat explaining it; item 9 in
+DASHBOARD_REFERENCE.md.
+
+DELIBERATELY ABSENT: Override. reading-your-dashboard says every history row has one. It was
+not on screen during the scan.
+
+Redirect added: /learn/reviewing-suspicious-activity -> here.
+
+HEADING NOTE: "Holistic Trust Score" is James's wording. That adjective is on the banned list
+in AI_WRITING_TELLS.md, so the scanner flags this page; the hit is the heading. The product
+says Trust Snapshot and article 1 says "comprehensive", so the three want aligning.
+
+v3, 2026-08-19: cut to three sections at James's request. "One person in full" folded into
+Holistic Trust Score, since the person view exists to explain the score and splitting them made
+a reader read the same screen twice.
+
+v5, 2026-08-19: back to three sections at James's request. Section one is "Understanding your
+data" and carries both halves of what happened, the Activity record and the Insights roll-up,
+since a reader asking what happened does not care which screen answers it. The population view
+keeps its own section because it answers a different question.
+
+Every figure and label is quoted from the live Insights page.
+
+Video: filmable, and the account has enough real data to shoot against.
+*/}
+
+In this module we show you what the dashboard is telling you, from a single check through to the shape of your whole user base.
+
+## Understanding your data
+
+* **Activity** is the record of everyone who completed a verification for your company, most recent first, with the identifier, the trust score, and whether it was approved or denied. Search it by email or phone, and filter to **Needs action** for the ones already worth a look. See [Reading Activity](/docs/activity/reading-activity)
+* A denial carries its reason with it, so `limit reached` tells you the verification limit did its job rather than anything being wrong with the person
+* **Insights** rolls the same data up across whichever period you pick: **settled passes**, every run that reached a decision; **liveness pass rate**, who proved a live face on capture; and **elevated risk**, how many people scored into the elevated or high bands. See [Reading Insights](/docs/insights/reading-insights)
+* **Threat levels over time** stacks your scored sessions by day, and **top threat families** shows what led the score, which tells you whether one person is behind it or many
+* Your own systems can ask the same question without anybody opening the dashboard. Send an email or phone to [/v3/confirmations](/v3/dev/spec/server-api/lookup) and you get back where that person stands with you
+
+## Holistic Trust Score
+
+* Click any row and you get that person: signals grouped as **Capture, Person, Location, Device and Network**, with the attributes we estimated and the devices we know them on. See [Comprehensive trust score](/docs/activity/guest-profiles)
+* Everyone starts at a spotless 100, and signals collected while they move through the flow deduct from it, so the score tells you how much we saw, while the pass or fail itself is settled by your configuration
+* Insights charts the same thing as **threat**, in bands from low to high. A high trust score and a low threat band describe one person, from opposite ends. See [Threat levels and signals](/docs/insights/threat-levels-and-signals)
+
+## Who is arriving, and how
+
+* **Session attributes** shows where sessions come from, with the top five countries, platforms, device types and browsers
+* **People** covers who verifies here: liveness passed against failed, an estimated age average and range, and gender
+* **Risk flags** gives the share of people arriving with each network or automation flag raised, across VPN, datacenter IP, Tor exit, abuse-listed IP, TLS automation and fingerprint mismatch
+
+**Next:** [Automated Fraud Prevention](/learn/taking-action-on-fraud)

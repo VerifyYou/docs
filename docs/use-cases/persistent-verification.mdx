@@ -1,0 +1,88 @@
+---
+title: "Persistent verification"
+"og:description": "Check that the person using the account is still the person who opened it."
+"twitter:description": "The same human, months later."
+keywords: ["persistent verification", "account takeover", "account sharing", "account selling", "re-verification", "identity outsourcing"]
+---
+
+{/*
+DOCS USE CASE, fourth on the arc. Written 2026-08-21 at James's direction: persistent
+verification is a line inside Userbase fraud audit and also its own use case.
+
+WHY IT IS SEPARATE from Userbase fraud audit: the audit is a sweep, run once, over accounts you
+already have. This is a standing arrangement, run at the same moments forever. They share the
+mechanism and answer different questions. Each page links to the other.
+
+SOURCES, both Granola:
+  - James, Site Check call 21 Aug, on the framing in the opening line: "it's almost like MFA.
+    But traditional MFA is user facing, it protects the user. It doesn't protect the platform by
+    telling you, is this the same user who signed up. Because I can hand Grant a passkey ... so
+    we're almost like reverse MFA where we flip it and give the platform the assurance that it's
+    the same user."
+  - James, same call: "persistent human verification is the same human coming back", and the
+    note that "persistent identity" is the wrong phrase because we do not prove identity.
+  - Augie, Snorkel, 31 Jul, on why this is the differentiator: "the way most identity as a
+    service works, you only need to do it once. The fact that it needs to keep going back to you
+    is" the thing. And the outsourcing case it catches: "we would have no way of knowing on our
+    own that the person validating their identity is in Alberta."
+  - David, same call, reporting the same finding from the Quirks conference: persistent identity
+    after onboarding "is where everyone's seeing the most pain".
+  - David, 11 Aug, proposing the baseline: run a check early, at profile creation or when payment
+    is added, "that way you have a baseline of face that you can then do a face diff against".
+    Augie agreed it is the right shape and said his own blocker is supply, not the idea.
+
+⚠️ CONFIRM WITH ZEEK before this ships. Point 2 says a different person on the account does not
+tie back to the one who signed up. That follows from recognition being by face, and from the
+History tab listing "every confirmation this person appears in". What is NOT confirmed is
+whether the product surfaces the inverse as an explicit signal: same identifier, different face.
+Grant described the face-to-identifier link in one direction only. If there is no mismatch
+signal, point 2 is still true as written, but do not let anyone strengthen it.
+
+NOT WRITTEN, discussed and unshipped: face diff and location diff against the baseline as
+automated comparisons. See the list in userbase-fraud-audit.mdx.
+
+SCORE against the rubric in IA_PLAN.md: 14 of 16.
+  1 outcome before the product             2
+  2 lead, How you start, Next steps        2
+  3 controls named as the dashboard does   2
+  4 numbered, one action per step          2
+  5 length under 400                       2  371 words
+  6 onward links, no call to action        2
+  7 ai-tells CLEAN, claims check passes    2
+  8 voice matches the surface              0  same open terminology question as signup-gate
+*/}
+
+Multi-factor proves somebody holds a credential. It cannot tell you they did not hand that credential to somebody else. Here's how we check the same human is still there with HumanCheck:
+
+1. **The first check sets the baseline.** Run one as early as you can, at signup or when somebody completes a profile, and every later check compares against that face.
+2. **Every later check asks whether this is the same person.** If it is, they are recognized and pass. If somebody else is holding the account, the run does not tie back to the person who opened it, and the history shows two people where you expected one.
+3. **Recognition carries across your checks.** Somebody verified at signup is recognized at payout, so the second check is a few seconds.
+4. **You choose the moments.** A payout, a withdrawal, a high value action, or a fixed interval. Each is its own verification with its own settings.
+5. **The history sits on the person.** Every confirmation they appear in, newest first, with the devices we know them on and what they have proven.
+
+This tells you whether it is the same person, not who they are. To sweep the accounts you already have once, see [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit).
+
+## How you start
+
+1. Create the baseline verification and put it as early in the account's life as friction allows.
+2. Set **Identity** to *Linked by guest*, so a phone or email carries recognition when somebody changes device.
+3. Create a second verification for the recurring moment, and set its **Verification limit** to that cadence, for example *once per period*.
+4. Turn on **Skip check on known devices** if you would rather people on a device you already know pass without scanning.
+5. Read **History** on the person, which lists every confirmation they appear in.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Guests and members" icon="users" href="/docs/how-it-works/guests-and-members">
+    How recognition carries across devices and checks.
+  </Card>
+  <Card title="Configuration" icon="sliders" href="/docs/verifications/configuration">
+    Every setting on a check.
+  </Card>
+  <Card title="Comprehensive trust score" icon="id-card" href="/docs/activity/guest-profiles">
+    The person view, and the history behind it.
+  </Card>
+  <Card title="Cross-network recognition" icon="share-nodes" href="/docs/how-it-works/cross-network-recognition">
+    Recognition beyond your own workspace.
+  </Card>
+</CardGroup>

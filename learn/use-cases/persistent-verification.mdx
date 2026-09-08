@@ -1,0 +1,46 @@
+---
+title: "Persistent verification"
+canonical: "/docs/use-cases/persistent-verification"
+"og:description": "Check that the person using the account is still the person who opened it."
+"twitter:description": "The same human, months later."
+keywords: ["persistent verification", "account takeover", "account sharing", "account selling", "re-verification", "identity outsourcing"]
+---
+
+{/*
+LITERAL COPY of docs/use-cases/persistent-verification.mdx. THE DOCS PAGE IS THE SOURCE.
+*/}
+
+Multi-factor proves somebody holds a credential. It cannot tell you they did not hand that credential to somebody else. Here's how we check the same human is still there with HumanCheck:
+
+1. **The first check sets the baseline.** Run one as early as you can, at signup or when somebody completes a profile, and every later check compares against that face.
+2. **Every later check asks whether this is the same person.** If it is, they are recognized and pass. If somebody else is holding the account, the run does not tie back to the person who opened it, and the history shows two people where you expected one.
+3. **Recognition carries across your checks.** Somebody verified at signup is recognized at payout, so the second check is a few seconds.
+4. **You choose the moments.** A payout, a withdrawal, a high value action, or a fixed interval. Each is its own verification with its own settings.
+5. **The history sits on the person.** Every confirmation they appear in, newest first, with the devices we know them on and what they have proven. Your server can [ask where somebody stands](/v3/dev/spec/server-api/lookup) by email or phone, without starting a new run.
+
+This tells you whether it is the same person, not who they are. To sweep the accounts you already have once, see [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit).
+
+## How you start
+
+1. Create the baseline verification and put it as early in the account's life as friction allows.
+2. Set **Identity** to *Linked by guest*, so a phone or email carries recognition when somebody changes device.
+3. Create a second verification for the recurring moment, and set its **Verification limit** to that cadence, for example *once per period*.
+4. Turn on **Skip check on known devices** if you would rather people on a device you already know pass without scanning.
+5. Read **History** on the person, which lists every confirmation they appear in.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Guests and members" icon="users" href="/docs/how-it-works/guests-and-members">
+    How recognition carries across devices and checks.
+  </Card>
+  <Card title="Configuration" icon="sliders" href="/docs/verifications/configuration">
+    Every setting on a check.
+  </Card>
+  <Card title="Comprehensive trust score" icon="id-card" href="/docs/activity/guest-profiles">
+    The person view, and the history behind it.
+  </Card>
+  <Card title="Cross-network recognition" icon="share-nodes" href="/docs/how-it-works/cross-network-recognition">
+    Recognition beyond your own workspace.
+  </Card>
+</CardGroup>

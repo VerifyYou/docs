@@ -1,0 +1,182 @@
+---
+title: "Glossary"
+description: "Every term this site uses, in plain language."
+---
+
+{/*
+DEEP PASS 2026-08-21, James.
+
+FOUR ENTRIES DELETED, all documenting settings that do not exist on the Configuration tab:
+  Collision scope · Identity lock · Identity sharing · identity_mismatch
+Collision scope was already removed from cross-network-recognition for the same reason. Identity
+lock and identity sharing belong to the old five-mode identity model that drift item 6 records as
+replaced by three access types. identity_mismatch was the reason code identity lock produced.
+
+ONE ENTRY RENAMED: "Skip re-verify" is called **Skip check on known devices**. Its options were
+also wrong: it is off by default or a window you choose, with no "never expire".
+
+ONE FACT CORRECTED: Session said "Insights counts every session that was started, whatever the
+outcome". Insights counts settled passes, meaning runs that reached a decision.
+
+⚠️ TERMINOLOGY, for James and Zeek. "Member" is in trouble three ways:
+  1. The developer docs page this glossary linked to does not use the words member or guest at
+     all. It says **anonymous** and **bound identity**.
+  2. The dashboard Team page uses MEMBERS to mean your colleagues with workspace access.
+  3. Our docs use it to mean a guest who bound a phone or email.
+Both entries now name the developer docs' words alongside ours, which is a stopgap. The real fix
+is picking one vocabulary. Retiring "member" in the guest sense and using "bound identity" would
+match the dev docs and free the word for the Team page.
+
+TWO DEAD-ISH LINKS REPLACED: /v3/concepts/members-vs-guests resolved but does not define the
+terms it was cited for. Both now point at docs/how-it-works/guests-and-members.
+
+FIVE ENTRIES ADDED for words the docs use and the glossary never had: Access type, Group, Preset,
+Needs action, Environment.
+
+STILL MISSING, because nobody has confirmed the answer: whether **Blocked** on a Flags row and
+**Denied** on an Activity row mean different things. Both appear on screen. Ask Zeek, then add
+one or both.
+*/}
+
+Every product picks up its own vocabulary, and the rest of these docs read more easily once the words are pinned down. Here are the terms HumanCheck uses, in plain language, grouped by where you will meet them. Each definition stands on its own, and the links point to the pages that go deeper.
+
+<Note>
+  These are the words the dashboard and the developer docs use, so what you read here lines up with what you will see on screen and in the API.
+</Note>
+
+## The product
+
+### HumanCheck
+
+The VerifyYou product: a short camera check that confirms a real, live, unique human, without ID documents. Companies place it in front of signups, surveys, and communities, anywhere that needs real people. [Guests and members](/docs/how-it-works/guests-and-members) has the full picture.
+
+### Verification
+
+A configured check in your dashboard. Each verification carries its own configuration, branding, and integration, and has its own link, insights, and activity, so you can run one for signups and another for a survey, each set up its own way. [Creating a verification](/docs/verifications/creating-a-verification) walks the wizard that makes one.
+
+### Session
+
+One run of a check by one person, from the moment it starts to a result or a walk-away. A session that reaches a decision is **settled**, and that is what Insights counts. [Guests and members](/docs/how-it-works/guests-and-members) follows one from start to finish.
+
+### Redirect URL
+
+Where a person lands after they finish the check. Set on the verification, in the **Where people land** panel, and in redirect mode it is also where the confirmation token arrives, so set it before you go live. The [quickstart](/v3/dev/integrating/start-a-session) shows where it fits.
+
+## Members and guests
+
+### Member
+
+A person whose verified phone number or email is bound to their face record, which the developer docs call a **bound identity**. Ownership is proven with a one-time code during the flow, and that is what carries recognition across devices and browsers. [Guests and members](/docs/how-it-works/guests-and-members) goes deeper.
+
+### Guest
+
+A person recognized by their device ID and nothing else: no phone, no email, no name. The developer docs call this **anonymous**. Recognition stays with that device, so a guest on a new device or a cleared browser looks like somebody new. [Guests and members](/docs/how-it-works/guests-and-members) has the comparison.
+
+### Device ID
+
+The identifier that lets HumanCheck recognize a guest's device when it returns. A new device generally means a new device ID, which is why repeat visitors are better registered as members. [Guests and members](/docs/how-it-works/guests-and-members) covers the return moment.
+
+### Skip check on known devices
+
+The setting that lets somebody returning on a device you already know through without repeating the scan. Off by default, otherwise a window you choose. A person who skips the scan still counts as a verification. [Configuration](/docs/verifications/configuration) covers the options.
+
+## What the check proves
+
+### Liveness
+
+The part of the check that confirms a real, present human is in front of the camera, not a photo, a replay, or a deepfake. [How it works](/docs/how-it-works/guests-and-members) walks through the whole flow.
+
+### Uniqueness
+
+The part of the check that confirms this human has not already passed under a different identity. New checks are compared against the face vectors already held, which is how a first-timer is told apart from someone coming back under a new name.
+
+### Face vector
+
+A numerical representation of the face's geometry, not a saved image. It is treated as sensitive biometric data, and verification images themselves are not stored. [Security and privacy](/docs/how-it-works/security-and-privacy) covers this honestly and in full.
+
+## Matching and identity
+
+### Collision
+
+A new check whose face matches a face record that already exists, meaning the same person is trying to pass again where your rules say they should not. Depending on your configuration, a collision is blocked outright or flagged as suspicious.
+
+### Access type
+
+What the **Identity** panel calls its three options: *Linked by guest*, *Anonymous* and *Provided by you*. [Configuration](/docs/verifications/configuration) covers each.
+
+### Group
+
+A parameter your integration sends when it starts a session, so one verification can gate several separate things and somebody may pass once in each. It is not a control on the Configuration tab. See [start a session](/v3/dev/integrating/start-a-session).
+
+### Preset
+
+The starting point you pick in the wizard: **Signup Gate**, **Account Sweep**, **AI Data Labeling Fraud Audit** or **Build Your Own**. It sets the configuration, and you change what does not fit.
+
+## Reading results
+
+### Trust score
+
+A number out of 100 on a person. Everyone starts at 100, and every signal we collect while they move through the flow takes points off. A high score means few signals came back on them. It never blocks anyone on its own: the pass or fail is settled by your configuration. See [Threat levels and signals](/docs/insights/threat-levels-and-signals).
+
+### Threat band
+
+How Insights groups scored sessions: **Low**, **Moderate**, **Elevated**, **High**. Higher means more concerning, which is the opposite direction to the trust score. The two describe one person from opposite ends.
+
+### Threat families
+
+What led the score across scored passes: network, geography, accounts, automation and liveness. Which family dominates tells you whether one person is repeating themselves or many people are arriving the same way. Not the same as the five signal groups on a person, which are Capture, Person, Location, Device and Network. See [Comprehensive trust score](/docs/activity/guest-profiles).
+
+### Settled
+
+A run that reached a decision. **Settled passes** on Insights counts them for the period you picked, alongside **liveness pass rate** and **elevated risk**.
+
+### Needs action
+
+A filter on a verification's Activity tab that narrows the list to the sessions the product has singled out. It is not on workspace Activity.
+
+### Environment
+
+The test and live split. Activity shows a `TEST` badge on test runs, and **Environment** is the filter that separates them.
+
+### Decline
+
+A graceful exit from the check. Turning on the decline banner adds an opt-out to the modal and returns a declined event to your product, so a person who would rather not verify has a way out and you find out they took it. See [Branding your check](/docs/verifications/branding-your-check).
+
+## Keys, tokens, and testing
+
+### Test keys and live keys
+
+Your workspace has two secret keys, `sk_test_` for trying things out and `sk_live_` for production. Both stay on your server. Test and live are separate partitions and never mix, so a session minted with a test key confirms only with the test secret key. Publishable keys (`pk_`) are deprecated: start every session server side and open it in the browser. The [quickstart](/v3/dev/integrating/start-a-session) puts them to work.
+
+### Simulator and test sessions
+
+Test keys run against a simulator, so the code path works end to end without involving a real person. There are no-code test sessions too, so you can rehearse before anything goes live. The [quickstart](/v3/dev/integrating/start-a-session) uses them.
+
+### external_id
+
+Your own identifier for the person being checked, passed when your server initializes a session with a secret key and echoed back on the confirmation. It lets you tie a result to your user without handing us their identity. [Account linking](/v3/advanced/account-linking) goes deeper.
+
+### Confirmation token (vyt)
+
+The token that travels back with a person after a check, as the vyt query parameter in redirect mode or through the onComplete callback in embedded modes. Your server exchanges it for the authoritative result. Confirm each token once, and lock it afterwards if the flow should be one shot. The [quickstart](/v3/dev/integrating/start-a-session) shows the exchange in code.
+
+### vyc
+
+A one-character hint that arrives next to the token: 1 suggests the check passed, 0 suggests it did not. It is only a hint for what to show on screen first. The token, confirmed from your server, is the truth. The [quickstart](/v3/dev/integrating/start-a-session) shows the two arriving together.
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" iconType="light" href="/v3/dev/integrating/start-a-session">
+    Run your first verification end to end, with or without code.
+  </Card>
+  <Card title="Reading Activity" icon="chart-line" iconType="light" href="/docs/activity/reading-activity">
+    Where these terms show up on screen, and how to read them.
+  </Card>
+  <Card title="Configure your check" icon="sliders" iconType="light" href="/docs/verifications/configuration">
+    Set what the check asks for, how often one person may pass, and what happens on a duplicate.
+  </Card>
+  <Card title="Developer docs" icon="code" iconType="light" href="/v3/dev/integrating/start-a-session">
+    Look up the SDK and the API.
+  </Card>
+</CardGroup>

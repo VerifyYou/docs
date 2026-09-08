@@ -1,0 +1,893 @@
+---
+title: "Google Forms setup"
+description: "Put HumanCheck in front of your Google Form. Five steps, one script you never edit."
+icon: "file-lines"
+---
+
+
+Google Forms cannot run a check before it shows a question. It has no hidden fields, no branching on a link parameter, and no way to ask an outside service anything while a respondent is looking at it. So HumanCheck holds the line in two places instead of one.
+
+The check happens on our side, before anyone reaches your form. The clean-up happens in your own spreadsheet, the moment somebody submits. Together they mean only verified people reach your questions, and anything that slips past by going straight to your form URL is removed from your results within seconds.
+
+<Note>
+  Somebody who skipped the check can still open your form and press submit. What they cannot do is leave a trace in your data or get paid for it. If you need unverified people to be unable to load the page at all, [Qualtrics](/docs/guides/qualtrics) and [Alchemer](/docs/guides/alchemer) can do that and Google Forms cannot.
+</Note>
+
+<Steps>
+  <Step title="Build your form">
+    In Google Forms, exactly as you normally would, with two additions.
+    1. Add a **Short answer** question called **Verification code**. Mark it **Required** and put it on the first page. Capitals and spacing do not matter.
+    2. Underneath it, write something like "Filled in automatically, please leave this alone."
+    3. Open the **Responses** tab and click the Sheets icon to send your responses to a Google Sheet. The rest of the setup lives in that sheet.
+    4. In **Settings**, open **Responses** and turn **off** "Allow response editing." Without this, somebody could submit and then edit a valid code in afterwards.
+
+    <p className="vy-have"><strong>You now have:</strong> a normal Google Form with a code box on page one, and a spreadsheet collecting the answers.</p>
+  </Step>
+  <Step title="Connect your study in VerifyYou">
+    In your [VerifyYou dashboard](https://platform.verifyyou.com/dashboard/verifications), open a verification and go to the **Integration** tab.
+    1. Make sure the method is **One-time passwords**. If it is set to something else, click **Switch method** and choose it.
+    2. Set **how many one-time passwords** you need. Ask for at least twenty percent more than the respondents you expect. Passwords cost nothing, and running out mid-study screens out real people.
+    3. Click **Copy list** to copy your passwords. You need them in step four.
+
+    <p className="vy-have"><strong>You now have:</strong> your <strong>study link</strong>, which is the one you share, and your <strong>one-time passwords</strong>.</p>
+  </Step>
+  <Step title="Add the script to your spreadsheet">
+    Open the Google Sheet your responses go to, not the form.
+    1. Open **Extensions**, then **Apps Script**.
+    2. Delete anything already in the editor and paste in the script from the bottom of this page.
+    3. Click **Save**.
+    4. Click **Deploy**, then **New deployment**. Click the gear beside "Select type" and choose **Web app**.
+    5. Set **Execute as: Me** and **Who has access: Anyone**, then click **Deploy** and approve the permissions.
+    6. In the function dropdown choose **`setUp`** and click **Run**.
+
+    When Google warns that it has not verified this app, click **Advanced**, then **Go to (your project)**, then **Allow**. That message appears because this is a private script you own and have not published to anyone else.
+
+    Your spreadsheet now has a tab called **VerifyYou codes**. Cell **G5** holds your **access link**, which you need in step five.
+
+    <p className="vy-have"><strong>You now have:</strong> a spreadsheet that checks every submission, and an access link that fills the code box on its own.</p>
+  </Step>
+  <Step title="Paste in your passwords">
+    On the **VerifyYou codes** tab.
+    1. Paste your passwords into **column A**, starting at A2.
+    2. Type `Unused` beside each one in **column B**.
+
+    That tab is your ledger. Status moves from Unused, to Issued when we hand somebody that password, to Used when they actually submit. It is also how you check the gate is running: if people are completing your survey and nothing is moving to Used, something is wrong.
+
+    Keep this spreadsheet private. Anyone who can read your passwords can use them.
+
+    <p className="vy-have"><strong>You now have:</strong> a study that accepts a response only when it arrives with a valid, unused password.</p>
+  </Step>
+  <Step title="Share your VerifyYou link, not your form link">
+    Two links to keep straight. In VerifyYou, set the destination for verified people to the **access link from cell G5**. Then the link you hand out to respondents is the **study link from VerifyYou**, never your Google Form link.
+
+    Anyone who opens the raw form link skips the check, so only ever share the VerifyYou link, in your panel, your sample provider, or your invite email.
+
+    <p className="vy-have"><strong>You now have:</strong> a fielded study where everyone who reaches your questions came through the check. That's the whole setup.</p>
+  </Step>
+</Steps>
+
+<Note>
+  Your respondent goes straight from the check into your survey with nothing to click. The survey runs inside the access link's own page, so the address bar keeps saying `script.google.com` while they answer. Underneath the form there is a small "Survey not loading? Open it in a new page" line, for the rare case where a form will not display nested.
+</Note>
+
+## Test it before you field
+
+The script starts in a safe mode where nothing is deleted. It writes what it would have done into a column called **VerifyYou status** in your responses sheet. Stay in that mode until all six behave.
+
+<AccordionGroup>
+  <Accordion title="A verified respondent">
+    Open your access link with `?vyt=test123` on the end. You should go straight into your survey with the code already filled in, without clicking anything. One password should now say Issued. Submit, and the status column should say `verified` while that password flips to Used.
+  </Accordion>
+  <Accordion title="The same person coming back">
+    Open the exact same link again. You should get the **same** password back, not a new one. This is what stops somebody who abandons your survey and returns from consuming two.
+  </Accordion>
+  <Accordion title="Somebody who skipped the check">
+    Open your plain form URL, leave the code box empty, and submit. The status should say `REJECTED: no code`.
+  </Accordion>
+  <Accordion title="A made-up code">
+    Type any invented string into the code box and submit. The status should say `REJECTED: code not in pool`.
+  </Accordion>
+  <Accordion title="A password used twice">
+    Submit once from a prefilled link, then open that same link again and submit a second time. The first should say `verified`. The second should say `REJECTED: code already used`. This is the check that proves one password cannot buy two responses, which is the whole reason the pool exists.
+  </Accordion>
+  <Accordion title="A broken setup">
+    Rename the VerifyYou codes tab, submit anything, then rename it back. The status should say `unchecked`, and never `verified`. This one matters most: it proves that if your setup breaks, it tells you rather than quietly waving everybody through.
+  </Accordion>
+</AccordionGroup>
+
+When all six behave, change `onInvalid` near the top of the script from `'FLAG'` to `'DELETE'` and click **Save**. That takes effect straight away, because the check that runs on each submission always uses your latest saved code.
+
+Deploying is a separate thing, and it is the step people lose an hour to. Anything that changes how your **access link** behaves goes live only when you click **Deploy**, then **Manage deployments**, then the pencil icon, then set **Version** to **New version**, then **Deploy**. Save the file without doing that and you will still be served the old version, and conclude the change did not work.
+
+## When something looks wrong
+
+<AccordionGroup>
+  <Accordion title="Responses arrive with a blank status column">
+    The script is not running. Run `setUp` again from the script editor.
+  </Accordion>
+  <Accordion title="Everything says unchecked">
+    Your codes tab is named something other than `VerifyYou codes`, or it is empty. Check the tab name matches exactly.
+  </Accordion>
+  <Accordion title="Everything is rejected, including your own test">
+    The passwords in your sheet are not the ones being handed out. Copy your list again and paste it in fresh.
+  </Accordion>
+  <Accordion title="Nothing changed after you edited the script">
+    It depends what you changed. `onInvalid` takes effect the moment you save, because the submission check always runs your latest saved code. Anything that changes how your access link behaves needs a new deployed version: **Deploy**, **Manage deployments**, the pencil icon, then **Version: New version**.
+  </Accordion>
+  <Accordion title="Respondents see a blank page with a Survey not loading line">
+    Your form is not displaying nested inside the access link. They can click that line to carry on, and you should tell us, because it means we should move you to the button version instead.
+  </Accordion>
+  <Accordion title="This link needs to be opened through your study link">
+    The access link was opened without a token on the end. That is expected if you opened it directly rather than through your VerifyYou study link. If real respondents see it, the token is not reaching the script, which is a VerifyYou setting rather than a problem with your form.
+  </Accordion>
+  <Accordion title="Anyone is greyed out when deploying">
+    Your organisation's Google administrator has switched off public web apps. You will need their help, or an account without that restriction.
+  </Accordion>
+  <Accordion title="How many passwords are left">
+    Run `vyPoolStatus` in the script editor any time. It reports how many are unused, how many we issued that nobody submitted, and how many people spent.
+  </Accordion>
+</AccordionGroup>
+
+## Your data stays yours
+
+Your passwords and your responses live in your Google account. What we hold is a list of verification sessions with no survey answers attached to any of them. There is no point at which we have both halves, so we could not connect a person to their answers even if we were asked to. If your ethics board asks how the two are kept apart, that is the answer, and you are welcome to point them at this page.
+
+The script makes no connections outside your Google account.
+
+## The script
+
+Paste this whole thing into **Extensions**, then **Apps Script**, on your responses spreadsheet. The only line you ever change is `onInvalid`, and only when you finish testing.
+
+<Accordion title="Show the script">
+```javascript HumanCheck backstop wrap
+/**
+ * VerifyYou HumanCheck backstop for Google Forms
+ * Version 1.0
+ *
+ * WHAT THIS DOES
+ * Every time someone submits your form, this checks the verification code they
+ * arrived with against your pool of issued codes. Valid and unused means the
+ * response is kept and the code is marked used. Missing, unknown, or already
+ * used means the response is removed, from both your spreadsheet and the form.
+ *
+ * It makes no external network calls. Everything happens inside your own Google
+ * account, so nobody outside it sees your codes or your response data.
+ *
+ * SETUP
+ * Run setUp() once from this editor and approve the permissions prompt.
+ *
+ * This script is bound to the RESPONSE SPREADSHEET, not the form. That is
+ * deliberate: the spreadsheet's form-submit trigger hands us the exact row that
+ * was just written, so there is no guessing and no race with the row appearing.
+ */
+
+const VY = {
+  // Tab holding your codes.
+  //   A: Code   B: Status (Unused/Issued/Used)   C: Issued at   D: Used at   E: Token
+  //   G2: link template          G5: dispenser URL (once deployed)
+  poolTabName: 'VerifyYou codes',
+
+  // Exact title of the short answer question that receives the code.
+  codeQuestionTitle: 'Verification code',
+
+  // Optional. If you add a short answer question with this title, the participant
+  // ID from your recruitment platform is carried into it too. Leave the question
+  // out of your form if you do not need it.
+  participantQuestionTitle: 'Participant ID',
+
+  // 'DELETE' removes bad responses.
+  // 'FLAG' keeps everything and writes a status column instead. Use FLAG while
+  // you are testing so you can see what would have happened before it is final.
+  onInvalid: 'FLAG',
+
+  // Header written into the response sheet when onInvalid is 'FLAG'.
+  statusColumnHeader: 'VerifyYou status',
+
+  // How the dispenser hands the respondent over to the form.
+  //
+  // A silent redirect of the whole browser tab is NOT possible here, and that is
+  // a Google restriction rather than something fixable in this file. Apps Script
+  // serves web apps inside a restricted iframe that is not granted
+  // allow-top-navigation, and grants allow-top-navigation-by-user-activation
+  // only to stand-alone script projects, not container-bound ones like this.
+  // Google's own documented advice is to use a link or button instead.
+  //
+  //   'BUTTON' = one clean "Start the survey" button. Honest and obvious, but it
+  //              is a click, on a script.google.com page, right after you asked
+  //              someone for a face scan.
+  //   'EMBED'  = no click. Loads the form inside the page instead of navigating
+  //              away, which sidesteps top navigation entirely. The address bar
+  //              keeps saying script.google.com and the form runs nested.
+  dispenserMode: 'EMBED',
+};
+
+// ---------------------------------------------------------------------------
+// SETUP
+// ---------------------------------------------------------------------------
+
+/**
+ * Run this once. Creates the code pool tab if it is missing and installs the
+ * form-submit trigger. Safe to run again; it will not create duplicate triggers.
+ */
+function setUp() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // doGet runs outside the spreadsheet's context, where "active spreadsheet" is
+  // not reliably defined. Stash the ID now and open by ID later.
+  PropertiesService.getScriptProperties().setProperty('VY_SS_ID', ss.getId());
+
+  let pool = ss.getSheetByName(VY.poolTabName);
+  if (!pool) pool = ss.insertSheet(VY.poolTabName);
+  pool.getRange('A1:E1').setValues([['Code', 'Status', 'Issued at', 'Used at', 'Token']]);
+  pool.setFrozenRows(1);
+
+  // Remove any trigger we installed previously, so re-running is safe.
+  ScriptApp.getProjectTriggers()
+    .filter(function (t) { return t.getHandlerFunction() === 'vyOnFormSubmit'; })
+    .forEach(function (t) { ScriptApp.deleteTrigger(t); });
+
+  ScriptApp.newTrigger('vyOnFormSubmit')
+    .forSpreadsheet(ss)
+    .onFormSubmit()
+    .create();
+
+  const template = vyWritePrefillTemplate_(ss, pool);
+
+  const codes = vyCountCodes_(pool);
+  const message =
+    'VerifyYou backstop installed.\n\n' +
+    'Codes: ' + codes.total + ' total, ' + codes.unused + ' unused, ' +
+      codes.issued + ' issued, ' + codes.used + ' used\n' +
+    'Dispenser: ' + (vyDispenserUrl_() || 'not deployed (optional, see runbook)') + '\n' +
+    'Mode: ' + VY.onInvalid + '\n' +
+    'Link template: ' + (template ? 'ready' : 'PROBLEM, reason is in G2') +
+      ' (cell G2 of the "' + VY.poolTabName + '" tab)\n\n' +
+    (codes.total === 0
+      ? 'Next step: paste your codes into column A of the "' + VY.poolTabName + '" tab.'
+      : 'You are ready to test.');
+  Logger.log(message);
+  if (template) Logger.log(template);
+  try { ss.toast(message, 'VerifyYou', 15); } catch (err) { /* toast is best effort */ }
+}
+
+/**
+ * Asks Google to generate the pre-fill link for us, rather than anyone building
+ * it by hand.
+ *
+ * Hand-assembling this URL has three silent failure modes: appending &entry to a
+ * URL with no query string, using the editor URL instead of the public one, and
+ * using a forms.gle short link, which drops the query string on redirect. Each
+ * one loads the form normally with an empty code field, so it fails invisibly.
+ * toPrefilledUrl() sidesteps all of them because Google emits the URL itself:
+ * correct public ID, correct entry IDs, correct encoding.
+ *
+ * The response is created but never submitted, so nothing lands in your results.
+ */
+function vyGetPrefillTemplate() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const pool = ss.getSheetByName(VY.poolTabName);
+  const url = vyWritePrefillTemplate_(ss, pool);
+  if (url) Logger.log(url);
+  return url;
+}
+
+/**
+ * Titles are compared trimmed and lower-cased everywhere. "Verification Code"
+ * and "Verification code" are the same question as far as this script is
+ * concerned. Exact matching looks tidy and is a trap: Google Forms gives no hint
+ * that capitals matter, so the natural way to type a title silently breaks
+ * everything downstream.
+ */
+function vyNorm_(s) {
+  return String(s || '').trim().toLowerCase();
+}
+
+function vyWritePrefillTemplate_(ss, pool) {
+  const formUrl = ss.getFormUrl();
+  if (!formUrl) {
+    return vyTemplateProblem_(pool,
+      'This spreadsheet is not linked to a form. Open the form, go to the Responses tab, and link it here.');
+  }
+
+  const form = FormApp.openByUrl(formUrl);
+  let response = form.createResponse();
+  let found = false;
+  const seen = [];
+
+  form.getItems().forEach(function (item) {
+    const type = item.getType();
+    const isText = type === FormApp.ItemType.TEXT;
+    const isPara = type === FormApp.ItemType.PARAGRAPH_TEXT;
+    if (!isText && !isPara) return;
+
+    const title = item.getTitle();
+    seen.push(title);
+
+    const answer = function (value) {
+      return isText
+        ? item.asTextItem().createResponse(value)
+        : item.asParagraphTextItem().createResponse(value);
+    };
+
+    // The code question, and optionally a participant ID question, get
+    // placeholders our gate substitutes at redirect time.
+    if (vyNorm_(title) === vyNorm_(VY.codeQuestionTitle)) {
+      response = response.withItemResponse(answer('__VY_CODE__'));
+      found = true;
+    } else if (vyNorm_(title) === vyNorm_(VY.participantQuestionTitle)) {
+      response = response.withItemResponse(answer('__VY_PID__'));
+    }
+  });
+
+  if (!found) {
+    return vyTemplateProblem_(pool,
+      'No question matching "' + VY.codeQuestionTitle + '" was found. ' +
+      'Text questions in your form: ' + (seen.length ? seen.join('  |  ') : 'none') + '. ' +
+      'Either rename one of them, or change codeQuestionTitle at the top of this script.');
+  }
+
+  const url = response.toPrefilledUrl();
+
+  if (pool) {
+    pool.getRange('G1').setValue('Link template');
+    pool.getRange('G2').setValue(url);
+    pool.getRange('G4').setValue('Access link (paste THIS into VerifyYou)');
+    pool.getRange('G5').setValue(vyDispenserUrl_() || 'not deployed yet, see step 6 of the runbook');
+    pool.setColumnWidth(7, 460);
+  }
+  return url;
+}
+
+/**
+ * Writes the reason into G2 rather than leaving it blank. A blank cell tells you
+ * nothing; the reason tells you everything, and it appears where you are already
+ * looking instead of in an execution log you would have to go and open.
+ */
+function vyTemplateProblem_(pool, message) {
+  Logger.log(message);
+  if (pool) {
+    pool.getRange('G1').setValue('Link template (PROBLEM)');
+    pool.getRange('G2').setValue(message);
+    pool.setColumnWidth(7, 460);
+  }
+  return '';
+}
+
+/** The deployed web app URL, or '' if this has not been deployed yet. */
+function vyDispenserUrl_() {
+  try {
+    return ScriptApp.getService().getUrl() || '';
+  } catch (err) {
+    return '';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// THE DISPENSER (web app)
+// ---------------------------------------------------------------------------
+//
+// TEST HARNESS, not the shipping design. Read this before relying on it.
+//
+// Deploy → New deployment → Web app, "Execute as: Me", "Who has access: Anyone".
+// Google hosts it. Paste the resulting URL into VerifyYou as the verified
+// destination, INSTEAD of your form URL.
+//
+// Three things to know:
+//   1. It cannot verify the token. Confirming a token server-side needs the
+//      VerifyYou SECRET key, which must never sit in a researcher's script. So
+//      this checks that a token is present and refuses to issue twice for the
+//      same one. That stops sharing and refreshes. It does not stop somebody
+//      deliberately sending made-up tokens to drain the pool.
+//   2. It fails CLOSED. If this breaks, hits a quota, or loses authorization,
+//      verified people get no code and cannot enter the study at all. The
+//      submit-side check fails open; this one is the opposite, and it sits on
+//      the critical path of live fielding.
+//   3. "Anyone, even anonymous" can be disabled by a Workspace administrator,
+//      and on some account types it is not offered. If you cannot select it,
+//      this approach is not available on that account.
+
+function doGet(e) {
+  const params = (e && e.parameter) || {};
+
+  // Two ways a password can arrive.
+  //
+  // PASSTHROUGH (preferred): VerifyYou already issues a one-time password per
+  // verified human and drops it on the link, which is how the Alchemer setup
+  // works, where it lands as ?vypw=. Nothing left to decide, so just carry it
+  // into the form. VerifyYou owns issuance, reissue on abandonment, and running
+  // out, which is exactly where that belongs.
+  //
+  // CLAIM (fallback): only a ?vyt= token arrives, so this script picks the next
+  // unused password out of the sheet itself.
+  const supplied = String(params.vypw || params.vyp || '').trim();
+  const token = String(params.vyt || params.vyc || '').trim();
+  const pid = String(params.pid || params.PROLIFIC_PID || params.participant || '').trim();
+
+  if (!supplied && !token) {
+    return vyDispenserPage_('This link needs to be opened through your study link, not directly.');
+  }
+
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+  } catch (err) {
+    return vyDispenserPage_('Busy right now. Please refresh in a few seconds.');
+  }
+
+  try {
+    const ssId = PropertiesService.getScriptProperties().getProperty('VY_SS_ID');
+    if (!ssId) return vyDispenserPage_('Not set up yet. Run setUp from the script editor.');
+
+    const ss = SpreadsheetApp.openById(ssId);
+    const pool = ss.getSheetByName(VY.poolTabName);
+    if (!pool) return vyDispenserPage_('No codes tab found. Run setUp from the script editor.');
+
+    const template = String(pool.getRange('G2').getValue() || '');
+    if (template.indexOf('__VY_CODE__') === -1) {
+      return vyDispenserPage_('No link template. Run setUp from the script editor.');
+    }
+
+    // Passthrough beats claiming. If VerifyYou already picked the password, use
+    // it and note it against the pool row so the sheet still shows what happened.
+    let code = supplied;
+    if (code) {
+      vyMarkIssued_(pool, code, token);
+    } else {
+      code = vyClaimCode_(pool, token);
+    }
+
+    if (!code) {
+      // Pool exhausted. Verified people arriving with nothing is the worst
+      // failure this design has, because in the results they look like bots.
+      return vyDispenserPage_(
+        'This study has run out of access codes. Please contact the researcher; ' +
+        'you have not done anything wrong.');
+    }
+
+    let url = template.split('__VY_CODE__').join(encodeURIComponent(code));
+    url = url.split('__VY_PID__').join(encodeURIComponent(pid));
+    return vyRedirect_(url, String(params.debug || '') === '1');
+  } catch (err) {
+    Logger.log('VerifyYou dispenser error: ' + err);
+    return vyDispenserPage_('Something went wrong opening the survey. Please contact the researcher.');
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * Claims a code for this token. Idempotent by token: the same person refreshing,
+ * or coming back after abandoning, gets the SAME code rather than spending
+ * another one. Returns '' when the pool is exhausted.
+ */
+function vyClaimCode_(pool, token) {
+  const last = vyLastCodeRow_(pool);
+  if (last < 2) return '';
+
+  const rows = pool.getRange(2, 1, last - 1, 5).getValues();
+
+  // Already issued to this token? Hand back the same code.
+  for (let i = 0; i < rows.length; i++) {
+    if (String(rows[i][4] || '').trim() === token) return String(rows[i][0]).trim();
+  }
+
+  // Otherwise take the first Unused one.
+  for (let i = 0; i < rows.length; i++) {
+    const code = String(rows[i][0] || '').trim();
+    if (!code) continue;
+    if (String(rows[i][1] || '').trim().toLowerCase() !== 'unused') continue;
+
+    pool.getRange(i + 2, 2, 1, 2).setValues([['Issued', new Date()]]);
+    pool.getRange(i + 2, 5).setValue(token);
+    SpreadsheetApp.flush();
+    return code;
+  }
+  return '';
+}
+
+/**
+ * Marks a password VerifyYou already chose as Issued, so the sheet reflects
+ * reality. Deliberately quiet if the password is not in the pool: VerifyYou is
+ * the authority on what it issued, and the submit-side check is what decides
+ * whether a response is kept.
+ */
+function vyMarkIssued_(pool, code, token) {
+  const last = vyLastCodeRow_(pool);
+  if (last < 2) return;
+  const rows = pool.getRange(2, 1, last - 1, 2).getValues();
+  for (let i = 0; i < rows.length; i++) {
+    if (String(rows[i][0]).trim() !== code) continue;
+    if (String(rows[i][1] || '').trim().toLowerCase() === 'unused') {
+      pool.getRange(i + 2, 2, 1, 2).setValues([['Issued', new Date()]]);
+      if (token) pool.getRange(i + 2, 5).setValue(token);
+      SpreadsheetApp.flush();
+    }
+    return;
+  }
+}
+
+/**
+ * Hands the respondent over to the form. See VY.dispenserMode for why a silent
+ * whole-tab redirect is not on the menu.
+ */
+function vyRedirect_(url, debug) {
+  const html = (VY.dispenserMode === 'EMBED' && !debug)
+    ? vyEmbedHtml_(url)
+    : vyButtonHtml_(url, debug);
+  return HtmlService.createHtmlOutput(html)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+    .setTitle('Your survey');
+}
+
+/**
+ * One button. It still attempts the automatic hop first, which costs nothing and
+ * covers the case where a browser or a future deployment type does permit it.
+ * Anchors carrying target="_top" are user-initiated, which is the one form of
+ * top navigation those restrictions do allow.
+ */
+function vyButtonHtml_(url, debug) {
+  const attr = String(url).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+  // Whether the automatic hop can work comes down to one thing: is this page
+  // inside Google's restricted iframe or not. If window.self === window.top there
+  // is nothing in the way and the redirect just works. Add ?debug=1 to the
+  // dispenser URL to see which situation a given deployment is in.
+  const probe = debug
+    ? '<pre id="vydbg" style="text-align:left;background:#f6f8fa;padding:1rem;border-radius:8px;' +
+      'margin-top:2rem;font-size:.8rem;white-space:pre-wrap"></pre>' +
+      '<script>(function(){var f;try{f=(window.self!==window.top);}catch(e){f="cross-origin (so: framed)";}' +
+      'document.getElementById("vydbg").textContent=' +
+      '"framed: "+f+"\\nself origin: "+location.origin+"\\nua: "+navigator.userAgent;})();<\/script>'
+    : '';
+
+  return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Your survey</title></head>' +
+    '<body style="font-family:system-ui,-apple-system,sans-serif;margin:0;padding:3rem 1.5rem;' +
+    'text-align:center;color:#1f2328">' +
+    '<p style="font-size:1.05rem;margin:0 0 .5rem">You are verified.</p>' +
+    '<p style="color:#5b6470;margin:0 0 2rem">Continue to the survey below.</p>' +
+    '<a href="' + attr + '" target="_top" ' +
+    'style="display:inline-block;padding:.9rem 2rem;border-radius:8px;background:#34A853;' +
+    'color:#fff;text-decoration:none;font-weight:600">Start the survey</a>' +
+    probe +
+    (debug ? '' :
+      '<script>try{window.top.location.href=' + JSON.stringify(String(url)) + ';}catch(e){}<\/script>') +
+    '</body></html>';
+}
+
+/**
+ * No click. Navigates this frame rather than the top one, which those frame
+ * restrictions do not cover, so the form loads in place. Forms supports being framed,
+ * which is what its own embed feature relies on.
+ */
+function vyEmbedHtml_(url) {
+  const esc = function (s) {
+    return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  };
+  const embed = String(url) + (String(url).indexOf('?') === -1 ? '?' : '&') + 'embedded=true';
+
+  // The escape hatch matters more than it looks. If the form ever fails to render
+  // in the frame, without this the respondent gets a blank page and no way
+  // forward, which is worse than the button we were trying to avoid. It stays
+  // small and out of the way until someone needs it.
+  return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Your survey</title>' +
+    '<style>html,body{margin:0;height:100%;font-family:system-ui,-apple-system,sans-serif}' +
+    '#f{border:0;width:100%;height:calc(100% - 34px);display:block}' +
+    '#b{height:34px;display:flex;align-items:center;justify-content:center;font-size:.78rem;color:#8a939f}' +
+    '#b a{color:#8a939f}</style></head>' +
+    '<body>' +
+    '<iframe id="f" src="' + esc(embed) + '">Loading your survey…</iframe>' +
+    '<div id="b">Survey not loading? <a href="' + esc(url) + '" target="_top">' +
+    '&nbsp;Open it in a new page</a></div>' +
+    '</body></html>';
+}
+
+function vyDispenserPage_(message) {
+  const html =
+    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Survey access</title></head>' +
+    '<body style="font-family:system-ui,-apple-system,sans-serif;padding:2rem;text-align:center">' +
+    '<p>' + String(message).replace(/</g, '&lt;') + '</p></body></html>';
+  return HtmlService.createHtmlOutput(html)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+    .setTitle('Survey access');
+}
+
+// ---------------------------------------------------------------------------
+// RUNTIME
+// ---------------------------------------------------------------------------
+
+function vyOnFormSubmit(e) {
+  // Serialise every execution. Google guarantees a script lock cannot be held
+  // by two executions at once regardless of who triggered them, which is what
+  // stops two submissions redeeming the same code simultaneously.
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
+  } catch (err) {
+    // Could not get the lock. Fail open: never destroy a real response because
+    // this script was busy.
+    vyFlagRow_(e, 'unchecked (script busy)');
+    return;
+  }
+
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const code = vyExtractCode_(e);
+    const verdict = vyRedeem_(ss, code);
+
+    // Fail-open paths are labelled as such. They must never read as 'verified',
+    // or a setup mistake looks like a clean study.
+    if (verdict.failOpen) {
+      vyFlagRow_(e, 'unchecked (' + verdict.reason + ')');
+      return;
+    }
+
+    if (verdict.ok) {
+      vyFlagRow_(e, 'verified');
+      return;
+    }
+
+    if (VY.onInvalid === 'FLAG') {
+      vyFlagRow_(e, 'REJECTED: ' + verdict.reason);
+      return;
+    }
+
+    vyRemoveResponse_(ss, e, code);
+  } catch (err) {
+    // Any unexpected failure fails open, with a note, rather than deleting data.
+    Logger.log('VerifyYou backstop error: ' + err);
+    try { vyFlagRow_(e, 'unchecked (error)'); } catch (ignored) {}
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * Reads the submitted code. namedValues is keyed by question title, matched
+ * case-insensitively for the same reason as everywhere else.
+ */
+function vyExtractCode_(e) {
+  const named = e.namedValues || {};
+  const wanted = vyNorm_(VY.codeQuestionTitle);
+  const keys = Object.keys(named);
+  for (let i = 0; i < keys.length; i++) {
+    if (vyNorm_(keys[i]) !== wanted) continue;
+    const raw = named[keys[i]];
+    if (!raw || !raw.length) return '';
+    return String(raw[0]).trim();
+  }
+  return '';
+}
+
+/**
+ * Looks the code up in the pool and marks it used. Returns {ok, reason}.
+ * Runs inside the script lock, so the read and the write are effectively atomic.
+ */
+function vyRedeem_(ss, code) {
+  if (!code) return { ok: false, reason: 'no code' };
+
+  const pool = ss.getSheetByName(VY.poolTabName);
+  if (!pool) return { ok: false, failOpen: true, reason: 'no pool tab' };
+
+  // Measured on column A, not getLastRow(). The link template sits in G2, so a
+  // sheet with a template but no codes would otherwise look non-empty and start
+  // rejecting people instead of failing open.
+  const last = vyLastCodeRow_(pool);
+  if (last < 2) return { ok: false, failOpen: true, reason: 'pool empty' };
+
+  const values = pool.getRange(2, 1, last - 1, 2).getValues();
+  for (let i = 0; i < values.length; i++) {
+    if (String(values[i][0]).trim() !== code) continue;
+
+    // Unused (typed in by hand during testing) and Issued (handed out by the
+    // dispenser) both redeem. Only Used is a genuine second attempt.
+    const status = String(values[i][1] || '').trim().toLowerCase();
+    if (status === 'used') return { ok: false, reason: 'code already used' };
+
+    pool.getRange(i + 2, 2).setValue('Used');
+    pool.getRange(i + 2, 4).setValue(new Date());
+    SpreadsheetApp.flush();
+    return { ok: true, reason: 'redeemed' };
+  }
+
+  return { ok: false, reason: 'code not in pool' };
+}
+
+/**
+ * Deletes the response from the sheet and, best effort, from the form itself.
+ */
+function vyRemoveResponse_(ss, e, code) {
+  const sheet = e.range.getSheet();
+  const rowValues = e.values || [];
+
+  // Re-locate the row inside the lock rather than trusting the row index
+  // captured before it. An earlier deletion may have shifted everything up.
+  const row = vyFindRow_(sheet, rowValues);
+  if (row > 1) sheet.deleteRow(row);
+
+  vyDeleteFormResponse_(ss, rowValues, code);
+}
+
+/**
+ * Finds the row matching this submission, searching newest first. Compares the
+ * answer columns rather than the timestamp, since the sheet stores a Date and
+ * the event gives a string.
+ */
+function vyFindRow_(sheet, rowValues) {
+  if (!rowValues.length) return -1;
+  const data = sheet.getDataRange().getValues();
+  for (let r = data.length - 1; r >= 1; r--) {
+    let match = true;
+    for (let c = 1; c < rowValues.length; c++) {
+      if (String(data[r][c]) !== String(rowValues[c])) { match = false; break; }
+    }
+    if (match) return r + 1;
+  }
+  return -1;
+}
+
+/**
+ * Removes the form's own copy so its response count and summary charts stay
+ * honest. Matched on the code where we have one, on timestamp where we do not.
+ */
+function vyDeleteFormResponse_(ss, rowValues, code) {
+  const formUrl = ss.getFormUrl();
+  if (!formUrl) return;
+
+  const submitted = new Date(rowValues[0]);
+  const since = new Date(submitted.getTime() - 120000);
+
+  const form = FormApp.openByUrl(formUrl);
+  const responses = form.getResponses(since);
+
+  for (let i = 0; i < responses.length; i++) {
+    const r = responses[i];
+    let hit = false;
+
+    if (code) {
+      const items = r.getItemResponses();
+      for (let j = 0; j < items.length; j++) {
+        if (vyNorm_(items[j].getItem().getTitle()) === vyNorm_(VY.codeQuestionTitle) &&
+            String(items[j].getResponse()).trim() === code) { hit = true; break; }
+      }
+    } else {
+      hit = Math.abs(r.getTimestamp().getTime() - submitted.getTime()) < 2000;
+    }
+
+    if (hit) { form.deleteResponse(r.getId()); return; }
+  }
+}
+
+/**
+ * Writes a status next to the response. Used for 'verified', for FLAG mode, and
+ * for every fail-open path so nothing is ever silently unchecked.
+ */
+function vyFlagRow_(e, status) {
+  const sheet = e.range.getSheet();
+  const header = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), 1)).getValues()[0];
+
+  let col = header.indexOf(VY.statusColumnHeader) + 1;
+  if (col === 0) {
+    col = sheet.getLastColumn() + 1;
+    sheet.getRange(1, col).setValue(VY.statusColumnHeader);
+  }
+
+  const row = vyFindRow_(sheet, e.values || []);
+  if (row > 1) sheet.getRange(row, col).setValue(status);
+}
+
+/** Last row of column A holding a code. Ignores anything in other columns. */
+function vyLastCodeRow_(pool) {
+  const values = pool.getRange(1, 1, Math.max(pool.getMaxRows(), 1), 1).getValues();
+  for (let r = values.length - 1; r >= 0; r--) {
+    if (String(values[r][0]).trim()) return r + 1;
+  }
+  return 0;
+}
+
+function vyCountCodes_(pool) {
+  const last = vyLastCodeRow_(pool);
+  if (last < 2) return { total: 0, unused: 0, issued: 0, used: 0 };
+  const values = pool.getRange(2, 1, last - 1, 2).getValues();
+  let total = 0, unused = 0, issued = 0, used = 0;
+  values.forEach(function (v) {
+    if (!String(v[0]).trim()) return;
+    total++;
+    const s = String(v[1] || '').trim().toLowerCase();
+    if (s === 'used') used++;
+    else if (s === 'issued') issued++;
+    else unused++;
+  });
+  return { total: total, unused: unused, issued: issued, used: used };
+}
+
+// ---------------------------------------------------------------------------
+// HELPERS YOU CAN RUN BY HAND
+// ---------------------------------------------------------------------------
+
+/** Generates test codes into the pool tab. For trying this out before go live. */
+function vyGenerateTestCodes() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const pool = ss.getSheetByName(VY.poolTabName) || ss.insertSheet(VY.poolTabName);
+  if (pool.getLastRow() === 0) {
+    pool.getRange('A1:C1').setValues([['Code', 'Status', 'Used at']]);
+  }
+  const rows = [];
+  for (let i = 0; i < 20; i++) rows.push([vyRandomCode_(), 'Unused', '', '', '']);
+  // Append after the last CODE, not the last row, so the template block in
+  // column G does not push new codes down and leave a gap.
+  pool.getRange(Math.max(vyLastCodeRow_(pool), 1) + 1, 1, rows.length, 5).setValues(rows);
+  Logger.log('Added ' + rows.length + ' test codes.');
+}
+
+/**
+ * 22 characters from a 30 character alphabet, roughly 108 bits. Short or
+ * sequential codes in a known pool are guessable by anyone who strips the
+ * prefill and tries, which is the one way to get this design wrong.
+ */
+function vyRandomCode_() {
+  const alphabet = 'ABCDEFGHJKMNPQRSTVWXYZ23456789';
+  let hex = '';
+  while (hex.length < 44) hex += Utilities.getUuid().replace(/-/g, '');
+  let out = 'vy-';
+  for (let i = 0; i < 22; i++) {
+    out += alphabet.charAt(parseInt(hex.substr(i * 2, 2), 16) % alphabet.length);
+  }
+  return out;
+}
+
+/**
+ * For running the dispenser as a STANDALONE script project instead of one bound
+ * to the spreadsheet. Google grants stand-alone projects
+ * allow-top-navigation-by-user-activation, which bound projects never get, so if
+ * a standalone deployment redirects cleanly it is worth having.
+ *
+ * Paste your response spreadsheet's URL and run this once. Everything else works
+ * unchanged, because the dispenser already opens the sheet by stored ID rather
+ * than assuming an active one.
+ *
+ * The submit-side backstop still has to live in the BOUND script, since only a
+ * bound project can hold the form-submit trigger. Running both is fine.
+ */
+function vyUseSpreadsheet(url) {
+  const target = url || 'PASTE_YOUR_SPREADSHEET_URL_HERE';
+  const m = String(target).match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (!m) {
+    Logger.log('Could not read a spreadsheet ID from: ' + target +
+               '\nCall it like: vyUseSpreadsheet("https://docs.google.com/spreadsheets/d/..../edit")');
+    return;
+  }
+  PropertiesService.getScriptProperties().setProperty('VY_SS_ID', m[1]);
+  const ss = SpreadsheetApp.openById(m[1]);
+  Logger.log('Dispenser now points at: ' + ss.getName());
+  Logger.log('Dispenser URL: ' + (vyDispenserUrl_() || 'not deployed yet'));
+}
+
+/** Prints how much of the pool is left. Run any time. */
+function vyPoolStatus() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const pool = ss.getSheetByName(VY.poolTabName);
+  if (!pool) { Logger.log('No pool tab named "' + VY.poolTabName + '".'); return; }
+  const c = vyCountCodes_(pool);
+  Logger.log('Codes: ' + c.total + ' total | ' + c.unused + ' unused | ' +
+             c.issued + ' issued but not submitted | ' + c.used + ' used.');
+  Logger.log('Dispenser: ' + (vyDispenserUrl_() || 'not deployed'));
+}
+```
+</Accordion>
+
+## What happens next
+
+<div className="grid md:grid-cols-2 gap-5 mt-6">
+  <a href="/learn/what-your-users-see" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="mobile-screen" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="mobile-screen" iconType="light" size={22} /></span>
+    <span className="vy-card-title">What your respondent sees</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">See exactly what your respondent sees.</span>
+  </a>
+  <a href="/docs/guides/pre-generated-passwords" className="vy-card bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-900 dark:text-zinc-50">
+    <span className="vy-card-wm"><Icon icon="layer-group" iconType="light" size={250} /></span>
+    <span className="vy-card-icon"><Icon icon="layer-group" iconType="light" size={22} /></span>
+    <span className="vy-card-title">The same mechanism, any platform</span>
+    <span className="vy-card-sub text-gray-500 dark:text-zinc-400">One password per human. Spend it once, wherever your study lives.</span>
+  </a>
+</div>
