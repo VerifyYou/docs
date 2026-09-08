@@ -30,6 +30,39 @@ Tag vocabulary is now Dashboard, Checks, Breaking. The every-entry-must-be-tagge
 Everything new in HumanCheck. Newest first.
 
 {/*
+SEPTEMBER 2026 ENTRY, written 2026-09-08 by Grant. Grounded in the shipped dashboard, not the design
+scope. Two changes, both confirmed live by the product team:
+  - Map columns step on Existing users import: three pinned fields (email, IP, impact figure) auto-matched
+    with a source-column dropdown on each; email is the only requirement; extras untick/remove; column type
+    from presets only (currency, date, number, text). Field renaming and write-in types are designed but
+    NOT shipped, so they are left out here on purpose.
+  - Duplicate a verification from the dashboard.
+Design spec for the fuller import mapping lives in Figma (Data Import conversion area) and import-scope.md.
+*/}
+
+<Update tags={["Dashboard", "Checks"]} label="September 8, 2026" description="Map your import columns yourself, bring in any data you hold, and duplicate a verification">
+
+Importing arrived last month and worked one thing out for you: which column held the email. This round hands you the rest of the spreadsheet.
+
+### Map your columns, and bring whatever data you hold
+
+Upload a CSV and you now get a **Map columns** step before anything comes in. Three fields sit at the top: **email address**, **IP address**, and **impact figure**. We match them to your columns automatically, and each one is a dropdown, so if we guessed wrong you point it at the right column yourself.
+
+Only email is required, since it is how we know who a row belongs to. Leave IP or impact unmapped and the import still runs. The gap is noted on screen, those people come in without it, and a later upload can fill it in.
+
+Everything else in your file imports as extra data on each person's record. Untick a column to skip it this time, or remove it from the list altogether. Each column's type can be set too: currency, date, number, text.
+
+The step tells you where you stand before you confirm. Rows with no email are skipped and counted, empty cells stay empty rather than being filled in for you, and the summary at the bottom says exactly how many columns are coming in. Long files scroll inside the step with that summary always in view.
+
+See [Integration](/docs/verifications/integration) and [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit).
+
+### Duplicate a verification
+
+A check you have already tuned no longer has to be rebuilt to be reused. Duplicate it from the dashboard and the setup carries over into a new check under its own label. Adjust what needs adjusting and take it live.
+
+</Update>
+
+{/*
 AUGUST 2026 ENTRY, written 2026-08-24. Grounded, per /product-update, not written from memory.
 
 VERIFIED IN THE DASHBOARD MYSELF (DASHBOARD_REFERENCE.md, scans 19 and 21 Aug). These two were
