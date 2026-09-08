@@ -3,6 +3,20 @@ title: "Dev changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
+<Update label="September 8, 2026" description="Auto-return">
+
+## Return the moment a check settles
+
+[`POST /v3/initialize`](/v3/dev/spec/server-api/initialize) now takes `auto_return`. Set it and an approved check sends the person straight back to `redirect_url` the instant it settles, with no result screen and nothing to tap. Leave it off and they see the result screen and tap to return, as before.
+
+- Works with any key. It sets the behavior for that one run, whatever the verification has saved.
+- In an embedded flow the result arrives the same way, through the `vycheck()` promise and `onComplete`, and the drawer closes on its own.
+- A denied check still shows its result so the person sees why. Invite links ignore the field.
+
+Nothing to upgrade. It works with the SDK version you already run.
+
+</Update>
+
 <Update label="August 31, 2026" description="Groups">
 
 ## One group can now see another

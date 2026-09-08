@@ -23,6 +23,8 @@ const res = await fetch("https://trust.verifyyou.com/v3/initialize", {
     redirect_url: "http://localhost:3000/verified",
     // optionally set uniqueness to be per group, so the same person can pass once in each group
     // group: "spring-intake",
+    // optionally return to redirect_url the moment the check settles, with no result screen
+    // auto_return: true,
     // optionally link with your database
     // external_id: user.id,
     // link with a new person or external identifier
