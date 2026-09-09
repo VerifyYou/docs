@@ -46,7 +46,9 @@ Never trust the client result alone. The token (`vyt`) is proof, not a verdict; 
     });
 
     if (res.status === 404) {
-      // no_settled_pass: this credential has never finished a run with you
+      // no_settled_pass: no confirmed pass to report — either this credential
+      // has never finished a run with you, or its last run was refused at
+      // your account's daily verification limit (no run is recorded to look up either way)
       return { allowed: false, status: "none", reasons: [] };
     }
     if (!res.ok) {
@@ -73,7 +75,8 @@ Never trust the client result alone. The token (`vyt`) is proof, not a verdict; 
 We report `verified: true | false`. Pass or fail is your decision, and routing lives in your code, next to the action.
 
 - Gate on `verified`. `vyc` in the URL is a UI hint.
-- Fail closed on `404`, `410`, or a timeout. Fresh session, try again.
+- Fail closed on `404` or `410` from the token exchange, or a timeout: start a fresh session and try again.
+- A `404` from the token-free lookup isn't a broken session, just no confirmed pass yet — don't retry it in a loop. If the account reached its [daily verification limit](/v3/faq#what-happens-if-we-exceed-our-daily-verification-limit), retries keep failing until it resets.
 - Test keys read test runs only. Never point a live action at a test key.
 - Consume each token once. Prefer your own idempotency over [lock](/v3/dev/spec/server-api/lock) unless you mean one pass per human, ever.
 - Strip `vyt` and `vyc` from the URL after handoff.

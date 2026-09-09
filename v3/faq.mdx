@@ -81,4 +81,14 @@ description: "Common questions about verifying, keys, returning people, and data
     `GET /v3/confirmations/{token}` returns `verified: false`.
   </Accordion>
 
+  <Accordion title="What happens if we exceed our daily verification limit?">
+    Every account has a default daily limit on verifications (66k). Once it's
+    reached, runs come back denied with
+    [`reasons: ["usage_cap_exceeded"]`](/v3/dev/spec/server-api/confirmations)
+    for the rest of the day; it resets at 00:00 UTC. This is about your account,
+    not the person being verified. Expecting high traffic due to a launch, a
+    campaign, or general traffic? [Contact us](mailto:support@verifyyou.com)
+    beforehand so we can size the limit with you.
+  </Accordion>
+
 </AccordionGroup>
