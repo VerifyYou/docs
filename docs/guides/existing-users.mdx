@@ -33,12 +33,23 @@ SCREENSHOTS PENDING. James's captures are of the live workspace with his real ad
 images/dashboard/README.md rule is demo workspace only. Wanted shots are listed in that README.
 Until they land, only switch-method.jpg (already shot) is on the page.
 
-STEP 3 REWRITTEN 2026-09-09 for the September Map columns ship. Grounded in the September 8
-product-updates entry (PR #46), which is itself dashboard-verified; no UI facts beyond it. The
-old sentence ("we work out which column holds the email") described the August behaviour that
-Map columns replaced. The exact click order between mapping and the Add people button is not
-in any source, so the step says a CSV "goes through" Map columns and stops short of naming
-which button confirms it. Tighten when someone walks the flow again.
+STEP 3 REWRITTEN 2026-09-09 for the September Map columns ship, then VERIFIED THE SAME DAY by
+walking the flow in the livetest workspace (genial-narwhal, method switched to Existing users
+and back, a two-row example.com CSV staged and backed out of, nothing imported or sent).
+Observed and now stated exactly: upload parses first ("2 people ready to add - we also picked
+up their IP address"), Map columns opens on clicking Add, not at upload; the dialog is titled
+"Map columns / Match your columns to the critical fields" with a banner like "Email and IP
+matched - 1 extra column found"; critical fields are FOUR, Email address plus optional IP
+address, Impact figure and Date for the figure (the changelog said three; the date field is
+real); your columns are the dropdowns on the left; extra data reads "saved to each person's
+record" with an Import as / Type table and a "Select columns to leave out" tick, so the old
+"untick to skip" wording was inverted; footer reads "Importing 4 critical fields + 1 extra
+column" and the confirm button is "Confirm mapping". Type chips seen: Email, IP, currency
+(a dropdown), Date, Text; the currency/date/number/text preset list stays on the changelog's
+authority. Skipped-row counting and empty-cells behaviour also stay on the changelog's
+authority, the test CSV had no gaps to show them. The Add people panel's own helper copy
+still carries the August auto-detect sentence, so do not quote the panel copy here until the
+product updates it.
 */}
 
 <Steps>
@@ -64,10 +75,10 @@ which button confirms it. Tighten when someone walks the flow again.
   </Step>
   <Step title="Add your people">
     In the **Add people** panel on the same tab.
-    1. Paste your list and click **Add people**, or click **Upload CSV**. Whole spreadsheet rows are fine, with or without a header.
-    2. A CSV goes through **Map columns** before anything comes in. Three fields sit at the top: **email address**, **IP address** and **impact figure**. We match them to your columns automatically, and each one is a dropdown, so if we guessed wrong you point it at the right column yourself. Only email is required. Leave IP or impact unmapped and the import still runs, with the gap noted on screen, and a later upload can fill it in.
-    3. Everything else in your file imports as extra data on each person's record. Untick a column to skip it this time, or remove it from the list altogether, and set each column's type: currency, date, number, text. Import whatever you would want to compare later. An IP address you hold comes back beside the one we see when that person verifies.
-    4. Check the step's summary and confirm. Rows with no email are skipped and counted, empty cells stay empty rather than being filled in for you, and the summary says exactly how many columns are coming in.
+    1. Paste your list, or click **Upload CSV**. Whole spreadsheet rows are fine, with or without a header. The panel reads your list and tells you how many people are ready to add.
+    2. Click **Add**, and **Map columns** opens before anything comes in. Four fields sit at the top: **Email address**, then **IP address**, **Impact figure** and **Date for the figure**, each marked optional. We match your columns to them automatically, and each match is a dropdown, so if we guessed wrong you point it at the right column yourself. Only email is required. Leave the others unmapped and the import still runs.
+    3. Everything else in your file sits under **Extra data**, saved to each person's record, with a type on each column: currency, date, number, text. Tick a column under **Select columns to leave out** to skip it this time. Import whatever you would want to compare later. An IP address you hold comes back beside the one we see when that person verifies.
+    4. Check the count at the foot of the step, importing so many critical fields and so many extra columns, then click **Confirm mapping**. Rows with no email are skipped and counted, and empty cells stay empty rather than being filled in for you.
 
     Each person you add gets a verification link locked to their address. Adding people never sends anything, so you can build the list over several sittings and send once, when you are ready.
 
