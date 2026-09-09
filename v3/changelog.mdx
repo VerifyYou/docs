@@ -3,6 +3,17 @@ title: "Dev changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
+<Update label="September 9, 2026" description="Skip window">
+
+## A new `external_id` is a new check
+
+If you pass a fresh `external_id` on every session and rely on `group` to keep entries unique, a person coming back inside the skip window could be handed the earlier entry's result: the same confirmation, the earlier `external_id`, and no duplicate reported. A session that carries a different `external_id` than the person's last pass now runs its own check and settles its own confirmation, so a repeat in the same group is reported the way your collision setting says.
+
+- The same `external_id` coming back still skips, and so does a session with no `external_id`. The skip window itself is unchanged.
+- Nothing to upgrade. It works with the SDK version you already run.
+
+</Update>
+
 <Update label="September 8, 2026" description="Auto-return">
 
 ## Return the moment a check settles

@@ -14,7 +14,7 @@ A verified human doesn't redo work they've already done. How they're recognized 
 
 ## The return trip, in practice
 
-- **Same browser, already passed:** the flow completes almost immediately. This is the **skip window** on your verification's configuration; within it, a prior pass counts and the person skips the face check entirely. You still get a fresh token to confirm.
+- **Same browser, already passed:** the flow completes almost immediately. This is the **skip window** on your verification's configuration; within it, a prior pass counts and the person skips the face check entirely. You still get a fresh token to confirm. Start the session with a different `external_id` than their earlier pass and they run a fresh check instead.
 - **Bound identity on a new device:** the new device has no history, so they start fresh. At the face check their face is recognized as one that carries a claim, and the flow asks them to sign in with their number or email. One code later the claim is re-asserted and they're through.
 - **Anonymous on a new device:** there's no claim to re-assert. Their face matching their old record reads as a collision, and the check comes back denied until that record clears. This is the main reason to bind an identity for anyone who returns.
 
