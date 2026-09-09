@@ -21,6 +21,14 @@ NEEDS ACTION removed from the body 2026-08-21, James asked whether it is real. T
 exist, on a verification's own Activity tab, but nothing on screen or in any source states what it
 selects, so every sentence we wrote about it described it without defining it. Better absent than
 vague. Put it back when Zeek says what the rule is.
+
+INVITE TRAIL paragraph added 2026-09-09, corrected the same day by James: the funnel is NOT
+extra states on the Activity rows. It lives in its own Email invites view, on a verification
+running Existing users, "essentially just a granular, detailed funnel view on emails", telling
+you whether each person opened the invite or never did. States vocabulary
+(sent/opened/clicked/verified) from the August 24 entry; location from James, 9 Sep. The
+livetest workspace has no send history, so the view itself was not walked. The September
+product-update email's "Send the check" section links here.
 */}
 
 **Activity** is the record of everyone who completed a verification, most recent first.
@@ -28,6 +36,8 @@ vague. Put it back when Zeek says what the rule is.
 [**Workspace Activity**](https://platform.verifyyou.com/dashboard/activity) covers every check you run. A row gives you the identifier they gave, or *No identifier given*, the time, a trust band, a trust score out of 100, the result, and a `TEST` badge if it came from test keys. The row menu opens that person's profile.
 
 **A verification's own Activity tab** adds the working controls: **Needs action**, **Export**, row selection, rows per page, and sending the check by email. Go here when you are working a list. Go to workspace Activity when you are looking somebody up.
+
+Email invites have their own funnel. On a verification running **Existing users**, the **Email invites** view tracks each invite through sent, opened, clicked and verified, so you can see who opened an invite and stopped, and who never opened it at all. Somebody who opens it and never finishes is telling you something different from somebody who never opened it. [Existing users setup](/docs/guides/existing-users) covers the sending itself.
 
 <Frame caption="A verification's own Activity tab. Filter and Export sit above the list.">
   <img src="/images/dashboard/activity-filter-export.png" alt="A verification's Activity tab, with the Filter and Export controls highlighted above the list of people" />
