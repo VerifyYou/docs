@@ -1,0 +1,101 @@
+# Stamp policy: which pull requests the gate may count as read by a second reader, and when
+# it may approve them.
+#
+# Read by .github/workflows/stamp.yml from the default branch, never from the PR head.
+# A PR that edits this file, the workflow, the script or the guidance is always needs-human.
+#
+# Every ready PR gets `stamp-eligible` or `needs-human`. The gate approves only when
+# `approve.enabled` is true, the PR is eligible, and the author has added the request label.
+# Agent-authored PRs are never eligible, whichever reader read them: the fleet does not
+# stamp itself. A machine is never a code owner: nothing CODEOWNERS covers is ever stamped.
+#
+# This is the public Mintlify docs site. The class the gate is for is prose: an MDX page,
+# a changelog entry, an image. The few files below are what a small diff can break for
+# every reader at once.
+
+version: 2
+
+labels:
+  eligible: stamp-eligible
+  needs_human: needs-human
+  request: stamp # the author's attestation: a person wrote this, ships it, and is reachable
+
+approve:
+  enabled: true
+  request_label_by_author_only: true # `stamp` counts only when the PR author added it
+
+size:
+  max_changed_lines: 200 # additions + deletions across the PR
+  max_files: 10
+
+# Any changed path matching one of these is needs-human: the site config that carries the
+# navigation, versions and redirects, the code and styles Mintlify ships to every visitor,
+# the v2 spec the API reference is rendered from, the publish filter, the Mintlify pin,
+# and the skills that govern what agents write here.
+risky_paths:
+  - "docs.json" # navigation, version dropdown, redirects, navbar; one bad key blanks the site
+  - ".mintignore" # decides what publishes
+  - "vy-intro-gate.js" # Mintlify auto-includes root .js; this runs in every visitor's browser
+  - "style.css"
+  - "learn.css"
+  - "v2/openapi.yaml" # the v2 API reference pages are generated from it
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - ".claude/**" # the voice, claim-gate, dev-docs and changelog skills that govern the prose
+  - "CLAUDE.md"
+
+# Case-insensitive regexes over the PR title. Not the body: the template's Risk section
+# invites "no auth surface touched", which is the opposite of a signal.
+deny_title:
+  - "\\bmigrat"
+  - "\\bsecret"
+  - "\\bcredential"
+  - "\\btenan(t|cy)\\b"
+  - "\\brls\\b"
+  - "\\bhotfix\\b"
+  - "\\brollback\\b"
+  - "\\bbreaking\\b"
+  - "\\bredirect"
+  - "\\bdeprecat"
+  - "\\bpricing\\b"
+  - "\\bopenapi\\b"
+
+# Case-sensitive regexes over added lines in the diff. MDX renders raw HTML and JSX, so
+# script, frame and javascript: URLs are refused wherever they appear.
+deny_diff:
+  - "BEGIN (?:(?:RSA|EC|DSA|OPENSSH|PGP|ENCRYPTED) )?PRIVATE KEY(?: BLOCK)?"
+  - "AKIA[0-9A-Z]{16}"
+  - "<script"
+  - "<iframe"
+  - "javascript:"
+  - "dangerouslySetInnerHTML"
+
+# A PR carrying any of these labels is needs-human. `agent-authored` is the dispatcher's
+# marker; `do-not-stamp` is anyone's override. Either one with `stamp` is still needs-human.
+refuse_labels:
+  - agent-authored
+  - do-not-stamp
+
+# PR authors that are never stamped. Agent-opened PRs run under a person's account, so
+# this list cannot catch them; the `agent-authored` label above is the control for that.
+refuse_authors:
+  - "copilot"
+  - "copilot-swe-agent[bot]"
+
+# The second readers. A PR is eligible when ANY one of them has a review on the PR's
+# current head commit with every thread it opened resolved. The status check is not
+# evidence: CodeRabbit skips drafts and posts "Review limit reached" while the check passes.
+readers:
+  - name: CodeRabbit
+    login: "coderabbitai[bot]"
+    require_review_on_head: true
+    require_threads_resolved: true
+    request_on_stamp: true # post `@coderabbitai review` once per head when the author asks
+  - name: stamp reader
+    login: "vy-dexter[bot]" # the stamp reader posts as the org's vy-dexter App; its review never approves
+    require_review_on_head: true
+    require_threads_resolved: true
+    refuse_verdict: "verdict: needs-human" # a review body carrying this is a refusal
+
+comment:
+  enabled: true # one sticky comment per PR carrying the verdict and the reasons
