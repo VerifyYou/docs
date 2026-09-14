@@ -1,0 +1,66 @@
+name: stamp
+# Labels every ready PR `stamp-eligible` or `needs-human` from .github/stamp-policy.yml and,
+# when the policy allows, approves it. pull_request_target runs this file, the policy and the
+# script from the default branch, never from the PR head; the gate reads the PR through the
+# API and never checks out its code. The script is a vendored copy of the shared one in
+# infra-common: this repository is public and cannot call a private reusable workflow.
+on:
+  pull_request_target:
+    types:
+      [
+        opened,
+        reopened,
+        ready_for_review,
+        converted_to_draft,
+        synchronize,
+        edited,
+        labeled,
+        unlabeled,
+      ]
+  pull_request_review:
+    types: [submitted, dismissed]
+  pull_request_review_comment:
+    types: [created]
+  schedule:
+    - cron: "17 * * * *" # thread resolution fires no event; reconcile every open PR hourly
+
+# Runs for one PR queue behind each other so a dismissal and the re-evaluation that follows
+# it are never cut in half.
+concurrency:
+  group: stamp-${{ github.event.pull_request.number || 'reconcile' }}
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch || 'main' }}
+          persist-credentials: false
+          sparse-checkout: |
+            .github/stamp-policy.yml
+            .github/scripts/stamp_gate.py
+          sparse-checkout-cone-mode: false
+      - run: python3 -c "import yaml" || python3 -m pip install --quiet pyyaml==6.0.3
+      - if: github.event_name != 'schedule'
+        run: python3 .github/scripts/stamp_gate.py
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          POLICY: .github/stamp-policy.yml
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch || 'main' }}
+      - if: github.event_name == 'schedule'
+        run: python3 .github/scripts/stamp_gate.py # PR_NUMBER empty: reconcile every open PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ""
+          POLICY: .github/stamp-policy.yml
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch || 'main' }}
