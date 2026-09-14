@@ -508,12 +508,51 @@ def satisfied_reader(
     return "none"
 
 
+def normalize_policy(policy: dict) -> dict:
+    """Bring a label-only policy up to the shape the gate reads, or say what is missing."""
+    labels = policy.get("labels")
+    if (
+        not isinstance(labels, dict)
+        or not labels.get("eligible")
+        or not labels.get("needs_human")
+    ):
+        raise SystemExit(
+            "stamp policy: `labels.eligible` and `labels.needs_human` are required"
+        )
+    labels.setdefault("request", "stamp")
+    policy.setdefault(
+        "approve", {"enabled": False, "request_label_by_author_only": True}
+    )
+    if "readers" not in policy and isinstance(policy.get("coderabbit"), dict):
+        legacy = policy["coderabbit"]
+        policy["readers"] = [
+            {
+                "name": "CodeRabbit",
+                "login": legacy.get("login", "coderabbitai[bot]"),
+                "require_review_on_head": legacy.get("require_review_on_head", True),
+                "require_threads_resolved": legacy.get(
+                    "require_threads_resolved", True
+                ),
+            }
+        ]
+    if not isinstance(policy.get("readers"), list) or not policy["readers"]:
+        raise SystemExit(
+            "stamp policy: no `readers:` block (and no legacy `coderabbit:` block to read as one); "
+            "list the reader logins the gate accepts"
+        )
+    if "size" not in policy:
+        raise SystemExit(
+            "stamp policy: `size` with `max_changed_lines` and `max_files` is required"
+        )
+    return policy
+
+
 def main() -> int:
     repo = os.environ["REPO"]
     default_branch = os.environ["DEFAULT_BRANCH"]
     policy_path = os.environ["POLICY"]
     with open(policy_path) as fh:
-        policy = yaml.safe_load(fh)
+        policy = normalize_policy(yaml.safe_load(fh))
     policy_sha = (
         os.environ.get("POLICY_SHA")
         or subprocess.run(
