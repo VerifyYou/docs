@@ -70,14 +70,16 @@ deny_diff:
   - "javascript:"
   - "dangerouslySetInnerHTML"
 
-# A PR carrying any of these labels is needs-human. `agent-authored` is the dispatcher's
-# marker; `do-not-stamp` is anyone's override. Either one with `stamp` is still needs-human.
+# A PR carrying any of these labels is needs-human. `agent-authored` marks a PR an agent
+# initiated with no person in the loop; `do-not-stamp` is anyone's override. Either one
+# with `stamp` is still needs-human.
 refuse_labels:
   - agent-authored
   - do-not-stamp
 
-# PR authors that are never stamped. Agent-opened PRs run under a person's account, so
-# this list cannot catch them; the `agent-authored` label above is the control for that.
+# PR authors that are never stamped. This catches bot identities only. An agent running
+# under a person's account is that person to every check here, and that is intended: a
+# change an agent typed while a person drove it is the author's, and is eligible.
 refuse_authors:
   - "copilot"
   - "copilot-swe-agent[bot]"
