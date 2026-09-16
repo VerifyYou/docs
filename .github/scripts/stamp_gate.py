@@ -44,11 +44,14 @@ FLOOR_PATHS = (
 REQUEST_MARKER = "<!-- stamp-gate:coderabbit-requested {sha} -->"
 GATE_LOGIN = "github-actions[bot]"
 
+PENDING_DEFAULT = "stamp-pending"
+
 LABEL_COLORS = {
     "eligible": ("0e8a16", "Every rule in .github/stamp-policy.yml passed"),
     "needs_human": ("b60205", "A person reviews this pull request"),
+    "pending": ("fbca04", "In the stamp lane; waiting on an AI reader, not on a person"),
     "request": ("1d76db", "The author asks the gate for its approval"),
-    "agent_authored": ("5319e7", "Opened by an agent; never stamped"),
+    "agent_authored": ("5319e7", "An agent initiated this with no person in the loop; never stamped"),
     "do_not_stamp": ("000000", "Anyone's override: a person reviews this"),
 }
 
@@ -197,23 +200,32 @@ def reader_refusal(pr: dict, reader: dict, reviews: list[dict]) -> str | None:
     return None
 
 
-def readers_state(
+def readers_split(
     repo: str, pr: dict, readers: list[dict], reviews: list[dict]
-) -> list[str]:
-    """A refusal by any reader stands on its own; otherwise empty when any listed reader
-    satisfies the policy, else every reader's reasons."""
+) -> tuple[list[str], list[str]]:
+    """The reader state as two kinds, because they earn different verdicts. A refusal is a
+    reader's considered `needs-human` on this head and stands on its own; the rest are reasons
+    the head is not read yet, which a reader clears without a person. Both empty means satisfied."""
     refusals = [
         why for reader in readers if (why := reader_refusal(pr, reader, reviews))
     ]
     if refusals:
-        return refusals
+        return refusals, []
     all_reasons: list[str] = []
     for reader in readers:
         reasons = reader_reasons(repo, pr, reader, reviews)
         if not reasons:
-            return []
+            return [], []
         all_reasons += reasons
-    return all_reasons
+    return [], all_reasons
+
+
+def readers_state(
+    repo: str, pr: dict, readers: list[dict], reviews: list[dict]
+) -> list[str]:
+    """Every reason no reader satisfies the policy, refusals first."""
+    refusals, reasons = readers_split(repo, pr, readers, reviews)
+    return refusals + reasons
 
 
 def rule_reasons(
@@ -339,6 +351,7 @@ def decide(
     pr: dict,
     policy: dict,
     rules: list[str],
+    refusals: list[str],
     readers: list[str],
     requested: bool,
     request_reasons: list[str],
@@ -347,11 +360,17 @@ def decide(
 ) -> Plan:
     """The writes the gate makes for this state, computed before any of them happen."""
     head = pr["head"]["sha"]
-    reasons = rules + readers
+    blocking = rules + refusals
+    reasons = blocking + readers
     eligible = not reasons
-    label = (
-        policy["labels"]["eligible"] if eligible else policy["labels"]["needs_human"]
-    )
+    if not requested:
+        label = ""
+    elif blocking:
+        label = policy["labels"]["needs_human"]
+    elif readers:
+        label = pending_label(policy)
+    else:
+        label = policy["labels"]["eligible"]
     plan = Plan(label=label)
     approved_on_head = [
         r for r in own if r["state"] == "APPROVED" and r["commit_id"] == head
@@ -362,10 +381,11 @@ def decide(
     ]
 
     short = head[:7]
+    verdict = f"`{label}`" if label else "no verdict"
     if eligible:
-        line = f"**stamp:** `{label}` at `{short}` — every rule in `.github/stamp-policy.yml` passed."
+        line = f"**stamp:** {verdict} at `{short}` — every rule in `.github/stamp-policy.yml` passed."
     else:
-        line = f"**stamp:** `{label}` at `{short}` — " + "; ".join(reasons) + "."
+        line = f"**stamp:** {verdict} at `{short}` — " + "; ".join(reasons) + "."
 
     enabled = bool(policy["approve"].get("enabled"))
     request_label = policy["labels"]["request"]
@@ -404,6 +424,7 @@ def ensure_labels(repo: str, policy: dict) -> None:
     names = {
         "eligible": policy["labels"]["eligible"],
         "needs_human": policy["labels"]["needs_human"],
+        "pending": pending_label(policy),
         "request": policy["labels"]["request"],
     }
     for key, name in list(names.items()) + [
@@ -428,21 +449,34 @@ def remove_label(repo: str, number: int, name: str) -> None:
             raise
 
 
-def set_labels(repo: str, number: int, add: str, remove: str) -> None:
-    gh(
-        "api",
-        "-X",
-        "POST",
-        f"repos/{repo}/issues/{number}/labels",
-        "-f",
-        f"labels[]={add}",
-    )
-    remove_label(repo, number, remove)
+def set_labels(repo: str, number: int, add: str, remove: list[str]) -> None:
+    """`add` is empty on a pull request whose author has not asked for a stamp: the gate holds
+    no verdict on it and writes no label, while still clearing any verdict it wrote before."""
+    if add:
+        gh(
+            "api",
+            "-X",
+            "POST",
+            f"repos/{repo}/issues/{number}/labels",
+            "-f",
+            f"labels[]={add}",
+        )
+    for name in remove:
+        remove_label(repo, number, name)
+
+
+def pending_label(policy: dict) -> str:
+    """`normalize_policy` defaults this, but `gate_one` reads a policy it never normalized."""
+    return policy["labels"].get("pending", PENDING_DEFAULT)
 
 
 def verdict_labels(policy: dict) -> list[str]:
-    """The two labels the gate itself writes; the request label belongs to the author."""
-    return [policy["labels"]["eligible"], policy["labels"]["needs_human"]]
+    """The three labels the gate itself writes; the request label belongs to the author."""
+    return [
+        policy["labels"]["eligible"],
+        policy["labels"]["needs_human"],
+        pending_label(policy),
+    ]
 
 
 def upsert_comment(repo: str, number: int, body: str) -> None:
@@ -520,6 +554,7 @@ def normalize_policy(policy: dict) -> dict:
             "stamp policy: `labels.eligible` and `labels.needs_human` are required"
         )
     labels.setdefault("request", "stamp")
+    labels.setdefault("pending", PENDING_DEFAULT)
     policy.setdefault(
         "approve", {"enabled": False, "request_label_by_author_only": True}
     )
@@ -610,14 +645,12 @@ def gate_one(
     own = [r for r in reviews if r["user"]["login"] == GATE_LOGIN]
 
     rules = rule_reasons(pr, files, policy, default_branch)
-    readers = readers_state(repo, pr, policy["readers"], reviews)
+    refusals, readers = readers_split(repo, pr, policy["readers"], reviews)
     requested, request_reasons = request_state(pr, policy, events)
-    plan = decide(pr, policy, rules, readers, requested, request_reasons, own, events)
-    other = (
-        policy["labels"]["needs_human"]
-        if plan.label == policy["labels"]["eligible"]
-        else policy["labels"]["eligible"]
+    plan = decide(
+        pr, policy, rules, refusals, readers, requested, request_reasons, own, events
     )
+    stale = [name for name in verdict_labels(policy) if name != plan.label]
 
     if dry_run:
         for r in plan.dismiss:
@@ -630,7 +663,7 @@ def gate_one(
         ensure_labels(repo, policy)
         for r in plan.dismiss:
             dismiss(repo, number, r, head)
-        set_labels(repo, number, plan.label, other)
+        set_labels(repo, number, plan.label, stale)
         if plan.request_coderabbit:
             request_coderabbit(repo, number, head)
         if plan.approve:
