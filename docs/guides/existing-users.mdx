@@ -58,10 +58,26 @@ page as a result:
   - Senders panel is unchanged from the August scan (Add sender, "Confirmed. Ready to send",
     TXT and CNAME rows, Re-check, Live/Pending) plus a new "Sends from <domain>" line whose
     "receives mail" check I could not confirm the meaning of, so the page does not mention it.
-  - NOT re-verified: the send dialog (needs at least one person; the walked verification had
-    none) and the Map columns dialog (needs a staged import; last verified 2026-09-09). The
-    send dialog wording below is kept to what held in both scans: who is getting it, the
-    address it leaves from, confirm.
+  - The send dialog and Map columns were then re-verified the same day on the DEMO workspace
+    (dev preview, wily-bandicoot, two scenario.vy.test people imported under the auto tag,
+    nothing sent, send dialog cancelled). Send dialog observed: "Send to 2 people? / Each
+    person gets a verification link locked to their address", Recipients, From (with no
+    confirmed sender it reads that none is confirmed yet and offers Add a sender, so sending
+    fails closed), Message with the Initial invite dropdown, Edit and a copy preview, then
+    Cancel / Send to N. Senders add form observed: From address, Display name, Reply-to
+    (optional), and the helper "We email the address a confirmation link. Nothing sends from
+    it until someone clicks through" - now stated in step 4. The fresh-workspace Activity tab
+    offers "Add a sender" in a banner instead of the address chip; step 4 covers both entries.
+  - The "Add" button label: verified on PROD by staging one example.com row in the ineffable-
+    dormouse paste box and clearing it (nothing imported). Empty box reads "Add people";
+    with a list staged it reads "Add 1"/"Add 2" with a "N people ready to add" count.
+  - DEV-ONLY surfaces seen on the demo preview and deliberately NOT documented (prod, checked
+    the same day, lacks them): the TAG cohort dropdown and Tags panel on Integration ("Sep 17
+    upload" default), the post-mapping "Add N people?" summary dialog with BY EMAIL / NEW /
+    UPDATED counts, and the live-check configuration lock (Switch method on a LIVE check
+    offers "Duplicate this check" on dev; prod still opens the normal dialog, whose copy
+    says you can switch back any time). When these ship, step 2 and step 3 need a pass, and
+    the Add people screenshot goes stale.
   - Phone surfaces exist now (the method's SETUP chip reads "Email or phone", the Activity
     search placeholder reads "email or phone") but the import panel still speaks email only.
     This page stays scoped to email until someone walks the phone path.
@@ -101,7 +117,7 @@ and send each person a link locked to their email. If you do not have a workspac
   <Step title="Add your people">
     In the **Add people** panel on the same tab.
     1. Paste your list, or click **Upload CSV**. Whole spreadsheet rows are fine, with or without a header. The panel reads your list and tells you how many people are ready to add.
-    2. Click **Add people**. **Map columns** opens before anything comes in.
+    2. Click **Add**, which carries the count of people you are adding. **Map columns** opens before anything comes in.
     3. Check the four fields at the top: **Email address**, then **IP address**, **Impact figure** and **Date for the figure**, each marked optional. We match your columns to them automatically, and each match is a dropdown, so if we guessed wrong you point it at the right column yourself. Only email is required, and the import runs with the others unmapped.
     4. Everything else in your file sits under **Extra data**, saved to each person's record with a type on each column: currency, date, number, text. Tick a column under **Select columns to leave out** to skip it this time. Import whatever you would want to compare later. An IP address you hold comes back beside the one we see when that person verifies.
     5. Check the count at the foot of the dialog, importing so many critical fields and so many extra columns, then click **Confirm mapping**. Rows with no email are skipped and counted, and empty cells stay empty rather than being filled in for you.
@@ -112,8 +128,8 @@ and send each person a link locked to their email. If you do not have a workspac
   </Step>
   <Step title="Link the address your invites leave from">
     On the verification's **Activity** tab.
-    1. Click the address shown in the header, next to **Send unsent**. The **Senders** panel opens.
-    2. Add your address with **Add sender** and confirm it. When it reads **Confirmed. Ready to send**, you can send.
+    1. Click the address shown in the header, next to **Send unsent**. On a workspace with no address linked yet, the tab offers **Add a sender** instead. Both open the **Senders** panel.
+    2. Add your address with **Add sender**: the From address, a display name, and an optional reply-to. We email the address a confirmation link, and nothing sends from it until someone clicks through. When it reads **Confirmed. Ready to send**, you can send.
     3. To send from your own domain, publish the TXT and CNAME records shown under **Your own domain** with your DNS provider, then click **Re-check**. Each record flips to **Live** once it is seen. You can send before the records are live, and having them in place keeps your invites out of spam, so plan this in before a large batch.
 
     <p className="vy-have"><strong>You now have:</strong> a confirmed From address your invites will leave from.</p>
@@ -123,7 +139,7 @@ and send each person a link locked to their email. If you do not have a workspac
     1. Click **Message** in the header to set up what your invites say. Two templates live here: **Initial invite** for people who have not verified yet, and **Re-verification** for people you are inviting back.
     2. Edit the subject and the body until they read as yours, then save. **Verification link** drops the link into the copy, and each send turns it into the personal locked link of whoever receives it. Saved changes apply to future sends, not to invites already out.
     3. Select the people to invite, or use **Send unsent** to reach everyone you have not contacted yet. The button shows how many people that is.
-    4. Click **Send**, check the dialog, and confirm. It shows who is getting the invite and the address it leaves from.
+    4. Click **Send**, check the dialog, and confirm. It shows who is getting the invite, the address it leaves from, and the message, with one more chance to edit it.
 
     We host the sending, so there is no mail system on your side to wire up. The **Email invites** view then tracks each invite through sent, opened, clicked and verified as people come through, so you can see who opened and stopped and who never opened at all, and [Reading Activity](/docs/activity/reading-activity) covers what to do with what arrives.
 
