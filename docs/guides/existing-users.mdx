@@ -1,6 +1,6 @@
 ---
-title: "Existing users setup"
-description: "Verify the people you already have, by email. Five steps, no code."
+title: "Send verifications by email"
+description: "Import the people you already have and send each one their own verification link by email."
 icon: "envelope"
 ---
 
@@ -17,21 +17,13 @@ and Re-check, "Publish these records to send from your own domain (optional)"); 
 Recipients / From / Message with the Initial invite dropdown and Edit); the Activity header
 (the address chip beside Send unsent, the sent-today counter).
 
-The second Message option: James says the dropdown offers an initial invite or a
-re-verification message. Only "Initial invite" is visible in his screenshot, so the prose
-names the first and describes the second without quoting a label.
-
 The default invite copy in the send dialog uses a phrase the claim gates ban, so the guide
 describes the message rather than quoting it. Same reason this page never quotes the test
 panel.
 
-The daily send cap: the Activity header shows "0 / 500 emails sent today" on this workspace.
-Per the integration.mdx note, the number may be per plan, so the Note points at the counter
-and prints no number. Confirm with Zeek before ever printing one.
-
-SCREENSHOTS PENDING. James's captures are of the live workspace with his real address, and the
-images/dashboard/README.md rule is demo workspace only. Wanted shots are listed in that README.
-Until they land, only switch-method.jpg (already shot) is on the page.
+The daily send cap: the Activity header shows a sent-today counter on this workspace. Per the
+integration.mdx note, the number may be per plan, so the Note points at the counter and prints
+no number. Confirm with Zeek before ever printing one.
 
 STEP 3 REWRITTEN 2026-09-09 for the September Map columns ship, then VERIFIED THE SAME DAY by
 walking the flow in the livetest workspace (genial-narwhal, method switched to Existing users
@@ -47,10 +39,43 @@ record" with an Import as / Type table and a "Select columns to leave out" tick,
 column" and the confirm button is "Confirm mapping". Type chips seen: Email, IP, currency
 (a dropdown), Date, Text; the currency/date/number/text preset list stays on the changelog's
 authority. Skipped-row counting and empty-cells behaviour also stay on the changelog's
-authority, the test CSV had no gaps to show them. The Add people panel's own helper copy
-still carries the August auto-detect sentence, so do not quote the panel copy here until the
-product updates it.
+authority, the test CSV had no gaps to show them.
+
+RETITLED AND REVERIFIED 2026-09-17, James's ask, title exactly as he dictated it. The slug and
+URL are deliberately unchanged: the link is being sent around in email. Walked live prod that
+day on ineffable-dormouse (0 people; nothing imported, sent, or saved). What changed on the
+page as a result:
+  - The import buttons are "Upload CSV" and "Add people". The old "Add" wording is gone, and
+    the panel helper copy no longer carries the August auto-detect sentence.
+  - The Activity tab is the entry to sending now. Its header carries the person count, a
+    Message control, the sender address chip, and "Send unsent" with a count. Step 4's old
+    entry (Recently added, then View all) was replaced with the tab itself.
+  - Message opens a Messages modal: two named types (Initial invite, "Not yet verified";
+    Re-verification, "Already verified"), a subject and rich body per type, a toolbar with a
+    Verification link token whose helper says each one becomes that person's own link, and a
+    footer saying changes apply to all future sends of this message. The template body on the
+    live verification is a real team's copy, so nothing from it is quoted here.
+  - Senders panel is unchanged from the August scan (Add sender, "Confirmed. Ready to send",
+    TXT and CNAME rows, Re-check, Live/Pending) plus a new "Sends from <domain>" line whose
+    "receives mail" check I could not confirm the meaning of, so the page does not mention it.
+  - NOT re-verified: the send dialog (needs at least one person; the walked verification had
+    none) and the Map columns dialog (needs a staged import; last verified 2026-09-09). The
+    send dialog wording below is kept to what held in both scans: who is getting it, the
+    address it leaves from, confirm.
+  - Phone surfaces exist now (the method's SETUP chip reads "Email or phone", the Activity
+    search placeholder reads "email or phone") but the import panel still speaks email only.
+    This page stays scoped to email until someone walks the phone path.
+
+SCREENSHOTS STILL PENDING. The three commissioned shots for this page are named in
+images/dashboard/README.md (existing-users-add-people, senders-panel, send-dialog), demo
+workspace only. The demo preview sits behind a staff Google sign-in as of 2026-09-17, so they
+wait until someone signs in and captures them. Until then switch-method.jpg is the page's only
+image.
 */}
+
+Verify people you already have: import your list, link the address your invites leave from,
+and send each person a link locked to their email. If you do not have a workspace yet,
+[the Start guide](/docs/get-started/getting-access) covers getting access.
 
 <Steps>
   <Step title="Create your verification">
@@ -76,28 +101,29 @@ product updates it.
   <Step title="Add your people">
     In the **Add people** panel on the same tab.
     1. Paste your list, or click **Upload CSV**. Whole spreadsheet rows are fine, with or without a header. The panel reads your list and tells you how many people are ready to add.
-    2. Click **Add**, and **Map columns** opens before anything comes in. Four fields sit at the top: **Email address**, then **IP address**, **Impact figure** and **Date for the figure**, each marked optional. We match your columns to them automatically, and each match is a dropdown, so if we guessed wrong you point it at the right column yourself. Only email is required. Leave the others unmapped and the import still runs.
-    3. Everything else in your file sits under **Extra data**, saved to each person's record, with a type on each column: currency, date, number, text. Tick a column under **Select columns to leave out** to skip it this time. Import whatever you would want to compare later. An IP address you hold comes back beside the one we see when that person verifies.
-    4. Check the count at the foot of the step, importing so many critical fields and so many extra columns, then click **Confirm mapping**. Rows with no email are skipped and counted, and empty cells stay empty rather than being filled in for you.
+    2. Click **Add people**. **Map columns** opens before anything comes in.
+    3. Check the four fields at the top: **Email address**, then **IP address**, **Impact figure** and **Date for the figure**, each marked optional. We match your columns to them automatically, and each match is a dropdown, so if we guessed wrong you point it at the right column yourself. Only email is required, and the import runs with the others unmapped.
+    4. Everything else in your file sits under **Extra data**, saved to each person's record with a type on each column: currency, date, number, text. Tick a column under **Select columns to leave out** to skip it this time. Import whatever you would want to compare later. An IP address you hold comes back beside the one we see when that person verifies.
+    5. Check the count at the foot of the dialog, importing so many critical fields and so many extra columns, then click **Confirm mapping**. Rows with no email are skipped and counted, and empty cells stay empty rather than being filled in for you.
 
     Each person you add gets a verification link locked to their address. Adding people never sends anything, so you can build the list over several sittings and send once, when you are ready.
 
     <p className="vy-have"><strong>You now have:</strong> your people imported, each with their own locked link and your extra columns on their record, and nothing sent.</p>
   </Step>
   <Step title="Link the address your invites leave from">
-    Under **Recently added**, click **View all** to open the verification's **Activity** tab.
+    On the verification's **Activity** tab.
     1. Click the address shown in the header, next to **Send unsent**. The **Senders** panel opens.
     2. Add your address with **Add sender** and confirm it. When it reads **Confirmed. Ready to send**, you can send.
     3. To send from your own domain, publish the TXT and CNAME records shown under **Your own domain** with your DNS provider, then click **Re-check**. Each record flips to **Live** once it is seen. You can send before the records are live, and having them in place keeps your invites out of spam, so plan this in before a large batch.
 
     <p className="vy-have"><strong>You now have:</strong> a confirmed From address your invites will leave from.</p>
   </Step>
-  <Step title="Send, and watch the results come in">
+  <Step title="Set up your message, send, and watch the results come in">
     On the **Activity** tab, with your people listed.
-    1. Select the people to invite, or use **Send unsent** to reach everyone you have not contacted yet.
-    2. Click **Send**. The dialog shows who is getting it and the address it leaves from.
-    3. Pick the message under **Message**: **Initial invite** for a first ask, or the re-verification message for people you are inviting back. **Edit** opens the copy so you can make it yours.
-    4. Confirm the send.
+    1. Click **Message** in the header to set up what your invites say. Two templates live here: **Initial invite** for people who have not verified yet, and **Re-verification** for people you are inviting back.
+    2. Edit the subject and the body until they read as yours, then save. **Verification link** drops the link into the copy, and each send turns it into the personal locked link of whoever receives it. Saved changes apply to future sends, not to invites already out.
+    3. Select the people to invite, or use **Send unsent** to reach everyone you have not contacted yet. The button shows how many people that is.
+    4. Click **Send**, check the dialog, and confirm. It shows who is getting the invite and the address it leaves from.
 
     We host the sending, so there is no mail system on your side to wire up. The **Email invites** view then tracks each invite through sent, opened, clicked and verified as people come through, so you can see who opened and stopped and who never opened at all, and [Reading Activity](/docs/activity/reading-activity) covers what to do with what arrives.
 
