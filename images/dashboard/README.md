@@ -35,9 +35,9 @@ Demo base URL:
 | `switch-method.png` | `/integration`, then **Switch method** | The dialog with all four methods visible | Integration |
 | `person-trust-snapshot.png` | `/activity`, then open any row | The **right-hand panel only**: the score out of 100, the line under it that says the score is from the most recent scored pass, Attributes, and Activity | Per user drill in |
 | `person-signals.png` | Same person, **Signals** tab | The five categories with their counts, and the High / Medium / Low filter | Per user drill in |
-| `existing-users-add-people.png` | `/integration`, method on **Existing users** | The Add people panel: the explainer text, the paste box, Upload CSV, Add people | Existing users setup |
-| `senders-panel.png` | `/activity`, then click the address in the header | The Senders panel: the address marked Verified, "Confirmed. Ready to send", and the TXT and CNAME rows | Existing users setup |
-| `send-dialog.png` | `/activity`, select a row, then **Send** | The whole dialog: Recipients, From, the Message dropdown, the copy preview | Existing users setup |
+| `existing-users-add-people.png` | `/integration`, method on **Existing users** | The Add people panel: the explainer text, the paste box, Upload CSV, Add people. SHOT 2026-09-17 from the demo (wily-bandicoot); shows the dev-only TAG section, re-shoot if tags do not reach prod | Send verifications by email |
+| `senders-panel.png` | `/activity`, then click the address in the header (or **Add a sender**) | SHOT 2026-09-17 in the add-address state: From address, Display name, Reply-to, and the confirmation-link helper. The commissioned Verified + "Confirmed. Ready to send" + TXT/CNAME state needs the demo to hold a confirmed sender first, which needs an inbox the team can open | Send verifications by email |
+| `send-dialog.png` | `/activity`, select a row, then **Send** | The whole dialog: Recipients, From, the Message dropdown, the copy preview. SHOT 2026-09-17 but HELD: with no confirmed demo sender the From row is an error state, and the default template copy in the preview says "identity verification", which the claim gates ban. Needs the confirmed demo sender plus a product pass on the default copy, then re-shoot | Send verifications by email |
 
 Crop to the content area if you can. The internal preview banner at the top of the demo should not
 be in shot.
