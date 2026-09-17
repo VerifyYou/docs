@@ -82,11 +82,20 @@ page as a result:
     search placeholder reads "email or phone") but the import panel still speaks email only.
     This page stays scoped to email until someone walks the phone path.
 
-SCREENSHOTS STILL PENDING. The three commissioned shots for this page are named in
-images/dashboard/README.md (existing-users-add-people, senders-panel, send-dialog), demo
-workspace only. The demo preview sits behind a staff Google sign-in as of 2026-09-17, so they
-wait until someone signs in and captures them. Until then switch-method.jpg is the page's only
-image.
+SCREENSHOTS 2026-09-17: two of the three commissioned shots landed, taken from the demo
+workspace (dev preview) per images/dashboard/README.md rule 1, scenario.vy.test data only.
+  - existing-users-add-people.png: the Add people panel. CAVEAT: the demo runs the dev build,
+    so the shot shows the TAG cohort section prod does not have yet. Re-shoot if tags do not
+    ship, replace this note when they do.
+  - senders-panel.png: the Senders panel in its add-address state (the demo workspace has no
+    confirmed sender, so the commissioned "Confirmed. Ready to send" state cannot be staged
+    there). This is also the state a first-time reader meets. To shoot the confirmed state,
+    the demo needs a sender whose inbox the team can open to click the confirmation link.
+  - send-dialog.png: SHOT BUT HELD OFF THE PAGE (in the session scratchpad, not committed).
+    Two blockers: the From row shows the "No confirmed sender yet" state, which contradicts
+    the step it would illustrate, and the copy preview shows the product's default template,
+    which says "identity verification", a phrasing the claim gates ban from this site. Fix is
+    on the product side (confirmed demo sender + default copy pass), then re-shoot.
 */}
 
 Verify people you already have: import your list, link the address your invites leave from,
@@ -125,6 +134,10 @@ and send each person a link locked to their email. If you do not have a workspac
     Each person you add gets a verification link locked to their address. Adding people never sends anything, so you can build the list over several sittings and send once, when you are ready.
 
     <p className="vy-have"><strong>You now have:</strong> your people imported, each with their own locked link and your extra columns on their record, and nothing sent.</p>
+
+    <Frame caption="The Add people panel on the Integration tab. Paste whole rows or upload a CSV; nothing sends at this stage.">
+      <img style={{ maxWidth: "700px", width: "100%", display: "block", margin: "0 auto" }} src="/images/dashboard/existing-users-add-people.png" alt="The Add people panel with a paste box, Upload CSV and Add people buttons" />
+    </Frame>
   </Step>
   <Step title="Link the address your invites leave from">
     On the verification's **Activity** tab.
@@ -133,6 +146,10 @@ and send each person a link locked to their email. If you do not have a workspac
     3. To send from your own domain, publish the TXT and CNAME records shown under **Your own domain** with your DNS provider, then click **Re-check**. Each record flips to **Live** once it is seen. You can send before the records are live, and having them in place keeps your invites out of spam, so plan this in before a large batch.
 
     <p className="vy-have"><strong>You now have:</strong> a confirmed From address your invites will leave from.</p>
+
+    <Frame caption="Adding a sending address in the Senders panel. We email it a confirmation link before anything can leave from it.">
+      <img style={{ maxWidth: "640px", width: "100%", display: "block", margin: "0 auto" }} src="/images/dashboard/senders-panel.png" alt="The Senders panel with the add a sending address form: From address, display name, and optional reply-to" />
+    </Frame>
   </Step>
   <Step title="Set up your message, send, and watch the results come in">
     On the **Activity** tab, with your people listed.
