@@ -1,0 +1,37 @@
+# Version updates for the dependencies this repo ships with, grouped so a
+# week's drift arrives as one PR per ecosystem rather than one per package.
+# Minor and patch bumps travel together; a major bump gets its own PR so the
+# changelog gets read. Security updates are grouped on their own so a CVE fix
+# is never held behind a routine batch. cooldown keeps us off any release for
+# its first seven days.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      npm-minor-and-patch:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      npm-security:
+        applies-to: security-updates
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "ci"
+    groups:
+      actions:
+        patterns: ["*"]
