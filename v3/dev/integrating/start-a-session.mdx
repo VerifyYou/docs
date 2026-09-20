@@ -69,10 +69,11 @@ metadata: { plan: "pro", signup_date: "2026-01-14", seats: 12 }
 The fields are kept against that person and show up on their profile in the
 dashboard, beside the columns an uploaded list carries. They never affect the
 result: nothing the person walks through reads them, and a check settles
-exactly as it would without them. Send up to 50 keys, keys up to 64
-characters and values up to 1024, as strings, numbers or booleans. An
-anonymous session has nobody to attach them to, so one carrying `metadata`
-comes back `400 metadata_requires_identifier`.
+exactly as it would without them. Send up to 50 keys, keys 1 to 64 characters
+and string values 1 to 1024, as strings, numbers or booleans; an empty value
+is refused rather than quietly dropped. An anonymous session has nobody to
+attach them to, so one carrying `metadata` comes back
+`400 metadata_requires_identifier`.
 
 ## Groups
 

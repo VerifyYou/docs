@@ -11,7 +11,7 @@ description: "What's new in the VerifyYou SDK, API, and docs."
 
 - Send it with an identifier — `email`, `phone` or `external_id`. A session with no identifier has nobody to attach the fields to, and is refused.
 - It never changes a result. Nothing the person walks through reads it, and a check settles exactly as it would without it.
-- Up to 50 keys per session. Keys up to 64 characters, values up to 1024, and a value can be a string, a number or a boolean.
+- Up to 50 keys per session. Keys 1 to 64 characters, string values 1 to 1024, and a value can be a string, a number or a boolean. An empty value is refused rather than dropped, so a session that comes back OK kept every key you sent.
 - Secret key only, like the other fields that name a person.
 
 Nothing to upgrade. It works with the SDK version you already run.
