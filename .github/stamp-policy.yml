@@ -33,6 +33,9 @@ size:
 # the v2 spec the API reference is rendered from, the publish filter, the Mintlify pin,
 # and the skills that govern what agents write here.
 risky_paths:
+  - ".betterleaks.toml"
+  - ".betterleaks.base.toml" # the shared detection policy, vendored from dev-platform
+  - "lefthook.yml"
   - "docs.json" # navigation, version dropdown, redirects, navbar; one bad key blanks the site
   - ".mintignore" # decides what publishes
   - "vy-intro-gate.js" # Mintlify auto-includes root .js; this runs in every visitor's browser

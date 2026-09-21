@@ -1,0 +1,18 @@
+# Local git hooks (https://lefthook.dev), activated by bootstrap's `make hooks`.
+# The shared jobs come from dev-platform: betterleaks on every commit, a
+# warn-only Conventional Commits lint, terraform fmt on pushed .tf files.
+# The only check this repo has of its own is Mintlify's link checker; the
+# `test` script is a stub that exits 1, so it is deliberately not wired up.
+remotes:
+  - git_url: git@github.com:VerifyYou/dev-platform
+    ref: v1
+    refetch_frequency: 24h
+    configs:
+      - hooks/base.yml
+
+pre-push:
+  jobs:
+    - name: broken-links
+      glob: ["**/*.mdx", "docs.json"]
+      run: pnpm run broken-links
+      tags: [slow]

@@ -1,0 +1,65 @@
+# The shared betterleaks baseline: the default rule set plus the detections
+# every repository should have. Each repository vendors this file verbatim as
+# `.betterleaks.base.toml` and extends it from its own `.betterleaks.toml`,
+# which carries nothing but that repository's own false positives.
+#
+# Refresh a vendored copy with bootstrap's `make hooks`. CI does not trust the
+# vendored copy: the secrets gate overwrites it with this file before scanning,
+# so a stale copy is a local-convenience problem, never a coverage hole.
+#
+# Do not put a single repository's false positive in here. It would be live
+# against every other repository's commits.
+
+[extend]
+useDefault = true
+
+# A scanner config is made of credential patterns, so it matches itself. The
+# loaded config is skipped automatically, but a vendored copy is just another
+# file on disk and is not.
+[[allowlists]]
+description = "Scanner configuration files"
+paths = ['''(^|/)\.betterleaks(\.base)?\.toml$''', '''(^|/)\.gitleaks\.toml$''', '''(^|/)betterleaks/base\.toml$''']
+
+# VY-590. Talisman's `custom_patterns` caught a credential keyword assigned a
+# short literal; betterleaks' defaults lean on entropy, so `api_key =
+# "abc123def456"`, `signing_key = "s3cr3t"`, `auth_token` and `private_key` all
+# pass them. This restores that class. `generic-password` already covers
+# `password = "..."`.
+[[rules]]
+id = "weak-keyword-secret"
+description = "A credential keyword assigned a short quoted literal"
+regex = '''(?i)(?:secret|api[_-]?key|access[_-]?key|private[_-]?key|signing[_-]?key|auth[_-]?token)(?:[_-]?(?:key|token))?\s*["']?\s*[:=]{1,2}\s*["']([^"'\n]{3,})["']'''
+secretGroup = 1
+keywords = ["secret", "key", "token"]
+
+  # Scoped off rather than allowlisted value by value: a test asserting a
+  # scrubber works has to contain the thing being scrubbed, so allowlisting
+  # each one would mean a new entry for every new fixture, forever. That
+  # decay is what made `.talismanrc` 330 lines long.
+  [[rules.allowlists]]
+  description = "Test fixtures, and the retired Talisman config while it is still on a branch"
+  paths = [
+    '''(^|/)tests?/''',
+    '''_test\.(go|py|ts|tsx)$''',
+    '''\.(spec|test|stories)\.(ts|tsx|js|jsx)$''',
+    '''(^|/)\.talismanrc$''',
+    '''talisman-fixtures/''',
+  ]
+
+  # A template slot or a shell expansion is a reference, not a value.
+  [[rules.allowlists]]
+  description = "Placeholders and indirection"
+  regexTarget = "secret"
+  regexes = ['''^<[^>]*>$''', '''^\$[({]''', '''^\{\{''', '''^%[A-Z_]+%$''']
+
+  # `secret = "app-aws-secret-access-key"` in Terraform names a Secret Manager
+  # secret; the value is the one thing that is not there. Both conditions have
+  # to hold, hence `condition = "AND"` — without it the two are OR'd and the
+  # kebab-case regex would suppress the same string anywhere. Note
+  # `matchCondition` validates clean and does nothing; this is the key.
+  [[rules.allowlists]]
+  description = "Terraform secret references: the name of a GSM secret, not its value"
+  condition = "AND"
+  paths = ['''\.tf$''', '''\.tfvars$''']
+  regexTarget = "match"
+  regexes = ['''(?i)secret(?:_id)?\s*[:=]\s*["'][a-z0-9]+(?:-[a-z0-9]+)+["']''']
