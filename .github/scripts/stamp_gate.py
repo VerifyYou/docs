@@ -38,7 +38,8 @@ FLOOR_PATHS = (
     "**/docker-compose*.yml",
     "**/docker-compose*.yaml",
     "**/CODEOWNERS",
-    ".talismanrc",
+    ".betterleaks.toml",
+    "lefthook.yml",
     ".coderabbit.yaml",
 )
 REQUEST_MARKER = "<!-- stamp-gate:coderabbit-requested {sha} -->"

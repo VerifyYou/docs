@@ -1,0 +1,11 @@
+[extend]
+path = ".betterleaks.base.toml"
+
+# Rules live in the vendored baseline (dev-platform owns it). Everything below
+# is this repository's own false positives. Keep every entry narrow: match the
+# value, never a whole path.
+
+[[allowlists]]
+description = "Documentation placeholders: every code sample tells the reader to substitute their own key"
+regexTarget = "match"
+regexes = ['your_api_key_here', 'YOUR_API_KEY', 'sk_test_your']
