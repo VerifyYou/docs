@@ -30,6 +30,44 @@ Tag vocabulary is now Dashboard, Checks, Breaking. The every-entry-must-be-tagge
 Everything new in HumanCheck. Newest first.
 
 {/*
+SEPTEMBER 2026 ENTRY (second), written 2026-09-23 by Grant. Both features passed UIUXQA on dev the week of Sept 15 and
+are feature-flagged by Zeek; publish when the flags flip. Grounded in the dev build, VY-903 and Michael's
+wizard thread in #dev, and the tagging scope. Tagging: unified tag list (no import/custom split), derived
+send-state pill, dual counts. Tag delete is NOT in v1 and is left out. Guardrails: config lock once a check
+has live data (after-a-denial and collision settings stay editable), Ready/Live status, presets carry an
+integration type so the method step is skipped, Build your own shows the method screen, incompatible
+combinations blocked.
+*/}
+
+<Update tags={["Dashboard", "Checks"]} label="September 23, 2026" description="Tag the people you check, and a wizard that locks live checks and only offers settings that work together">
+
+Three changes this round. One is about organizing the people you verify. The other two close the gaps that let a check be configured into a state we could not honor: live checks now lock, and the wizard no longer offers settings that cannot work together.
+
+### Tags
+
+Every person you check can now carry tags, and tags are one thing everywhere. Imports still create a tag for the batch you bring in, and you can make your own from the Tags card on a check's Integration tab. There is no longer a split between the two: one list, newest first, the same row for every tag.
+
+Each row shows how many people hold the tag and how many of them have verified, with a pill that reads how far the batch has got, such as 12 of 40 sent. Where a tag is shared across checks, the counts show the number on this check against the total, so a tag never claims more than the view in front of you.
+
+Add people to a tag one at a time or in bulk from the list, and create a new tag from the same picker without leaving it. Pick from tags you already have first; a new one is only created when you type a name that does not exist yet.
+
+### Live checks are locked
+
+Once a check has live data, its configuration locks. Settings stay visible so you can read what is running, but the fields no longer take edits, and the check says so: Locked while this check has live data. Two settings stay open because changing them mid-flight is safe: what happens after a denial, and what happens on a collision.
+
+A check that has not seen a verification yet reads Ready rather than Live, so a freshly published check and one with traffic never look the same.
+
+### The wizard only offers what works
+
+Most presets now carry their integration method, so choosing one skips the method step and lands you in configuration with sensible defaults already applied. Build your own is the exception: it starts empty and asks you to pick code or a no-code method (sharing a link, existing users, one-time passwords) before going on.
+
+Settings that only apply to a code integration are no longer offered on a no-code setup, so you cannot save a combination we would silently ignore.
+
+See [Creating a verification](/docs/verifications/creating-a-verification) and [Integration](/docs/verifications/integration).
+
+</Update>
+
+{/*
 SEPTEMBER 2026 ENTRY, written 2026-09-08 by Grant. Grounded in the shipped dashboard, not the design
 scope. Two changes, both confirmed live by the product team:
   - Map columns step on Existing users import: three pinned fields (email, IP, impact figure) auto-matched
