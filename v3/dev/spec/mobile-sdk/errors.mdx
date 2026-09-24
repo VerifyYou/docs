@@ -1,0 +1,68 @@
+---
+title: "Errors"
+description: "What onError fires with, and how React Native's promise reflects it."
+---
+
+`onError` fires when a run never reaches a settled outcome at all, distinct from `onClose`, which means the person dismissed a run that did open. Every message today is a plain string; there is no error code to branch on.
+
+<CodeGroup>
+
+```kotlin Android
+VerifyYou.vycheck(
+    context = this,
+    session = sessionId,
+    onComplete = { result -> /* ... */ },
+    onError = { message ->
+        // Bad session id, a run already in progress, or the hosted
+        // page failed to load. Mint a fresh session and let them retry.
+        Log.e("MyApp", "verifyyou: $message")
+    },
+)
+```
+
+```swift iOS
+VerifyYou.vycheck(
+    from: self,
+    session: sessionId,
+    onComplete: { result in /* ... */ },
+    onError: { message in
+        // A bad session id, or the hosted page failed to load.
+        // Mint a fresh session and let them retry.
+        print("verifyyou:", message)
+    }
+)
+```
+
+```ts React Native
+try {
+  const { token } = await vycheck({ session: sessionId });
+  if (!token) {
+    // They closed it without finishing. Not an error. Let them retry.
+  }
+} catch (err) {
+  // Bad session id, a run already in progress, or the hosted page
+  // failed to load. Mint a fresh session and let them retry.
+  console.error("verifyyou:", err.message);
+}
+```
+
+</CodeGroup>
+
+## When it fires
+
+| Cause | Message names |
+| --- | --- |
+| `session` is empty or blank | that it must not be empty |
+| A run is already presenting (Android, React Native) | that a verification is already in progress |
+| `appBase` produced an unbuildable URL | that the hosted URL could not be built |
+| The hosted page failed to load, or its WebView crashed | that the page failed to load or crashed |
+
+iOS has no "already in progress" guard today: calling `vycheck()` again while a screen is presenting is undefined behavior on that platform, not a defined `onError`. Fix this by tracking your own in-flight state around the call until it lands.
+
+## Dismissal is not an error
+
+Closing the screen without finishing calls `onClose`, or on React Native resolves the promise with `{ token: null, verified: false, vyc: null }`. Check for a missing `token`; do not treat it as a rejection.
+
+## React Native: onError and the promise both fire
+
+A native error calls `onError` and rejects the returned promise with a real `Error`, so `err.message` reads the same string `onError` receives. Use whichever fits your code: the callback for a component that never awaits the handle, `catch` for one that does.

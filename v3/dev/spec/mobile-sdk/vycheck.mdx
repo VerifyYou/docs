@@ -1,0 +1,131 @@
+---
+title: "vycheck()"
+description: "Open a session in a full-screen native host and get the result through callbacks."
+---
+
+## Signature
+
+<CodeGroup>
+
+```kotlin Android
+fun vycheck(
+    context: Context,
+    session: String,
+    theme: String = "auto",
+    onComplete: (VyResult) -> Unit,
+    onClose: (() -> Unit)? = null,
+    onError: ((String) -> Unit)? = null,
+)
+```
+
+```swift iOS
+static func vycheck(
+    from presenter: UIViewController,
+    session: String,
+    theme: String = "auto",
+    onComplete: @escaping (VyResult) -> Void,
+    onClose: (() -> Void)? = nil,
+    onError: ((String) -> Void)? = nil
+) -> VyCheckHandle
+```
+
+```ts React Native
+function vycheck(options: VyCheckOptions): VyCheckHandle;
+
+type VyCheckOptions = {
+  session: string;
+  theme?: "light" | "dark" | "auto";
+  onComplete?: (result: VyResult) => void;
+  onClose?: () => void;
+  onError?: (message: string) => void;
+};
+```
+
+</CodeGroup>
+
+Presents the hosted flow full screen in a native WebView. No redirect, no iframe: the screen is native chrome the SDK owns, with its own close control.
+
+## Options
+
+<ParamField path="session" type="string" required>The `session_id` from `/v3/initialize`. The SDK opens that run: no key, no `init()`, ever passed here.</ParamField>
+<ParamField path="theme" type='"light" | "dark" | "auto"' default="auto">`"light"`/`"dark"` force an appearance regardless of the device. `"auto"` follows the device's current appearance at the moment `vycheck()` is called.</ParamField>
+<ParamField path="onComplete" type="(result: VyResult) => void" required>Fires once, with a settled result. `token` is always present.</ParamField>
+<ParamField path="onClose" type="() => void">The person dismissed the screen without finishing. Not an error; check `vyget()` later if you need the outcome.</ParamField>
+<ParamField path="onError" type="(message: string) => void">The run never reached a settled outcome at all. See [Errors](/v3/dev/spec/mobile-sdk/errors).</ParamField>
+
+Any of these except `session` can be set once with [`init()`](/v3/dev/spec/mobile-sdk/init) instead. On React Native, `session` is the only required field; everything else layers onto whatever `init()` already set.
+
+## Returns
+
+<CodeGroup>
+
+```kotlin Android
+// No return value. VerificationActivity launches immediately;
+// the result arrives through the callbacks above.
+```
+
+```swift iOS
+// A VyCheckHandle. Call close() to dismiss the presented screen
+// early; a no-op once the run has settled.
+protocol VyCheckHandle {
+    func close()
+}
+```
+
+```ts React Native
+// A VyCheckHandle: a Promise<VyResult> with a close() method.
+// The promise resolves on completion or dismissal and rejects
+// on error, in addition to firing the callbacks above.
+interface VyCheckHandle extends Promise<VyResult> {
+  close(): void;
+}
+```
+
+</CodeGroup>
+
+## Errors
+
+Never throws synchronously. See [Errors](/v3/dev/spec/mobile-sdk/errors) for what reaches `onError` and, on React Native, what the promise rejects with.
+
+## Example
+
+<CodeGroup>
+
+```kotlin Android
+VerifyYou.vycheck(
+    context = this,
+    session = sessionId,
+    onComplete = { result ->
+        if (result.outcome == VyOutcome.APPROVED) unlockAction()
+    },
+    onClose = { /* they'll come back to it */ },
+    onError = { message -> showRetry(message) },
+)
+```
+
+```swift iOS
+VerifyYou.vycheck(
+    from: self,
+    session: sessionId,
+    onComplete: { result in
+        if result.outcome == .approved { self.unlockAction() }
+    },
+    onClose: { /* they'll come back to it */ },
+    onError: { message in self.showRetry(message) }
+)
+```
+
+```ts React Native
+vycheck({
+  session: sessionId,
+  onComplete: (result) => {
+    if (outcomeOf(result) === "approved") unlockAction();
+  },
+  onClose: () => {
+    /* they'll come back to it */
+  },
+  onError: (message) => showRetry(message),
+});
+```
+
+</CodeGroup>
