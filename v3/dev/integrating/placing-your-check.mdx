@@ -9,6 +9,12 @@ npm install @verifyyou-sdk/client
 
 The SDK opens the session your server minted and hands back a token. No key, no `init()`. It is not a router: put `vycheck()` on the action only humans should do, and send the token with that action.
 
+<Tip>
+  Building a native app instead of a web page? Use the [Mobile SDKs](/v3/dev/spec/mobile-sdk/vycheck)
+  instead of this page. `vycheck()` opens the same hosted flow full screen on iOS, Android, and React
+  Native, with no iframe and no origin to register.
+</Tip>
+
 <Warning>
   Drawer and inline mode put the check in an iframe on your page, and that only works from an origin you
   have registered with us. Register yours before you build against them:
