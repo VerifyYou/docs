@@ -21,7 +21,7 @@ function vyget(): Promise<VyResult | null>;
 
 </CodeGroup>
 
-Returns the last result `onComplete` delivered, or `null`/`nil` if nothing completed yet in this process. Never throws.
+Returns the last result `onComplete` delivered, or `null`/`nil` if nothing completed yet in this process. On Android, pass `context` and it can also return a result persisted from an earlier process, even when nothing completed in this one. Never throws.
 
 ## Platform difference, named plainly
 

@@ -42,7 +42,8 @@ try {
 } catch (err) {
   // Bad session id, a run already in progress, or the hosted page
   // failed to load. Mint a fresh session and let them retry.
-  console.error("verifyyou:", err.message);
+  const message = err instanceof Error ? err.message : String(err);
+  console.error("verifyyou:", message);
 }
 ```
 

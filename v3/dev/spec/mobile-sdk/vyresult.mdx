@@ -31,7 +31,7 @@ interface VyResult {
 
 </CodeGroup>
 
-`token` is the only field your server needs. `verified` and `vyc` are what the device saw. Do not gate on them. `token` is present on every result `onComplete` delivers. It is only absent from the [`onClose`](/v3/dev/spec/mobile-sdk/vycheck#options) dismiss shape. On Android and iOS, that dismiss shape is not `VyResult` at all, because `onClose` there takes no arguments.
+`token` is the only field your server needs. `verified` and `vyc` are what the device saw. Do not gate on them. `token` is present on every result `onComplete` delivers. On Android and iOS, [`onClose`](/v3/dev/spec/mobile-sdk/vycheck#options) takes no arguments at all, so no `VyResult` with a null `token` ever reaches it. On React Native, the returned promise resolves on dismissal with `{ token: null, verified: false, vyc: null }`, not `onClose`.
 
 ## outcome
 
