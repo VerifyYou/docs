@@ -31,7 +31,7 @@ interface VyResult {
 
 </CodeGroup>
 
-`token` is the only field your server needs. `verified` and `vyc` are what the device saw; never gate on them. `token` is present on every result `onComplete` delivers; it is only ever absent from the [`onClose`](/v3/dev/spec/mobile-sdk/vycheck#options) dismiss shape, which is not `VyResult` at all on Android or iOS, since `onClose` there takes no arguments.
+`token` is the only field your server needs. `verified` and `vyc` are what the device saw. Do not gate on them. `token` is present on every result `onComplete` delivers. It is only absent from the [`onClose`](/v3/dev/spec/mobile-sdk/vycheck#options) dismiss shape. On Android and iOS, that dismiss shape is not `VyResult` at all, because `onClose` there takes no arguments.
 
 ## outcome
 
@@ -53,4 +53,4 @@ function outcomeOf(result: VyResult): "approved" | "denied";
 
 </CodeGroup>
 
-Two values only. A run that never reached `onComplete` at all, whether dismissed or errored, has no outcome to compute; check `onClose`/`onError` for that, not `outcome`.
+Two values only. A run that never reached `onComplete` at all, whether dismissed or errored, has no outcome to compute. Look at `onClose`/`onError` for that instead.

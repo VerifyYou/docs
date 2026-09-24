@@ -50,10 +50,10 @@ Presents the hosted flow full screen in a native WebView. No redirect, no iframe
 <ParamField path="session" type="string" required>The `session_id` from `/v3/initialize`. The SDK opens that run: no key, no `init()`, ever passed here.</ParamField>
 <ParamField path="theme" type='"light" | "dark" | "auto"' default="auto">`"light"`/`"dark"` force an appearance regardless of the device. `"auto"` follows the device's current appearance at the moment `vycheck()` is called.</ParamField>
 <ParamField path="onComplete" type="(result: VyResult) => void" required>Fires once, with a settled result. `token` is always present.</ParamField>
-<ParamField path="onClose" type="() => void">The person dismissed the screen without finishing. Not an error; check `vyget()` later if you need the outcome.</ParamField>
+<ParamField path="onClose" type="() => void">The person dismissed the screen without finishing. This is not an error. Look at `vyget()` later if you need the outcome.</ParamField>
 <ParamField path="onError" type="(message: string) => void">The run never reached a settled outcome at all. See [Errors](/v3/dev/spec/mobile-sdk/errors).</ParamField>
 
-Any of these except `session` can be set once with [`init()`](/v3/dev/spec/mobile-sdk/init) instead. On React Native, `session` is the only required field; everything else layers onto whatever `init()` already set.
+Any of these except `session` can be set once with [`init()`](/v3/dev/spec/mobile-sdk/init) instead. On React Native, `session` is the only required field. Every other field falls back to whatever `init()` already set.
 
 ## Returns
 

@@ -3,7 +3,7 @@ title: "Errors"
 description: "What onError fires with, and how React Native's promise reflects it."
 ---
 
-`onError` fires when a run never reaches a settled outcome at all, distinct from `onClose`, which means the person dismissed a run that did open. Every message today is a plain string; there is no error code to branch on.
+`onError` fires when a run never reaches a settled outcome at all. This is distinct from `onClose`, which means the person dismissed a run that did open. Every message today is a plain string. There is no error code to branch on.
 
 <CodeGroup>
 
@@ -54,14 +54,14 @@ try {
 | --- | --- |
 | `session` is empty or blank | that it must not be empty |
 | A run is already presenting (Android, React Native) | that a verification is already in progress |
-| `appBase` produced an unbuildable URL | that the hosted URL could not be built |
+| `appBase` produced an unbuildable URL | that the hosted URL failed to build |
 | The hosted page failed to load, or its WebView crashed | that the page failed to load or crashed |
 
 iOS has no "already in progress" guard today: calling `vycheck()` again while a screen is presenting is undefined behavior on that platform, not a defined `onError`. Fix this by tracking your own in-flight state around the call until it lands.
 
 ## Dismissal is not an error
 
-Closing the screen without finishing calls `onClose`, or on React Native resolves the promise with `{ token: null, verified: false, vyc: null }`. Check for a missing `token`; do not treat it as a rejection.
+Closing the screen without finishing calls `onClose`, or on React Native resolves the promise with `{ token: null, verified: false, vyc: null }`. Look for a missing `token` instead. Do not treat this as a rejection.
 
 ## React Native: onError and the promise both fire
 
