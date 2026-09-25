@@ -25,7 +25,7 @@ approve:
   request_label_by_author_only: true # `stamp` counts only when the PR author added it
 
 size:
-  max_changed_lines: 200 # additions + deletions across the PR
+  max_changed_lines: 400 # additions + deletions across the PR
   max_files: 10
 
 # Any changed path matching one of these is needs-human: the site config that carries the
