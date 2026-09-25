@@ -14,7 +14,8 @@ description: "Mint a session and get back session_id and the hosted URL."
 <ParamField body="phone" type="string">Bind the run to this phone. Same rules.</ParamField>
 <ParamField body="group" type="string">Your id for the uniqueness pool this run belongs to, so one verification can be reused across separate groups. Judged only against passes carrying the same group; omit to judge against all of them. Keep `external_id` per person rather than per group. 1 to 255 characters. See [Groups](/v3/dev/integrating/start-a-session#groups).</ParamField>
 <ParamField body="include_groups" type="string[]">Other groups whose history also counts against this run. A prior pass in an included group blocks or flags exactly as a pass in the run's own `group` would, following the verification's settings; the run still settles into its own group. Does nothing without `group`, since an ungrouped run is judged against everything already. Up to 50 ids, each 1 to 255 characters. See [Groups](/v3/dev/integrating/start-a-session#groups).</ParamField>
-<ParamField body="pass_params" type="object<string, string>">Extra query params echoed onto the return URL. `vy*` names are ignored.</ParamField>
+<ParamField body="metadata" type="object<string, string | number | boolean>">What you already know about this person — a plan, a signup date, a department code. Kept against them and shown on their profile in the dashboard, beside the columns an uploaded list carries. Never affects the result. Requires an identifier (`email`, `phone` or `external_id`): an anonymous session has nobody to attach it to. Up to 50 keys, keys 1 to 64 characters, string values 1 to 1024. An empty value is refused rather than dropped.</ParamField>
+<ParamField body="pass_params" type="object<string, string>">Extra query params echoed onto the return URL. `vy*` names are ignored. Unlike `metadata`, these are not kept — they only ride the return URL.</ParamField>
 <ParamField body="config" type="object">Test key only. Per-run config override, used verbatim, never merged.</ParamField>
 <ParamField body="auto_return" type="boolean">Return to `redirect_url` the instant an approved check settles, instead of showing the result screen with a return button. Works with any key. Overlays the verification's saved setting for this run only. Ignored by invite links.</ParamField>
 
@@ -36,6 +37,7 @@ description: "Mint a session and get back session_id and the hosted URL."
 | `400` | `invalid_redirect_url` | Not absolute, or not `https` off localhost. |
 | `400` | `verification_requires_identifier` | The verification is set to "provided by you" and none was sent. |
 | `400` | `identifiers_require_secret_key` | A deprecated publishable key was used with identity or targeting fields. |
+| `400` | `metadata_requires_identifier` | `metadata` with no `email`, `phone` or `external_id`. |
 | `400` | `invalid_verification_config` | The verification's stored config does not compile. |
 | `403` | `config_requires_test_key` | `config` with a live key. |
 | `404` | `no_matching_verification` | Not on your account. |
