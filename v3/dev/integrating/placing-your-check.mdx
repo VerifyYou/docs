@@ -1,168 +1,224 @@
 ---
 title: "Placing your check"
-description: "Open the session in the browser with vycheck() and hand the token to your server."
+description: "Open the session with vycheck() and hand the token to your server."
 ---
-
-```bash
-npm install @verifyyou-sdk/client
-```
 
 The SDK opens the session your server minted and hands back a token. No key, no `init()`. It is not a router: put `vycheck()` on the action only humans should do, and send the token with that action.
 
-<Tip>
-  Building a native app instead of a web page? Use the [Mobile SDKs](/v3/dev/spec/mobile-sdk/vycheck)
-  instead of this page. `vycheck()` opens the same hosted flow full screen on iOS, Android, and React
-  Native, with no iframe and no origin to register.
-</Tip>
-
-<Warning>
-  Drawer and inline mode put the check in an iframe on your page, and that only works from an origin you
-  have registered with us. Register yours before you build against them:
-  [Register your embedding origin](#register-your-embedding-origin). Redirect mode does not
-  require origin registration.
-</Warning>
-
 <Tabs>
-  <Tab title="Redirect">
-    Zero UI to build. We host the whole flow and send them back to `redirect_url` with `?vyt=<token>&vyc=<0|1>`. `vycheck` navigates away, so it never resolves; on the way back, `vyget()` reads the result off the URL.
-
-    ```js 1. where they leave
-    import { vycheck } from "@verifyyou-sdk/client";
-
-    // `session` is the id provided by your server
-    try {
-      await vycheck({ session: sessionId });
-    } catch (err) {
-      // Only reachable BEFORE the browser navigates away: the session expired
-      // or was already used, or we couldn't be reached. Mint a new session.
-      console.error("verifyyou:", err.message);
-      throw err;
-    }
-
-    // Nothing below here runs. The page is already gone.
+  <Tab title="Browser">
+    ```bash
+    npm install @verifyyou-sdk/client
     ```
 
-    ```js 2. where they come back
-    import { vyget } from "@verifyyou-sdk/client";
+    <Warning>
+      Drawer and inline mode put the check in an iframe on your page, and that only works from an origin you
+      have registered with us. Register yours before you build against them:
+      [Register your embedding origin](#register-your-embedding-origin). Redirect mode does not
+      require origin registration.
+    </Warning>
 
-    // run on every page load to check for the token (will not error if no token is found)
-    const { token } = vyget();
+    <Tabs>
+      <Tab title="Redirect">
+        Zero UI to build. We host the whole flow and send them back to `redirect_url` with `?vyt=<token>&vyc=<0|1>`. `vycheck` navigates away, so it never resolves; on the way back, `vyget()` reads the result off the URL.
 
-    if (token) {
-      // check with your server if the person is verified
-      await fetch("/api/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      });
-    }
-    ```
+        ```js 1. where they leave
+        import { vycheck } from "@verifyyou-sdk/client";
+
+        // `session` is the id provided by your server
+        try {
+          await vycheck({ session: sessionId });
+        } catch (err) {
+          // Only reachable BEFORE the browser navigates away: the session expired
+          // or was already used, or we couldn't be reached. Mint a new session.
+          console.error("verifyyou:", err.message);
+          throw err;
+        }
+
+        // Nothing below here runs. The page is already gone.
+        ```
+
+        ```js 2. where they come back
+        import { vyget } from "@verifyyou-sdk/client";
+
+        // run on every page load to check for the token (will not error if no token is found)
+        const { token } = vyget();
+
+        if (token) {
+          // check with your server if the person is verified
+          await fetch("/api/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }),
+          });
+        }
+        ```
+      </Tab>
+      <Tab title="Drawer">
+        Slides over your page: bottom sheet on mobile, side panel on desktop. No redirect. `vycheck` resolves in place with the result.
+
+        ```js
+        import { vycheck } from "@verifyyou-sdk/client";
+
+        // `session` is the id from step 1. It runs THAT session, the one already
+        // carrying your external_id and redirect_url, so there is no key and no
+        // init() on this path.
+        try {
+          const { token } = await vycheck({ session: sessionId, mode: "iframe" });
+          // No token = they closed it without finishing. Not an error; let them retry.
+          if (token) {
+            // Hand it to your own endpoint; the confirm runs there, with your secret key.
+            await fetch("/api/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token }),
+            });
+          }
+        } catch (err) {
+          // Session expired or already used, or we couldn't be reached.
+          // Mint a fresh session and let them try again.
+          console.error("verifyyou:", err.message);
+        }
+        ```
+      </Tab>
+      <Tab title="Inline">
+        Mounts inside your own element, like an embedded video. `vycheck` resolves in place with the result.
+
+        ```js
+        import { vycheck } from "@verifyyou-sdk/client";
+
+        try {
+          const { token } = await vycheck({
+            session: sessionId,
+            mode: "iframe",
+            display: "inline",
+            container: "#verify-here", // your element; size it with CSS
+          });
+          if (token) {
+            await fetch("/api/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token }),
+            });
+          }
+        } catch (err) {
+          console.error("verifyyou:", err.message);
+        }
+        ```
+
+        ```html
+        <!-- the flow fills this element, like an embedded video -->
+        <div id="verify-here" style="height: 640px"></div>
+        ```
+      </Tab>
+    </Tabs>
+
+    ## Register your embedding origin
+
+    Send us every origin you embed from and we add it to the allowlist. Drawer and inline mode need this.
+    Redirect mode does not, because it navigates instead of framing.
+
+    The page that frames a check can position it, resize it, and draw over it, so that page is part of the
+    security boundary. We decide which pages are allowed to be it. The permitted origins go in a
+    [`frame-ancestors`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors)
+    policy on our side and the browser enforces it. Anything not on the list is refused. Nothing you pass from
+    the browser can widen it, which is what makes it worth having.
+
+    Registering is one step per origin, not one per session. Send us the following through
+    [support](https://verifyyou.com/support):
+
+    - Every origin you frame from, across every environment. Production, staging, preview and QA hosts all
+      count separately.
+    - An origin is scheme, host and port with no path and no trailing slash. `https://app.example.com` is an
+      origin. `https://app.example.com/` is not.
+    - Any host on a port other than 443, because `https://app.example.com` covers 443 only.
+    - Which origins are temporary, so we can take them off again.
+
+    If you are not sure which of your hosts to send, open the page where the check appears and read
+    `window.location.origin` in your browser console. That string is the value, character for character.
+    Take it from the running page rather than from what a host is called. A host named `api` can still be
+    the one serving the page that frames the check, and the browser reports the page it loaded, never the
+    server your own code talks to.
+
+    You can ask for a wildcard on your own domain, like `https://*.example.com`, instead of listing hosts. It
+    covers subdomains only, so add `https://example.com` separately if you frame from the bare domain.
+
+    Send us your origins ahead of the launch that needs them. Registration is a change on our side rather
+    than something that takes effect the moment you ask.
+
+    <Note>
+      A registered origin is a different thing from your `redirect_url`. Registering one does not register the
+      other.
+    </Note>
+
+    ## Camera and microphone
+
+    The check needs both, and in an iframe your page controls whether it gets them. The SDK sets
+    `allow="camera; microphone"` on the iframe it creates. A
+    [`Permissions-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy) header
+    on your own page still wins over that, so if you send one, delegate both features to
+    `https://app.verifyyou.com`.
+
+    Get this wrong and the flow loads, looks right, then fails at the moment it tries to capture.
+
+    Options and modes: [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/browser-sdk/errors).
   </Tab>
-  <Tab title="Drawer">
-    Slides over your page: bottom sheet on mobile, side panel on desktop. No redirect. `vycheck` resolves in place with the result.
+  <Tab title="Android">
+    Full screen, no redirect, no iframe: the SDK opens native chrome it owns. Call `vycheck()` once; the result arrives through callbacks.
 
-    ```js
-    import { vycheck } from "@verifyyou-sdk/client";
-
-    // `session` is the id from step 1. It runs THAT session, the one already
-    // carrying your external_id and redirect_url, so there is no key and no
-    // init() on this path.
-    try {
-      const { token } = await vycheck({ session: sessionId, mode: "iframe" });
-      // No token = they closed it without finishing. Not an error; let them retry.
-      if (token) {
-        // Hand it to your own endpoint; the confirm runs there, with your secret key.
-        await fetch("/api/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
-        });
-      }
-    } catch (err) {
-      // Session expired or already used, or we couldn't be reached.
-      // Mint a fresh session and let them try again.
-      console.error("verifyyou:", err.message);
-    }
+    ```kotlin
+    VerifyYou.vycheck(
+        context = this,
+        session = sessionId,
+        onComplete = { result ->
+            // Send result.token to your server. Unlock only after it confirms.
+            confirmOnServer(result.token) { verified -> if (verified) unlockAction() }
+        },
+        onClose = { /* they'll come back to it */ },
+        onError = { message -> showRetry(message) },
+    )
     ```
+
+    Options and examples: [`vycheck()`](/v3/dev/spec/mobile-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/mobile-sdk/errors).
   </Tab>
-  <Tab title="Inline">
-    Mounts inside your own element, like an embedded video. `vycheck` resolves in place with the result.
+  <Tab title="iOS">
+    Full screen, no redirect, no iframe: the SDK opens native chrome it owns. Call `vycheck()` once; the result arrives through callbacks.
 
-    ```js
-    import { vycheck } from "@verifyyou-sdk/client";
-
-    try {
-      const { token } = await vycheck({
+    ```swift
+    VerifyYou.vycheck(
+        from: self,
         session: sessionId,
-        mode: "iframe",
-        display: "inline",
-        container: "#verify-here", // your element; size it with CSS
-      });
-      if (token) {
-        await fetch("/api/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
-        });
-      }
-    } catch (err) {
-      console.error("verifyyou:", err.message);
-    }
+        onComplete: { result in
+            // Send result.token to your server. Unlock only after it confirms.
+            confirmOnServer(result.token) { verified in
+                if verified { self.unlockAction() }
+            }
+        },
+        onClose: { /* they'll come back to it */ },
+        onError: { message in self.showRetry(message) }
+    )
     ```
 
-    ```html
-    <!-- the flow fills this element, like an embedded video -->
-    <div id="verify-here" style="height: 640px"></div>
+    Options and examples: [`vycheck()`](/v3/dev/spec/mobile-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/mobile-sdk/errors).
+  </Tab>
+  <Tab title="React Native">
+    Full screen, no redirect, no iframe: the SDK opens native chrome it owns. Call `vycheck()` once; the result arrives through callbacks, and the returned promise settles too.
+
+    ```ts
+    vycheck({
+      session: sessionId,
+      onComplete: async (result) => {
+        // Send result.token to your server. Unlock only after it confirms.
+        const verified = await confirmOnServer(result.token);
+        if (verified) unlockAction();
+      },
+      onClose: () => {
+        /* they'll come back to it */
+      },
+      onError: (message) => showRetry(message),
+    });
     ```
+
+    Options and examples: [`vycheck()`](/v3/dev/spec/mobile-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/mobile-sdk/errors).
   </Tab>
 </Tabs>
-
-## Register your embedding origin
-
-Send us every origin you embed from and we add it to the allowlist. Drawer and inline mode need this.
-Redirect mode does not, because it navigates instead of framing.
-
-The page that frames a check can position it, resize it, and draw over it, so that page is part of the
-security boundary. We decide which pages are allowed to be it. The permitted origins go in a
-[`frame-ancestors`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors)
-policy on our side and the browser enforces it. Anything not on the list is refused. Nothing you pass from
-the browser can widen it, which is what makes it worth having.
-
-Registering is one step per origin, not one per session. Send us the following through
-[support](https://verifyyou.com/support):
-
-- Every origin you frame from, across every environment. Production, staging, preview and QA hosts all
-  count separately.
-- An origin is scheme, host and port with no path and no trailing slash. `https://app.example.com` is an
-  origin. `https://app.example.com/` is not.
-- Any host on a port other than 443, because `https://app.example.com` covers 443 only.
-- Which origins are temporary, so we can take them off again.
-
-If you are not sure which of your hosts to send, open the page where the check appears and read
-`window.location.origin` in your browser console. That string is the value, character for character.
-Take it from the running page rather than from what a host is called. A host named `api` can still be
-the one serving the page that frames the check, and the browser reports the page it loaded, never the
-server your own code talks to.
-
-You can ask for a wildcard on your own domain, like `https://*.example.com`, instead of listing hosts. It
-covers subdomains only, so add `https://example.com` separately if you frame from the bare domain.
-
-Send us your origins ahead of the launch that needs them. Registration is a change on our side rather
-than something that takes effect the moment you ask.
-
-<Note>
-  A registered origin is a different thing from your `redirect_url`. Registering one does not register the
-  other.
-</Note>
-
-## Camera and microphone
-
-The check needs both, and in an iframe your page controls whether it gets them. The SDK sets
-`allow="camera; microphone"` on the iframe it creates. A
-[`Permissions-Policy`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy) header
-on your own page still wins over that, so if you send one, delegate both features to
-`https://app.verifyyou.com`.
-
-Get this wrong and the flow loads, looks right, then fails at the moment it tries to capture.
-
-Options and modes: [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/browser-sdk/errors).
