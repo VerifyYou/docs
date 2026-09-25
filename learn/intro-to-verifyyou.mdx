@@ -3,8 +3,9 @@ title: "Intro to VerifyYou"
 ---
 
 {/*
-LEARN MODULE, DRAFT. In docs.json nav as the first page of Getting started, but not deployed
-(the live URL still 404s).
+LEARN MODULE. First page of Getting started in docs.json, live at
+docs.verifyyou.com/learn/intro-to-verifyyou (checked 2026-09-25; the old "not deployed, URL
+404s" note predated the fold into this repo).
 
 Body copy is James's. Revision history:
   v1 2026-08-19  906 words, inserted verbatim
@@ -42,17 +43,25 @@ NEW in v5: "ensure one account per person" is stronger than v4's "control over a
 human". Repeat limits are configurable (unlimited, once per rolling window, once lifetime), so
 one-per-person is one setting rather than what every check does. Flagged to James.
 
-Video: David's product script. Not embedded yet, by James's call. When the cut is final it
-goes directly under the opening four paragraphs, above "HumanCheck". Chapter marks,
-approximate, to pin to it:
+Video: EMBEDDED 2026-09-25, James: "add this to the learn site under the intro to VerifyYou
+article", with the Vimeo embed code. vimeo.com/1228118054 (unlisted, h=6cd14012df kept in the
+src), titled "HumanCheck: the trust layer for real, unique humans (Product Overview)": David's
+product overview, 2:55. Placed where this note had reserved it, under the opening four
+paragraphs and above "HumanCheck". Width and height dropped from the embed code so the
+.vy-video wrapper does the responsive 16:9 sizing, same as platform-demo and
+what-your-users-see. The iframe title is the Vimeo title rather than "vimeo-player", so a
+screen reader announces what the video is.
 
-  0:00  Who we are and who uses it
-  0:25  Passive signals or KYC, and the layer between
-  1:00  How the check works: live human, face geometry, passive signals
-  2:00  The trust score and the network
-  2:40  Rules, the dashboard, no code or API
-  3:15  Marty, and making fraud cost more than it pays
-  3:35  Real, and only here once
+Chapter marks, from the Vimeo description. They replace the approximate marks planned from
+David's script, which ran to 3:35 and no longer match the cut:
+
+  0:00  Why VerifyYou exists
+  0:30  The choice every platform is forced to make
+  0:55  What a HumanCheck looks like for a user
+  1:16  How humanness and uniqueness get confirmed
+  1:54  The trust score and repeat bad actors
+  2:15  Rules, dashboard, and how you run it
+  2:43  The rule underneath all of it
 */}
 
 Welcome to VerifyYou! We believe that platforms should have trust at scale without compromising on security, conversion, or cost.
@@ -62,6 +71,17 @@ Our HumanCheck [Proof of Human](https://www.ycombinator.com/rfs#proving-youre-hu
 VerifyYou is the culmination of our CTO and co-founder [Marty Weiner](https://www.linkedin.com/in/martyweiner/)'s experience. As Pinterest's founding engineer and [Reddit's former CTO](https://techcrunch.com/2015/08/18/reddit-names-marty-weiner-founding-engineer-at-pinterest-its-first-cto/), he was motivated to build VerifyYou after years of battling bots, spam, and fraud at massive scale. Marty's thesis is that by verifying the human behind the device, fraud becomes economically disincentivized.
 
 AI has made fraud cheaper, easier, and more profitable than ever for bad actors to commit. Current fraud solutions force companies to make an impossible decision, choose passive signals and compromise on security, or choose ID based KYC and sacrifice conversion. HumanCheck is the trust layer between them.
+
+<div className="vy-video">
+  <iframe
+    title="HumanCheck: the trust layer for real, unique humans (Product Overview)"
+    src="https://player.vimeo.com/video/1228118054?h=6cd14012df"
+    frameBorder="0"
+    referrerPolicy="strict-origin-when-cross-origin"
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+    allowFullScreen
+  />
+</div>
 
 ## HumanCheck
 
