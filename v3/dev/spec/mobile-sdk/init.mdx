@@ -1,0 +1,32 @@
+---
+title: "init()"
+description: "Optional. Set an appBase override once, for dev or staging builds."
+---
+
+## Signature
+
+<CodeGroup>
+
+```kotlin Android
+fun initialize(appBase: String = DEFAULT_APP_BASE)
+```
+
+```swift iOS
+static func initialize(appBase: URL = defaultAppBase)
+```
+
+```ts React Native
+function init(config?: InitConfig): void;
+
+interface InitConfig {
+  appBase?: string;
+}
+```
+
+</CodeGroup>
+
+Optional. There is nothing else to configure: no key, ever, on any of the three SDKs. Skip calling this entirely if you are shipping against production.
+
+## Options
+
+<ParamField path="appBase" type="string" default="https://app.verifyyou.com">The hosted flow's own origin. Override it for a dev or staging build. The SDK builds every verification URL against it.</ParamField>

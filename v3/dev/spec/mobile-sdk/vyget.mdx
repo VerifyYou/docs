@@ -1,0 +1,36 @@
+---
+title: "vyget()"
+description: "Read the last completed result."
+---
+
+## Signature
+
+<CodeGroup>
+
+```kotlin Android
+fun vyget(context: Context? = null): VyResult?
+```
+
+```swift iOS
+static func vyget() -> VyResult?
+```
+
+```ts React Native
+function vyget(): Promise<VyResult | null>;
+```
+
+</CodeGroup>
+
+Returns the last result `onComplete` delivered, or `null`/`nil` if nothing completed yet in this process. On Android, pass `context` and it can also return a result persisted from an earlier process, even when nothing completed in this one. Never throws.
+
+## Platform difference, named plainly
+
+Android's `vyget()` takes an optional `Context`. Pass one and it recovers the last result from disk if the OS killed and restarted the app's process between the check completing and your call to `vyget()`. This is a real scenario: a camera permission dialog plus low memory can take the process down mid-flow. iOS and React Native hold the last result in memory only. Neither one survives a process restart today. If you need the result to survive one, send the token to your server for confirmation as soon as `onComplete` fires, instead of relying on `vyget()` later.
+
+## Returns
+
+| Situation | Result |
+| --- | --- |
+| A run completed in this process | That result |
+| Android, after a process restart, `context` passed | The persisted result, if one exists |
+| Nothing completed yet | `null` / `nil` |
