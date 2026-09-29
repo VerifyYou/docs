@@ -3,6 +3,21 @@ title: "Dev changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
+<Update label="September 20, 2026" description="Session metadata">
+
+## Send what you already know about a person
+
+[`POST /v3/initialize`](/v3/dev/spec/server-api/initialize) now takes `metadata`: your own fields about the person the session is for — their plan, when they signed up, an internal department code, whatever your records hold. The fields are kept against that person and show up on their profile in the dashboard, beside the columns that arrive on an uploaded list, and the dashboard's filters can match on any key you send.
+
+- Send it with an identifier — `email`, `phone` or `external_id`. A session with no identifier has nobody to attach the fields to, and is refused.
+- It never changes a result. Nothing the person walks through reads it, and a check settles exactly as it would without it.
+- Up to 50 keys per session. Keys 1 to 64 characters, string values 1 to 1024, and a value can be a string, a number or a boolean. An empty value is refused rather than dropped, so a session that comes back OK kept every key you sent.
+- Secret key only, like the other fields that name a person.
+
+Nothing to upgrade. It works with the SDK version you already run.
+
+</Update>
+
 <Update label="September 9, 2026" description="Skip window">
 
 ## A new `external_id` is a new check
