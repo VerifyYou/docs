@@ -30,6 +30,37 @@ Tag vocabulary is now Dashboard, Checks, Breaking. The every-entry-must-be-tagge
 Everything new in HumanCheck. Newest first.
 
 {/*
+FACE SIMILARITY ENTRY, written 2026-09-29 from Zeek's VY-1250 rundown and checked against the merged
+source (connect-fe#280, connect-fe#285 and the backend PR). Full provenance, the data-wording
+reasoning and the source strings are in the comment at the top of docs/activity/face-similarity.
+
+PUBLISHED AHEAD OF ROLLOUT, James's call on 2026-09-29. It was off in production on the day and
+turning on one workspace at a time, so the entry closes on early access.
+
+LEFT OUT ON PURPOSE: the first-run guided tour (Usertour flows are in Dev only, per connect-fe#285),
+and the internal note we make when a photo resembles someone else the customer verified. The feature
+page carries that one, where the full account of what we keep sits.
+*/}
+
+<Update tags={["Dashboard"]} label="September 29, 2026" description="Face similarity: check a photo you hold against the face behind a person's HumanChecks">
+
+A HumanCheck proves a live, unique person was there each time. Face similarity ties that person back to your own records, so you can see whether the face behind an account's checks is the person you onboarded.
+
+### Face similarity
+
+Open a person from Activity and you'll find a **Face similarity** card under the profile tabs. Add up to two photos you hold for them (a selfie, a photo ID, or one of each) and select **Run assessment**. A few seconds later you get a verdict: **The person in your photo**, **Possibly the person in your photo**, **Not the person in your photo**, or **Couldn't read your photo** when there's no single clear face to compare.
+
+The case it was built for is an account handed to somebody else, who then passes on their own face. When the checks on an account weren't all done by the same face, the verdict says **A different person since** the date it changed, and the list of checks shows which ones were the person in your photo.
+
+Each photo is listed with what we read it as and its match percentage. When a selfie and an ID both match, the result is marked **Document-backed**. Past assessments sit on the person's **History** tab, and each opens as a read-only record.
+
+We don't keep the photos, as images or as face data. We keep the result and the file name, so the history can say which photo was which.
+
+It's in early access and turning on one workspace at a time. See [Face similarity](/docs/activity/face-similarity).
+
+</Update>
+
+{/*
 SEPTEMBER 2026 ENTRY, written 2026-09-08 by Grant. Grounded in the shipped dashboard, not the design
 scope. Two changes, both confirmed live by the product team:
   - Map columns step on Existing users import: three pinned fields (email, IP, impact figure) auto-matched

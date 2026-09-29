@@ -120,6 +120,7 @@
                                 "pages": [
                                     "docs/activity/reading-activity",
                                     "docs/activity/guest-profiles",
+                                    "docs/activity/face-similarity",
                                     "docs/activity/exporting-the-list"
                                 ]
                             },

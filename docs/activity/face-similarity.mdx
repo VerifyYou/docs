@@ -1,0 +1,141 @@
+---
+title: "Face similarity"
+description: "Check a photo you hold of a person, such as the selfie or ID from your own KYC, against the face behind their HumanChecks."
+---
+
+{/*
+WRITTEN 2026-09-29 from Zeek's rundown of VY-1250, then checked line by line against the merged
+source: connect-fe#280 (entry card and drawer), connect-fe#285 (Usertour targets) and
+the backend PR for the assess route, the bands and the history read. All merged 2026-09-29.
+
+MERGED AHEAD OF ROLLOUT, James's call on 2026-09-29: "I'm okay with merging it first since it's
+kind of a small feature". At merge it was flag-gated and off in production, turning on one
+workspace at a time. The early-access Note below is what keeps the page honest until then: a
+reader without the card is told why. Drop the Note once it is on for every workspace.
+
+WHY IT LIVES UNDER ACTIVITY AND NOT ON THREAT LEVELS AND SIGNALS. James's first instinct was the
+Insights group, reasoning that this is a signal. Checked in the backend: the trust score is built
+from what happens during the check itself and never reads a similarity result, nothing here feeds Top threat signals, the threat families, Flags or the
+person's Signals tab, and it only runs when a member of the team uploads a photo. The card sits on
+the person's profile and the history sits on that profile's History tab, which is
+docs/activity/guest-profiles, so this page follows it in the nav and that page links here. Moving
+it is one line in docs.json.
+
+FROM SOURCE, quoted so the next edit does not have to re-derive them:
+  Card: "Face similarity", button "Assess similarity", later "View assessment", summary line
+    "matched N of M HumanChecks · assessed <when> · photos not kept"
+  Drawer: "Photos · up to two", "Add a photo", "Or paste one (⌘V / Ctrl+V)", "Run assessment"
+  Headlines (similarityPresentation.ts storyCopy): "The person in your photo(s)", "Possibly the
+    person in your photo(s)", "Not the person in your photo(s)", "A different person since <date>",
+    "Couldn't read your photo" / "Couldn't read either photo"
+  Per-photo pills: Match, Possible, No match, No read. Kinds: Photo, Passport, Driver's license,
+    ID document. Badge: Document-backed.
+  No ID row: "Add photo" (one photo) / "Swap photo" (two photos, neither read as an ID); picking one
+    re-runs the assessment immediately.
+  Nobody to compare: "Nothing to compare yet".
+  History tab card: "Face similarity checks", five at a time, "Load N more", rows open "Assessment".
+  Record footer: "The photos were not kept, so this cannot be re-scored; run a new assessment to
+    compare again."
+
+BANDS ARE SETTINGS, NOT CONSTANTS. 99 and 80 are backend defaults, calibrated with early
+customers. If they move, this table moves with them.
+
+FILE SIZE, more nuanced than the rundown. The browser resizes to 1920px on the long edge and
+re-encodes as JPEG BEFORE the 5 MB check (preparePhoto.ts, then photoProblem), so a large phone
+photo passes and the 5 MB limit only bites where the browser cannot resize. Hence "rarely".
+
+WHICH CHECKS ARE COMPARED: every check this company ran on
+this face, plus every check that proved one of this person's claims whoever's face was on camera.
+The second half is what makes "A different person since" possible. Passed and denied both count.
+
+DATA WORDING follows claim gate 2: the subject is "we", never "photos are never stored". The
+backend reads, compares and drops the photos inside the one request and keeps nothing about them,
+as an image or as face data. What persists is the assessment record (verdicts, percentages, what
+each photo read as, the file name) and the internal other-person note. The other-person sentence
+is on the page because leaving it off would make "we keep the result" incomplete.
+
+LEFT OUT ON PURPOSE:
+  - The first-run guided tour. connect-fe#285 says the four Usertour flows exist in Usertour's Dev
+    environment. Add a line once they are published for production.
+  - "Face hash". The product's processing copy says it; the voice skill bans "hash" on docs pages.
+  - Anything about who else in the network has seen the face. Assessments are scoped to the
+    company's own checks, by design.
+
+SCREENSHOTS: none yet. Rule 1 in images/dashboard/README.md is demo workspace only, and the demo
+runs the dev build where the flag is on. Wanted: the card (empty and with a verdict), the drawer
+with two photos added, one verdict, the History card.
+*/}
+
+Face similarity tells you whether the person in a photo you hold is the person who has been passing this account's HumanChecks. You bring the photo, usually the selfie or photo ID from your own KYC, and we compare it with the face from each check. It answers something a single check doesn't: whether the account is still with the person who opened it.
+
+<Note>
+Face similarity is in early access and is being turned on one workspace at a time. If a person's profile has no **Face similarity** card, it isn't on for your workspace yet.
+</Note>
+
+## Run an assessment
+
+Anyone on your [team](/docs/workspace/team-and-roles) can run one.
+
+<Steps>
+  <Step title="Open the person">
+    Open the person from [Activity](/docs/activity/reading-activity). The **Face similarity** card sits under the profile tabs. Select **Assess similarity**.
+  </Step>
+  <Step title="Add up to two photos">
+    Add a photo of them, a photo of their ID, or one of each. Select **Add a photo** to pick a file, drag one onto it, or paste one with `⌘V` or `Ctrl+V`. Use a JPEG or PNG. Large photos are resized in your browser before they're sent, so the 5 MB limit rarely comes into play.
+  </Step>
+  <Step title="Select Run assessment">
+    It usually takes a few seconds, and occasionally up to 20. The result opens in the same panel.
+  </Step>
+</Steps>
+
+For each photo, we work out what it is: a photo of the person, a passport, a driver's license or another ID document. We check that it shows one clear face, then compare that face with the face from every HumanCheck this person completed with you.
+
+## Read the result
+
+The headline answers for the whole account.
+
+| Headline | What it means |
+|---|---|
+| **The person in your photo** | Your photo matches the face behind this account's HumanChecks at 99% or more. |
+| **Possibly the person in your photo** | A match between 80% and 99%. Similar, but not close enough to be sure. Lighting, angle or a changed appearance can do this, and a sharper, more recent photo usually settles it. |
+| **Not the person in your photo** | One person completed every check on this account, and it isn't the person in your photo. |
+| **A different person since** *date* | The checks on this account weren't all done by the same face. The list of checks shows which ones are the person in your photo. |
+| **Couldn't read your photo** | We couldn't find one clear face to compare: either no face, or more than one. Try a sharp, front-facing photo of one person. |
+
+**A different person since** takes priority over the others, because when the face has changed, the real answer is in the list of checks. The percentage is how similar two faces are. It isn't the chance that they're the same person.
+
+### Your references
+
+Each photo you added gets a row with what we read it as (**Photo**, **Passport**, **Driver's license** or **ID document**), its file name, its match percentage and a verdict: **Match**, **Possible**, **No match** or **No read**.
+
+With two photos, a line underneath says whether they show the same person as each other. If they don't, check you attached the right document. When a photo of the person and their ID both match, the result is marked **Document-backed**.
+
+We tell an ID from a selfie by the text printed on it. Document-backed means your two photos agree with each other and with the checks. It doesn't mean we checked the document is genuine, or who it names.
+
+If none of your photos read as an ID, the result offers to add one. **Add photo** puts their ID in as a second photo. **Swap photo** replaces your second photo when neither read as an ID. Either way, the assessment runs again straight away.
+
+### HumanChecks
+
+This is every check we compared against, newest first. Each row has the date and time, the verification it ran under, whether it passed, its trust score, and the match percentage and verdict for your photo. A check done by someone else's face is marked **a different face**.
+
+The list includes every check that proved this person's email or phone with you, whoever was in front of the camera that day. That is how a change of hands shows up. When you added two photos, the list scores the photo of the person, or the other photo if that one couldn't be read.
+
+## Find an assessment again
+
+Once someone has been assessed, the card on their profile shows the latest verdict, how many checks it matched (for example, `matched 3 of 3 HumanChecks`) and when it ran. **View assessment** reopens it, and **Assess again** starts a new one.
+
+Every past assessment is on the person's **History** tab too, in a **Face similarity checks** card, newest first. Five show at a time, with a button to load the next five, and each opens as a read-only record. A record can't be re-scored, because the photos weren't kept. To compare again, run a new assessment.
+
+## What we keep, and whose checks you see
+
+We don't keep the photos you upload, as images or as face data. They're compared and discarded while the assessment runs.
+
+What we keep is the result: the verdicts, the percentages, what each photo read as, and the file name you uploaded it under, so the history can tell you which photo was which. Each assessment is saved to the person's record, which is where the **History** tab reads it from.
+
+You only ever compare against your own company's checks on that person. If they haven't completed a HumanCheck with you, the panel says **Nothing to compare yet**.
+
+If a photo resembles someone else your company has verified, we note that on our side. It isn't shown in the dashboard.
+
+Running an assessment doesn't change the person's [trust score](/docs/activity/guest-profiles) or the result of any check.
+
+**Next:** [Exporting users](/docs/activity/exporting-the-list)
