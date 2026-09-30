@@ -20,7 +20,7 @@ can ask a follow-up. A doc has no follow-up. Take his framing, not his wording.
 | Can we say this price, or this comparison figure | David |
 | Is this shipped, and is it visible to a customer today | Zeek |
 | What do we keep, and for how long | Zeek, and the privacy policy is the binding text |
-| Can we say anything about a certification | Nobody yet. The answer is the security@ line below |
+| Can we say anything about a certification | Not in docs copy. Link the Trust Center, which Jack keeps current, and use the security@ line below |
 | Is this signal real, and on which page | Zeek, then re-check before the next customer list |
 
 In-product copy has no separate review step. It lives inline in the components and ships with
@@ -71,8 +71,12 @@ not keep it, someone blocked could come straight back under a new email. So "we 
 "compliant" about VerifyYou at all.** Not "compliant by design", not "built for GDPR", nothing.
 
 This appears on verifyyou.com today and is being corrected. Do not propagate it. If a reader
-needs this, the answer is: our current security documentation is available on request at
-security@verifyyou.com, and we are happy to work through your vendor questionnaire.
+needs this, link the Trust Center (the navbar, the footer and the Security and privacy page all
+carry the URL). Our security team keeps it current, and audit status is stated there, never in
+docs copy: it changes when an audit closes, and a docs page does not change with it. For
+anything beyond the Trust Center, the answer is: our current
+security documentation is available on request at security@verifyyou.com, and we are happy to
+work through your vendor questionnaire.
 
 ---
 
