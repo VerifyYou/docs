@@ -431,8 +431,8 @@
                 "href": "https://platform.verifyyou.com/dashboard"
             },
             {
-                "label": "Support",
-                "href": "https://verifyyou.com/support"
+                "label": "Trust Center",
+                "href": "https://security.verifyyou.com"
             }
         ],
         "primary": {
@@ -523,6 +523,10 @@
                     {
                         "label": "Support",
                         "href": "https://verifyyou.com/support"
+                    },
+                    {
+                        "label": "Trust Center",
+                        "href": "https://security.verifyyou.com"
                     },
                     {
                         "label": "Privacy",
