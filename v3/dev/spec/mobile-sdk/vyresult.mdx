@@ -1,0 +1,56 @@
+---
+title: "VyResult"
+description: "The result shape, and the outcome property mobile adds on top of it."
+---
+
+<CodeGroup>
+
+```kotlin Android
+data class VyResult(
+    val token: String?,   // vyt; send to your server
+    val verified: Boolean, // vyc == "1"; UI hint only
+    val vyc: String?,      // "1" | "0" | null
+)
+```
+
+```swift iOS
+struct VyResult {
+    let token: String?    // vyt; send to your server
+    let verified: Bool    // vyc == "1"; UI hint only
+    let vyc: String?      // "1" | "0" | null
+}
+```
+
+```ts React Native
+interface VyResult {
+  token: string | null;  // vyt; send to your server
+  verified: boolean;     // vyc === "1"; UI hint only
+  vyc: string | null;    // "1" | "0" | null
+}
+```
+
+</CodeGroup>
+
+`token` is the only field your server needs. `verified` and `vyc` are what the device saw. Do not gate on them. `token` is present on every result `onComplete` delivers. On Android and iOS, [`onClose`](/v3/dev/spec/mobile-sdk/vycheck#options) takes no arguments at all, so no `VyResult` with a null `token` ever reaches it. On React Native, the returned promise resolves on dismissal with `{ token: null, verified: false, vyc: null }`, not `onClose`.
+
+## outcome
+
+A convenience the mobile SDKs add on top of `verified`, not part of the browser SDK's `VyResult`:
+
+<CodeGroup>
+
+```kotlin Android
+val outcome: VyOutcome  // .APPROVED or .DENIED, derived from verified
+```
+
+```swift iOS
+var outcome: VyOutcome { get }  // .approved or .denied, derived from verified
+```
+
+```ts React Native
+function outcomeOf(result: VyResult): "approved" | "denied";
+```
+
+</CodeGroup>
+
+Two values only. A run that never reached `onComplete` at all, whether dismissed or errored, has no outcome to compute. Look at `onClose`/`onError` for that instead.
