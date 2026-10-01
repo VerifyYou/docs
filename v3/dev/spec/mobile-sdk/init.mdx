@@ -8,7 +8,7 @@ description: "Optional. Set an appBase override once, for dev or staging builds.
 <CodeGroup>
 
 ```kotlin Android
-fun initialize(appBase: String = DEFAULT_APP_BASE)
+// No initialize() on Android. See "Platform difference, named plainly" below.
 ```
 
 ```swift iOS
@@ -25,8 +25,12 @@ interface InitConfig {
 
 </CodeGroup>
 
-Optional. There is nothing else to configure: no key, ever, on any of the three SDKs. Skip calling this entirely if you are shipping against production.
+Optional on iOS and React Native. There is nothing else to configure: no key, ever, on any of the three SDKs. Skip calling this entirely if you are shipping against production.
 
 ## Options
 
-<ParamField path="appBase" type="string" default="https://app.verifyyou.com">The hosted flow's own origin. Override it for a dev or staging build. The SDK builds every verification URL against it.</ParamField>
+<ParamField path="appBase" type="string" default="https://app.verifyyou.com">The hosted flow's own origin, on iOS and React Native. Override it for a dev or staging build. The SDK builds every verification URL against it.</ParamField>
+
+## Platform difference, named plainly
+
+Android has no `initialize()` and takes no `appBase` at runtime. Your Gradle build flavor sets it at compile time instead: the `prod` flavor builds against `https://app.verifyyou.com`, and the `dev` flavor builds against `https://dev.app.verifyyou.com`. Pick your flavor the same way you already pick debug or release, and the SDK follows it. iOS and React Native keep the runtime override shown above, because neither ships build flavors of its own.

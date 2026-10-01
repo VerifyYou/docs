@@ -166,6 +166,12 @@ The SDK opens the session your server minted and hands back a token. No key, no 
   <Tab title="Android">
     Full screen, no redirect, no iframe: the SDK opens native chrome it owns. Call `vycheck()` once; the result arrives through callbacks.
 
+    **Prerequisites.** `minSdk` 24 or higher, `compileSdk` 35, and Java 17.
+
+    **Adding the SDK.** `android-native` is not yet on a public Maven repository. It will publish as a normal Gradle dependency at `com.verifyyou:android-native`. Until then, [contact support](https://verifyyou.com/support) for early access.
+
+    **Required app integration steps.** The SDK carries its own camera and internet permissions, and its verification activity, inside its own manifest. Gradle merges all three into your app automatically. You declare nothing yourself.
+
     ```kotlin
     VerifyYou.vycheck(
         context = this,
@@ -183,6 +189,12 @@ The SDK opens the session your server minted and hands back a token. No key, no 
   </Tab>
   <Tab title="iOS">
     Full screen, no redirect, no iframe: the SDK opens native chrome it owns. Call `vycheck()` once; the result arrives through callbacks.
+
+    **Prerequisites.** iOS 15 or later, and Swift 5.9 or later through Swift Package Manager.
+
+    **Adding the SDK.** `ios-native` has no public Swift Package registry entry yet, because the repository it lives in is private. [Contact support](https://verifyyou.com/support) for early access.
+
+    **Required app integration steps.** Add `NSCameraUsageDescription` to your own Info.plist. The SDK cannot add it for you. Skip it, and iOS terminates your app the moment the verification screen requests camera access.
 
     ```swift
     VerifyYou.vycheck(
@@ -203,6 +215,14 @@ The SDK opens the session your server minted and hands back a token. No key, no 
   </Tab>
   <Tab title="React Native">
     Full screen, no redirect, no iframe: the SDK opens native chrome it owns. Call `vycheck()` once; the result arrives through callbacks, and the returned promise settles too.
+
+    **Prerequisites.** This wraps the same native SDKs underneath, so their minimums apply: `minSdk` 24 and Java 17 on Android, iOS 15 and Swift 5.9 on iOS. `react-native` 0.86.3 is what this package builds and tests against. `react` and `react-native` stay peer dependencies, so your app's own versions apply. Expo Go cannot run it, because it depends on a real native module outside Expo's pre-included set.
+
+    **Adding the SDK.** `@verifyyou-sdk/react-native` is not yet on npm. [Contact support](https://verifyyou.com/support) for early access while we finish publishing it.
+
+    **Required app integration steps.** On iOS, add `NSCameraUsageDescription` to your own Info.plist, the same as the native iOS SDK. On Android, autolinking merges the SDK's own camera and internet permissions into your manifest, so you add nothing there.
+
+    **Known conflict.** `expo-modules-jsi` 58.0.2 does not build under Xcode 26.1 and Swift 6.2.1. Android is unaffected and runs end to end today. iOS through Expo stays blocked until expo-modules-jsi fixes this or your own patch works around it.
 
     ```ts
     vycheck({
