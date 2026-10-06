@@ -8,7 +8,7 @@ description: "Optional. Set an appBase override once, for dev or staging builds.
 <CodeGroup>
 
 ```kotlin Android
-// No initialize() on Android. See "Platform difference, named plainly" below.
+fun initialize(appBase: String = VerifyYou.DEFAULT_APP_BASE)
 ```
 
 ```swift iOS
@@ -25,14 +25,8 @@ interface InitConfig {
 
 </CodeGroup>
 
-Optional on iOS and React Native. There is nothing else to configure: no key, ever, on any of the three SDKs. Skip calling this entirely if you are shipping against production.
+Optional, on every platform. There is nothing else to configure: no key, ever, on any of the three SDKs. Skip calling this entirely if you are shipping against production.
 
 ## Options
 
-<ParamField path="appBase" type="string" default="https://app.verifyyou.com">The hosted flow's own origin, on iOS and React Native. Override it for a dev or staging build. The SDK builds every verification URL against it.</ParamField>
-
-## Platform difference, named plainly
-
-Android has no `initialize()` and takes no `appBase` at runtime. Your Gradle build flavor sets it at compile time instead: the `prod` flavor builds against `https://app.verifyyou.com`, and the `dev` flavor builds against `https://dev.app.verifyyou.com`. Pick your flavor the same way you already pick debug or release, and the SDK follows it. iOS and React Native keep the runtime override shown above, because neither ships build flavors of its own.
-
-One more gap worth naming. React Native's `init({ appBase })` call reaches iOS, where it works. It also reaches Android, where the bridge does not act on it yet. Call `init()` with an `appBase` override in a React Native app, and Android keeps shipping against production regardless. iOS honors the override. Until React Native ships its own per-environment build, test a dev or staging `appBase` on iOS, not Android.
+<ParamField path="appBase" type="string" default="https://app.verifyyou.com">The hosted flow's own origin. Override it for a dev or staging build, the same as the browser SDK's `appBase`. It must be an `https` VerifyYou origin, or a local dev host: Android throws `IllegalArgumentException`, iOS fails an assertion and keeps the previous value, React Native throws.</ParamField>

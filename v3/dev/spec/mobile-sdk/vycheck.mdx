@@ -15,7 +15,7 @@ fun vycheck(
     onComplete: (VyResult) -> Unit,
     onClose: (() -> Unit)? = null,
     onError: ((String) -> Unit)? = null,
-)
+): VyCheckHandle
 ```
 
 ```swift iOS
@@ -43,7 +43,7 @@ type VyCheckOptions = {
 
 </CodeGroup>
 
-Presents the hosted flow full screen in a native WebView. No redirect, no iframe: the screen is native chrome the SDK owns, with its own close control.
+Presents the hosted flow full screen in a native WebView. Inside it, the browser SDK opens the same session the way `vycheck({ session, mode: "iframe" })` does on the web, so the flow, its close control and its result behave exactly as they do there.
 
 ## Options
 
@@ -60,8 +60,11 @@ Presents the hosted flow full screen in a native WebView. No redirect, no iframe
 <CodeGroup>
 
 ```kotlin Android
-// No return value. VerificationActivity launches immediately;
-// the result arrives through the callbacks above.
+// A VyCheckHandle. Call close() to dismiss the screen early;
+// a no-op once the run has settled.
+interface VyCheckHandle {
+    fun close()
+}
 ```
 
 ```swift iOS
