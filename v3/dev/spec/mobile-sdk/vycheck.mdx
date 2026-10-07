@@ -43,12 +43,14 @@ type VyCheckOptions = {
 
 </CodeGroup>
 
-Presents the hosted flow full screen in a native WebView. Inside it, the browser SDK opens the same session the way `vycheck({ session, mode: "iframe" })` does on the web, so the flow, its close control and its result behave exactly as they do there.
+Presents the hosted flow full screen in a native WebView. Inside it, the browser SDK opens the same session the way `vycheck({ session, mode: "iframe" })` does on the web, so the flow and its result match what you get there.
+
+The screen adds a native close button, which stays visible until the run settles. Once the page is up, that button, Back on Android and `handle.close()` all ask the page to close first. If the page does not answer within a short grace period, the screen closes anyway and calls `onClose`. Before the page is up, they close the screen at once.
 
 ## Options
 
 <ParamField path="session" type="string" required>The `session_id` from `/v3/initialize`. The SDK opens that run: no key, no `init()`, ever passed here.</ParamField>
-<ParamField path="theme" type='"light" | "dark" | "auto"' default="auto">`"light"`/`"dark"` force an appearance regardless of the device. `"auto"` follows the device's current appearance at the moment `vycheck()` is called.</ParamField>
+<ParamField path="theme" type='"light" | "dark" | "auto"' default="auto">`"light"` or `"dark"` forces that appearance, and the flow follows it. `"auto"` follows the device at the moment `vycheck()` is called.</ParamField>
 <ParamField path="onComplete" type="(result: VyResult) => void" required>Required on Android and iOS. Optional on React Native, where the returned promise also resolves with the same result. Fires once, with a settled result. `token` is always present.</ParamField>
 <ParamField path="onClose" type="() => void">The person dismissed the screen without finishing. This is not an error, and it is not a settled run. Do not call `vyget()` to look up its outcome: `vyget()` returns the last *completed* result, which can belong to an earlier run, not this dismissed one.</ParamField>
 <ParamField path="onError" type="(message: string) => void">The run never reached a settled outcome at all. See [Errors](/v3/dev/spec/mobile-sdk/errors).</ParamField>

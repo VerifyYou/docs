@@ -164,7 +164,7 @@ The SDK opens the session your server minted and hands back a token. No key, no 
     Options and modes: [`vycheck()`](/v3/dev/spec/browser-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/browser-sdk/errors).
   </Tab>
   <Tab title="Android">
-    Full screen, no redirect: the SDK opens the same flow and drawer as the Browser tab inside a native screen, so it behaves the same. Call `vycheck()` once; the result arrives through callbacks.
+    Full screen, no redirect: the SDK opens the same flow and drawer as the Browser tab inside a native screen. Call `vycheck()` once; the result arrives through callbacks.
 
     **Prerequisites.** `minSdk` 24 or higher, `compileSdk` 35, and Java 17.
 
@@ -188,7 +188,7 @@ The SDK opens the session your server minted and hands back a token. No key, no 
     Options and examples: [`vycheck()`](/v3/dev/spec/mobile-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/mobile-sdk/errors).
   </Tab>
   <Tab title="iOS">
-    Full screen, no redirect: the SDK opens the same flow and drawer as the Browser tab inside a native screen, so it behaves the same. Call `vycheck()` once; the result arrives through callbacks.
+    Full screen, no redirect: the SDK opens the same flow and drawer as the Browser tab inside a native screen. Call `vycheck()` once; the result arrives through callbacks.
 
     **Prerequisites.** iOS 15 or later, and Swift 5.9 or later through Swift Package Manager.
 
@@ -214,7 +214,7 @@ The SDK opens the session your server minted and hands back a token. No key, no 
     Options and examples: [`vycheck()`](/v3/dev/spec/mobile-sdk/vycheck). What a rejection looks like: [Errors](/v3/dev/spec/mobile-sdk/errors).
   </Tab>
   <Tab title="React Native">
-    Full screen, no redirect: the SDK opens the same flow and drawer as the Browser tab inside a native screen, so it behaves the same. Call `vycheck()` once; the result arrives through callbacks, and the returned promise settles too.
+    Full screen, no redirect: the SDK opens the same flow and drawer as the Browser tab inside a native screen. Call `vycheck()` once; the result arrives through callbacks, and the returned promise settles too.
 
     **Prerequisites.** This wraps the same native SDKs underneath, so their minimums apply: `minSdk` 24 and Java 17 on Android, iOS 15 and Swift 5.9 on iOS. `react-native` 0.86.3 is what this package builds and tests against. `react` and `react-native` stay peer dependencies, so your app's own versions apply. Expo Go cannot run it, because it depends on a real native module outside Expo's pre-included set.
 

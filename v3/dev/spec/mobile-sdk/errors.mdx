@@ -13,8 +13,8 @@ VerifyYou.vycheck(
     session = sessionId,
     onComplete = { result -> /* ... */ },
     onError = { message ->
-        // Bad session id, a run already in progress, or the hosted
-        // page failed to load. Mint a fresh session and let them retry.
+        // An empty session, a run already in progress, or the hosted
+        // page failed to load or start. Mint a fresh session and let them retry.
         Log.e("MyApp", "verifyyou: $message")
     },
 )
@@ -26,8 +26,8 @@ VerifyYou.vycheck(
     session: sessionId,
     onComplete: { result in /* ... */ },
     onError: { message in
-        // Bad session id, a run already in progress, or the hosted
-        // page failed to load. Mint a fresh session and let them retry.
+        // An empty session, a run already in progress, or the hosted
+        // page failed to load or start. Mint a fresh session and let them retry.
         print("verifyyou:", message)
     }
 )
@@ -40,8 +40,8 @@ try {
     // They closed it without finishing. Not an error. Let them retry.
   }
 } catch (err) {
-  // Bad session id, a run already in progress, or the hosted page
-  // failed to load. Mint a fresh session and let them retry.
+  // An empty session, a run already in progress, or the hosted page
+  // failed to load or start. Mint a fresh session and let them retry.
   const message = err instanceof Error ? err.message : String(err);
   console.error("verifyyou:", message);
 }
@@ -56,8 +56,14 @@ try {
 | `session` is empty or blank | that it must not be empty |
 | A run is already presenting | that a verification is already in progress |
 | `appBase` produced an unbuildable URL | that the hosted URL failed to build |
-| The hosted page failed to load, or its WebView crashed | that the page failed to load or crashed |
-| The session expired or was already used | the browser SDK's own message for it |
+| The hosted page failed to load, answered with an HTTP error, or its WebView crashed | that the page failed to load, returned an error, or crashed |
+| The hosted page did not report ready within 20 seconds | `the verification page did not start` |
+| The device's WebView is too old (Android only) | `this device's WebView is too old to run verification` |
+| The verification screen could not start (Android only) | `could not open the verification screen` |
+
+The two Android only rows also reach a React Native app running on Android.
+
+An empty session reports an error. A bad, expired or already used session does not. The web SDK makes no network call when it opens a session by id, so nothing rejects at call time. The problem shows up on the hosted page itself, inside the screen. The person can close that screen, which calls `onClose`.
 
 The flow itself runs on the [browser SDK](/v3/dev/spec/browser-sdk/errors) inside the native screen, so anything the browser SDK rejects with reaches `onError` with the same message.
 
