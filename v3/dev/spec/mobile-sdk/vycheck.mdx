@@ -45,7 +45,7 @@ type VyCheckOptions = {
 
 Presents the hosted flow full screen in a native WebView. Inside it, the browser SDK opens the same session the way `vycheck({ session, mode: "iframe" })` does on the web, so the flow and its result match what you get there.
 
-The screen adds a native close button, which stays visible until the run settles. Once the page is up, that button, Back on Android and `handle.close()` all ask the page to close first. If the page does not answer within a short grace period, the screen closes anyway and calls `onClose`. Before the page is up, they close the screen at once.
+The screen adds a native close button, which stays visible until the run settles. Once the flow is up, that button, Back on Android and `handle.close()` close it the same way the flow's own close control does. If the run already has a verdict, closing delivers that result through `onComplete`, so the person never loses a finished check. Otherwise it calls `onClose`. If the flow does not answer within a short grace period, the screen closes anyway and calls `onClose`. Before the flow is up, they close the screen at once and call `onClose`.
 
 ## Options
 
