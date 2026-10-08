@@ -90,6 +90,16 @@
                                 ]
                             },
                             {
+                                "group": "Mobile SDKs",
+                                "pages": [
+                                    "v3/dev/spec/mobile-sdk/vycheck",
+                                    "v3/dev/spec/mobile-sdk/vyget",
+                                    "v3/dev/spec/mobile-sdk/init",
+                                    "v3/dev/spec/mobile-sdk/vyresult",
+                                    "v3/dev/spec/mobile-sdk/errors"
+                                ]
+                            },
+                            {
                                 "group": "Reference",
                                 "pages": [
                                     "v3/faq",

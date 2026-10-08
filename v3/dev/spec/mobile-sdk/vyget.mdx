@@ -1,0 +1,26 @@
+---
+title: "vyget()"
+description: "Read the last completed result."
+---
+
+## Signature
+
+<CodeGroup>
+
+```kotlin Android
+fun vyget(): VyResult
+```
+
+```swift iOS
+static func vyget() -> VyResult
+```
+
+```ts React Native
+function vyget(): Promise<VyResult>;
+```
+
+</CodeGroup>
+
+Returns the last result `onComplete` delivered, or an empty `VyResult` (`token` null, `verified` false, `vyc` null) when nothing has completed yet, the same as the browser SDK. Check `token`. Never throws.
+
+The result lives in memory only. It does not survive the app's process being restarted, so send the token to your server for confirmation as soon as `onComplete` fires instead of relying on `vyget()` later.
