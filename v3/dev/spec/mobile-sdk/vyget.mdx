@@ -8,11 +8,11 @@ description: "Read the last completed result."
 <CodeGroup>
 
 ```kotlin Android
-fun vyget(context: Context? = null): VyResult?
+fun vyget(): VyResult
 ```
 
 ```swift iOS
-static func vyget() -> VyResult?
+static func vyget() -> VyResult
 ```
 
 ```ts React Native
@@ -21,18 +21,6 @@ function vyget(): Promise<VyResult>;
 
 </CodeGroup>
 
-Returns the last result `onComplete` delivered. Android and iOS return `null`/`nil` when nothing has completed yet in this process. React Native never resolves to `null`: it resolves to an empty `VyResult` instead (`{ token: null, verified: false, vyc: null }`), so check `token` rather than the value itself. On Android, pass `context` and it can also return a result persisted from an earlier process, even when nothing completed in this one. Never throws.
+Returns the last result `onComplete` delivered, or an empty `VyResult` (`token` null, `verified` false, `vyc` null) when nothing has completed yet, the same as the browser SDK. Check `token`. Never throws.
 
-## Platform difference, named plainly
-
-Android's `vyget()` takes an optional `Context`. Pass one and it recovers the last result from disk if the OS killed and restarted the app's process between the check completing and your call to `vyget()`. This is a real scenario: a camera permission dialog plus low memory can take the process down mid-flow. iOS and React Native hold the last result in memory only. Neither one survives a process restart today. If you need the result to survive one, send the token to your server for confirmation as soon as `onComplete` fires, instead of relying on `vyget()` later.
-
-React Native also differs on what "nothing yet" looks like. Android and iOS return a real `null`/`nil`. React Native's promise always resolves to a `VyResult`, with every field `null` or `false` when nothing has completed. Check `token` for `null` on all three platforms and the difference stops mattering.
-
-## Returns
-
-| Situation | Android / iOS | React Native |
-| --- | --- | --- |
-| A run completed in this process | That result | That result |
-| Android, after a process restart, `context` passed | The persisted result, if one exists | Not applicable |
-| Nothing completed yet | `null` / `nil` | An empty `VyResult` |
+The result lives in memory only. It does not survive the app's process being restarted, so send the token to your server for confirmation as soon as `onComplete` fires instead of relying on `vyget()` later.
