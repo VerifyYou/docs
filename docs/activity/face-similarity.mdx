@@ -55,6 +55,9 @@ each photo read as, the file name) and the internal other-person note. The other
 is on the page because leaving it off would make "we keep the result" incomplete.
 
 LEFT OUT ON PURPOSE:
+  - The number each HumanChecks row prints as "trust N". It is the check's raw RISK score
+    (higher is riskier), shown without the dashboard's usual risk-to-trust flip, so it reads the opposite
+    way from the trust score everywhere else. Flagged to James as a bug 2026-09-29. Document it once fixed.
   - The first-run guided tour. connect-fe#285 says the four Usertour flows exist in Usertour's Dev
     environment. Add a line once they are published for production.
   - "Face hash". The product's processing copy says it; the voice skill bans "hash" on docs pages.
@@ -66,7 +69,7 @@ runs the dev build where the flag is on. Wanted: the card (empty and with a verd
 with two photos added, one verdict, the History card.
 */}
 
-Face similarity tells you whether the person in a photo you hold is the person who has been passing this account's HumanChecks. You bring the photo, usually the selfie or photo ID from your own KYC, and we compare it with the face from each check. It answers something a single check doesn't: whether the account is still with the person who opened it.
+Upload a photo you already hold of a person, such as the selfie or photo ID from your own KYC, and face similarity tells you whether it's the person who has been passing their HumanChecks. We compare your photo with the face from each check. That answers something a single check doesn't: whether the account is still with the person who opened it.
 
 <Note>
 Face similarity is in early access and is being turned on one workspace at a time. If a person's profile has no **Face similarity** card, it isn't on for your workspace yet.
@@ -88,7 +91,7 @@ Anyone on your [team](/docs/workspace/team-and-roles) can run one.
   </Step>
 </Steps>
 
-For each photo, we work out what it is: a photo of the person, a passport, a driver's license or another ID document. We check that it shows one clear face, then compare that face with the face from every HumanCheck this person completed with you.
+For each photo, we work out what it is: a photo of the person, a passport, a driver's license or another ID document. We check that it shows one clear face, then compare that face with the face from each HumanCheck this person completed with you.
 
 ## Read the result
 
@@ -102,13 +105,13 @@ The headline answers for the whole account.
 | **A different person since** *date* | The checks on this account weren't all done by the same face. The list of checks shows which ones are the person in your photo. |
 | **Couldn't read your photo** | We couldn't find one clear face to compare: either no face, or more than one. Try a sharp, front-facing photo of one person. |
 
-**A different person since** takes priority over the others, because when the face has changed, the real answer is in the list of checks. The percentage is how similar two faces are. It isn't the chance that they're the same person.
+With two photos that both read and agree, the headline says *your photos* instead of *your photo*. **A different person since** takes priority over the others, because when the face has changed, the real answer is in the list of checks. The percentage is how similar two faces are. It isn't the chance that they're the same person.
 
 ### Your references
 
 Each photo you added gets a row with what we read it as (**Photo**, **Passport**, **Driver's license** or **ID document**), its file name, its match percentage and a verdict: **Match**, **Possible**, **No match** or **No read**.
 
-With two photos, a line underneath says whether they show the same person as each other. If they don't, check you attached the right document. When a photo of the person and their ID both match, the result is marked **Document-backed**.
+With two photos, a line underneath says whether they show the same person as each other. If they don't, check you attached the right document. When your two photos agree on a match and at least one of them is an ID, we mark the result **Document-backed**.
 
 We tell an ID from a selfie by the text printed on it. Document-backed means your two photos agree with each other and with the checks. It doesn't mean we checked the document is genuine, or who it names.
 
@@ -116,7 +119,7 @@ If none of your photos read as an ID, the result offers to add one. **Add photo*
 
 ### HumanChecks
 
-This is every check we compared against, newest first. Each row has the date and time, the verification it ran under, whether it passed, its trust score, and the match percentage and verdict for your photo. A check done by someone else's face is marked **a different face**.
+This is every check we compared against, newest first, up to the 50 most recent. Each row has the date and time, the verification it ran under, whether it passed, and the match percentage and verdict for your photo. A check done by someone else's face shows **a different face**.
 
 The list includes every check that proved this person's email or phone with you, whoever was in front of the camera that day. That is how a change of hands shows up. When you added two photos, the list scores the photo of the person, or the other photo if that one couldn't be read.
 
@@ -130,7 +133,7 @@ Every past assessment is on the person's **History** tab too, in a **Face simila
 
 We don't keep the photos you upload, as images or as face data. They're compared and discarded while the assessment runs.
 
-What we keep is the result: the verdicts, the percentages, what each photo read as, and the file name you uploaded it under, so the history can tell you which photo was which. Each assessment is saved to the person's record, which is where the **History** tab reads it from.
+The result is what stays: the verdicts, the percentages and what each photo read as. We also keep the file name you uploaded each photo under, so the history can tell you which photo was which. We save each assessment to the person's record, and that's what the **History** tab reads from.
 
 You only ever compare against your own company's checks on that person. If they haven't completed a HumanCheck with you, the panel says **Nothing to compare yet**.
 
