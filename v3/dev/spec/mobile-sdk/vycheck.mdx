@@ -47,6 +47,10 @@ Presents the hosted flow full screen in a native WebView. Inside it, the browser
 
 The screen adds a native close button, which stays visible until the run settles. Once the flow is up, that button, Back on Android and `handle.close()` close it the same way the flow's own close control does. If the run already has a verdict, closing delivers that result through `onComplete`, so the person never loses a finished check. Otherwise it calls `onClose`. If the flow does not answer within a short grace period, the screen closes anyway and calls `onClose`. Before the flow is up, they close the screen at once and call `onClose`.
 
+On iOS, pass a `from` view controller that is on screen and is not being dismissed. If it is not, `onError` fires at once with `could not open the verification screen`, and the next `vycheck()` works normally. Each callback fires only after the screen has gone, so you can call `vycheck()` again from inside `onError` or `onClose`. If your app dismisses the screen itself, the run ends with `onClose`.
+
+On React Native, `close()` affects only its own run. After that run has settled, `close()` does nothing, and it never closes a newer run.
+
 ## Options
 
 <ParamField path="session" type="string" required>The `session_id` from `/v3/initialize`. The SDK opens that run: no key, no `init()`, ever passed here.</ParamField>

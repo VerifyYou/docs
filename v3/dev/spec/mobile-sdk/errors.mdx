@@ -57,11 +57,11 @@ try {
 | A run is already presenting | that a verification is already in progress |
 | `appBase` produced an unbuildable URL | that the hosted URL failed to build |
 | The hosted page failed to load, answered with an HTTP error, or its WebView crashed | that the page failed to load, returned an error, or crashed |
-| The hosted flow did not load within 20 seconds | `the verification page did not start` |
+| The hosted flow did not load within 20 seconds of the `vycheck()` call | `the verification page did not start` |
 | The device's WebView is too old (Android only) | `this device's WebView is too old to run verification` |
-| The verification screen could not start (Android only) | `could not open the verification screen` |
+| The verification screen did not open. On Android, the system refused to start it. On iOS, the screen you passed as `from` is not on screen, or is being dismissed. | `could not open the verification screen` |
 
-The two Android only rows also reach a React Native app running on Android.
+The Android only row also reaches a React Native app running on Android.
 
 An empty session reports an error. A bad, expired or already used session does not. The web SDK makes no network call when it opens a session by id, so nothing rejects at call time. The problem shows up on the hosted page itself, inside the screen. The person can close that screen, which calls `onClose`.
 
