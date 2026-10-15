@@ -43,6 +43,9 @@ Groups, in order:
 1. **Integrating**: the guided path, three pages (below).
 2. **Server API**: one page per endpoint.
 3. **Browser SDK**: one page per export, `vycheck()` first.
+4. **Mobile SDKs**: one page per export, mirroring Browser SDK page for page,
+   `vycheck()` first. Covers Android, iOS, and React Native together via
+   `<CodeGroup>`, keyed by platform.
 
 Navigation rules learned the hard way:
 
@@ -76,7 +79,14 @@ these points; they are the reason the pages exist.
 - The SDK's job is getting the person to and through the check. `vycheck()`
   and `vyget()` are gating calls: `vycheck()` is the code gate that produces a
   token to pass to the backend, placed on the action only humans should do.
-- Redirect is the primary tab, then drawer, then inline.
+- Platform is the primary tab axis: Browser, Android, iOS, React Native. Mode
+  (Redirect, then drawer, then inline) nests one level inside the Browser tab
+  only — native mobile has no mode, it is always a full-screen native host, so
+  it never gets a fake mode choice forced on it.
+- Mobile tabs show the `Example` snippet inline (kept in sync with the Mobile
+  SDKs `vycheck()` page by hand) but link out for Signature/Options/Returns,
+  the same relationship the Browser tab already has with the Browser SDK
+  reference. Don't duplicate the full reference here.
 - The token rides in the same request as the action it gates.
 
 **Handling results**

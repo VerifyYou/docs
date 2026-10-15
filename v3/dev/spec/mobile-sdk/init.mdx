@@ -1,0 +1,45 @@
+---
+title: "init()"
+description: "Optional. Set an appBase override once, for dev or staging builds."
+---
+
+## Signature
+
+<CodeGroup>
+
+```kotlin Android
+fun initialize(appBase: String = VerifyYou.DEFAULT_APP_BASE)
+```
+
+```swift iOS
+static func initialize(appBase: URL = defaultAppBase)
+```
+
+```ts React Native
+function init(config?: InitConfig): void;
+
+interface InitConfig {
+  appBase?: string;
+}
+```
+
+</CodeGroup>
+
+Optional, on every platform. There is nothing else to configure: no key, ever, on any of the three SDKs. Skip calling this entirely if you are shipping against production.
+
+## Options
+
+<ParamField path="appBase" type="string" default="https://app.verifyyou.com">The hosted flow's own origin. Override it for a dev or staging build, the same as the browser SDK's `appBase`. It must be an `https` VerifyYou origin, or a local dev host. See Errors below for what an invalid value does.</ParamField>
+
+## Errors
+
+An invalid `appBase` is a developer mistake, and each platform reacts differently.
+
+- Android throws `IllegalArgumentException`.
+- React Native throws an `Error`. It checks the value in JavaScript, before the native SDK sees it.
+- iOS in a debug build stops with an assertion failure.
+- iOS in a release build ignores the value without any message and keeps the previous `appBase`. That is production unless you set a valid one earlier.
+
+<Note>
+  A release build on iOS never tells you that an override was ignored. A typo in a staging `appBase` runs against production. Check your override in a debug build first.
+</Note>

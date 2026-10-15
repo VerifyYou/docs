@@ -1,0 +1,34 @@
+---
+title: "VyResult"
+description: "The result shape, the same as the browser SDK's."
+---
+
+<CodeGroup>
+
+```kotlin Android
+data class VyResult(
+    val token: String?,   // vyt; send to your server
+    val verified: Boolean, // vyc == "1"; UI hint only
+    val vyc: String?,      // "1" | "0" | null
+)
+```
+
+```swift iOS
+struct VyResult {
+    let token: String?    // vyt; send to your server
+    let verified: Bool    // vyc == "1"; UI hint only
+    let vyc: String?      // "1" | "0" | null
+}
+```
+
+```ts React Native
+interface VyResult {
+  token: string | null;  // vyt; send to your server
+  verified: boolean;     // vyc === "1"; UI hint only
+  vyc: string | null;    // "1" | "0" | null
+}
+```
+
+</CodeGroup>
+
+The same shape as the [browser SDK's `VyResult`](/v3/dev/spec/browser-sdk/vyresult). `token` is the only field your server needs. `verified` and `vyc` are what the device saw. Do not gate on them. `token` is present on every result `onComplete` delivers. On Android and iOS, [`onClose`](/v3/dev/spec/mobile-sdk/vycheck#options) takes no arguments at all, so no `VyResult` with a null `token` ever reaches it. On React Native, the returned promise resolves on dismissal with `{ token: null, verified: false, vyc: null }`, not `onClose`.
