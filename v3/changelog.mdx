@@ -3,6 +3,20 @@ title: "Dev changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
+<Update label="October 29, 2026" description="Mobile SDKs">
+
+## Native SDKs for Android and iOS
+
+The Android and iOS SDKs are out at 1.0.0. Each one opens the same flow as the browser SDK, full screen in a native screen, and hands the result back through `onComplete`, `onClose` or `onError`. Confirm the token on your server, the same as on the web.
+
+- Android: `implementation("com.verifyyou:android-native:1.0.0")` from Maven Central. Android 7.0 (API 24) or later.
+- iOS: `https://github.com/VerifyYou/verifyyou-ios` through Swift Package Manager. iOS 15 or later. Add `NSCameraUsageDescription` to your own Info.plist.
+- The React Native package is not on npm yet.
+
+Setup for each platform is in [Placing your check](/v3/dev/integrating/placing-your-check), and every call is in the [Mobile SDK reference](/v3/dev/spec/mobile-sdk/vycheck). Nothing changes for a browser integration.
+
+</Update>
+
 <Update label="September 20, 2026" description="Session metadata">
 
 ## Send what you already know about a person

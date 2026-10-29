@@ -168,7 +168,13 @@ The SDK opens the session your server minted and hands back a token. No key, no 
 
     **Prerequisites.** `minSdk` 24 or higher, `compileSdk` 35, and Java 17.
 
-    **Adding the SDK.** `android-native` is not yet on a public Maven repository. It will publish as a normal Gradle dependency at `com.verifyyou:android-native`. Until then, [contact support](https://verifyyou.com/support) for early access.
+    **Adding the SDK.** `android-native` is on Maven Central. Add it to your app module's `build.gradle.kts`, with `mavenCentral()` in your repositories:
+
+    ```kotlin
+    dependencies {
+        implementation("com.verifyyou:android-native:1.0.0")
+    }
+    ```
 
     **Required app integration steps.** The SDK carries its own camera and internet permissions, and its verification activity, inside its own manifest. Gradle merges all three into your app automatically. You declare nothing yourself. The SDK declares the camera as optional (`android:required="false"`), so Google Play still offers your app on devices without a back camera. The check uses the front camera, and it never asks for the microphone.
 
@@ -192,7 +198,19 @@ The SDK opens the session your server minted and hands back a token. No key, no 
 
     **Prerequisites.** iOS 15 or later, and Swift 5.9 or later through Swift Package Manager.
 
-    **Adding the SDK.** `ios-native` has no public Swift Package registry entry yet, because the repository it lives in is private. [Contact support](https://verifyyou.com/support) for early access.
+    **Adding the SDK.** Add the package from `https://github.com/VerifyYou/verifyyou-ios` with Swift Package Manager. In Xcode, open File, then Add Package Dependencies, paste that URL, and add the `VerifyYou` library to your app target. In a `Package.swift`:
+
+    ```swift
+    dependencies: [
+        .package(url: "https://github.com/VerifyYou/verifyyou-ios", from: "1.0.0")
+    ],
+    targets: [
+        .target(
+            name: "MyApp",
+            dependencies: [.product(name: "VerifyYou", package: "verifyyou-ios")]
+        )
+    ]
+    ```
 
     **Required app integration steps.** Add `NSCameraUsageDescription` to your own Info.plist. The SDK cannot add it for you. Skip it, and iOS terminates your app the moment the verification screen requests camera access.
 
