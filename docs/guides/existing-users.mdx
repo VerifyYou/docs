@@ -1,171 +1,96 @@
 ---
 title: "Send verifications by email"
-description: "Import the people you already have and send each one their own verification link by email."
+description: "Import the people you already have and email each one their own HumanCheck link."
 icon: "envelope"
 ---
 
 {/*
-WRITTEN 2026-08-28 from James's live walkthrough of the flow (five annotated screenshots of the
-kindly-dormouse verification on platform.verifyyou.com) plus the 21 Aug dashboard scan in
-DASHBOARD_REFERENCE.md, which carries the Add people panel copy and the Switch method dialog
-verbatim. Format mirrors the four one-time-password guides exactly, at James's request.
+REWRITTEN 2026-11-05 against the deployed dashboard source, after the dashboard moved email out
+of each verification's Integration tab. Sending is now workspace wide: senders, templates and
+assignments live under Connectors, Email; imports and sends live on Activity, and each import
+becomes a tag with its own page. Labels below are verbatim from the product.
 
-UI facts taken from the screenshots, not memory: the Senders panel ("The addresses your invites
-leave from", Add sender, "Confirmed. Ready to send", the TXT and CNAME rows with Live/Pending
-and Re-check, "Publish these records to send from your own domain (optional)"); the send dialog
-("Send to 1 people?", "Each person gets a verification link locked to their address",
-Recipients / From / Message with the Initial invite dropdown and Edit); the Activity header
-(the address chip beside Send unsent, the sent-today counter).
+Title and slug unchanged on purpose: this link is in circulation by email.
 
-The default invite copy in the send dialog uses a phrase the claim gates ban, so the guide
-describes the message rather than quoting it. Same reason this page never quotes the test
-panel.
+Not stated on purpose:
+  - The daily send number. It is set per sender, server side, and is not in the product source.
+  - The DNS record types. The product shows them from the server; it does not name them.
+  - The default template wording. Customers should write their own.
+  - Phone and SMS. Phone columns import as extra data only; the product says SMS sending is not
+    available yet.
 
-The daily send cap: the Activity header shows a sent-today counter on this workspace. Per the
-integration.mdx note, the number may be per plan, so the Note points at the counter and prints
-no number. Confirm with Zeek before ever printing one.
-
-STEP 3 REWRITTEN 2026-09-09 for the September Map columns ship, then VERIFIED THE SAME DAY by
-walking the flow in the livetest workspace (genial-narwhal, method switched to Existing users
-and back, a two-row example.com CSV staged and backed out of, nothing imported or sent).
-Observed and now stated exactly: upload parses first ("2 people ready to add - we also picked
-up their IP address"), Map columns opens on clicking Add, not at upload; the dialog is titled
-"Map columns / Match your columns to the critical fields" with a banner like "Email and IP
-matched - 1 extra column found"; critical fields are FOUR, Email address plus optional IP
-address, Impact figure and Date for the figure (the changelog said three; the date field is
-real); your columns are the dropdowns on the left; extra data reads "saved to each person's
-record" with an Import as / Type table and a "Select columns to leave out" tick, so the old
-"untick to skip" wording was inverted; footer reads "Importing 4 critical fields + 1 extra
-column" and the confirm button is "Confirm mapping". Type chips seen: Email, IP, currency
-(a dropdown), Date, Text; the currency/date/number/text preset list stays on the changelog's
-authority. Skipped-row counting and empty-cells behaviour also stay on the changelog's
-authority, the test CSV had no gaps to show them.
-
-RETITLED AND REVERIFIED 2026-09-17, James's ask, title exactly as he dictated it. The slug and
-URL are deliberately unchanged: the link is being sent around in email. Walked live prod that
-day on ineffable-dormouse (0 people; nothing imported, sent, or saved). What changed on the
-page as a result:
-  - The import buttons are "Upload CSV" and "Add people". The old "Add" wording is gone, and
-    the panel helper copy no longer carries the August auto-detect sentence.
-  - The Activity tab is the entry to sending now. Its header carries the person count, a
-    Message control, the sender address chip, and "Send unsent" with a count. Step 4's old
-    entry (Recently added, then View all) was replaced with the tab itself.
-  - Message opens a Messages modal: two named types (Initial invite, "Not yet verified";
-    Re-verification, "Already verified"), a subject and rich body per type, a toolbar with a
-    Verification link token whose helper says each one becomes that person's own link, and a
-    footer saying changes apply to all future sends of this message. The template body on the
-    live verification is a real team's copy, so nothing from it is quoted here.
-  - Senders panel is unchanged from the August scan (Add sender, "Confirmed. Ready to send",
-    TXT and CNAME rows, Re-check, Live/Pending) plus a new "Sends from <domain>" line whose
-    "receives mail" check I could not confirm the meaning of, so the page does not mention it.
-  - The send dialog and Map columns were then re-verified the same day on the DEMO workspace
-    (dev preview, wily-bandicoot, two scenario.vy.test people imported under the auto tag,
-    nothing sent, send dialog cancelled). Send dialog observed: "Send to 2 people? / Each
-    person gets a verification link locked to their address", Recipients, From (with no
-    confirmed sender it reads that none is confirmed yet and offers Add a sender, so sending
-    fails closed), Message with the Initial invite dropdown, Edit and a copy preview, then
-    Cancel / Send to N. Senders add form observed: From address, Display name, Reply-to
-    (optional), and the helper "We email the address a confirmation link. Nothing sends from
-    it until someone clicks through" - now stated in step 4. The fresh-workspace Activity tab
-    offers "Add a sender" in a banner instead of the address chip; step 4 covers both entries.
-  - The "Add" button label: verified on PROD by staging one example.com row in the ineffable-
-    dormouse paste box and clearing it (nothing imported). Empty box reads "Add people";
-    with a list staged it reads "Add 1"/"Add 2" with a "N people ready to add" count.
-  - DEV-ONLY surfaces seen on the demo preview and deliberately NOT documented (prod, checked
-    the same day, lacks them): the TAG cohort dropdown and Tags panel on Integration ("Sep 17
-    upload" default), the post-mapping "Add N people?" summary dialog with BY EMAIL / NEW /
-    UPDATED counts, and the live-check configuration lock (Switch method on a LIVE check
-    offers "Duplicate this check" on dev; prod still opens the normal dialog, whose copy
-    says you can switch back any time). When these ship, step 2 and step 3 need a pass, and
-    the Add people screenshot goes stale.
-  - Phone surfaces exist now (the method's SETUP chip reads "Email or phone", the Activity
-    search placeholder reads "email or phone") but the import panel still speaks email only.
-    This page stays scoped to email until someone walks the phone path.
-
-SCREENSHOTS 2026-09-17: two of the three commissioned shots landed, taken from the demo
-workspace (dev preview) per images/dashboard/README.md rule 1, scenario.vy.test data only.
-  - existing-users-add-people.png: the Add people panel. CAVEAT: the demo runs the dev build,
-    so the shot shows the TAG cohort section prod does not have yet. Re-shoot if tags do not
-    ship, replace this note when they do.
-  - senders-panel.png: the Senders panel in its add-address state (the demo workspace has no
-    confirmed sender, so the commissioned "Confirmed. Ready to send" state cannot be staged
-    there). This is also the state a first-time reader meets. To shoot the confirmed state,
-    the demo needs a sender whose inbox the team can open to click the confirmation link.
-  - send-dialog.png: SHOT BUT HELD OFF THE PAGE (in the session scratchpad, not committed).
-    Two blockers: the From row shows the "No confirmed sender yet" state, which contradicts
-    the step it would illustrate, and the copy preview shows the product's default template,
-    which says "identity verification", a phrasing the claim gates ban from this site. Fix is
-    on the product side (confirmed demo sender + default copy pass), then re-shoot.
+Screenshots: the three images on the previous version (switch-method, add-people, senders panel)
+showed screens that have moved, so they are off the page. Re-shoot from the demo workspace once
+it runs the prod build: Connectors > Email > Senders, the Import mapping step, the Send HumanCheck
+sheet.
 */}
 
-Verify people you already have: import your list, link the address your invites leave from,
-and send each person a link locked to their email. If you do not have a workspace yet,
-[the Start guide](/docs/get-started/getting-access) covers getting access.
+Verify the people you already have: set up the address your invites come from, import your list, and send each person a HumanCheck link that belongs to them alone. There is no mail system on your side to wire up, because we host the sending. If you do not have a workspace yet, [the Start guide](/docs/get-started/getting-access) walks you through creating one.
 
 <Steps>
-  <Step title="Create your verification">
-    In your [VerifyYou dashboard](https://platform.verifyyou.com/dashboard/verifications), if you already have a verification you want to use, skip to step 2.
-    1. Click **New verification** and pick your check. [Creating a verification](/docs/verifications/creating-a-verification) walks the wizard, and [Configuration](/docs/verifications/configuration) explains each setting.
-    2. Choose **No code** when the wizard asks how the check will reach people.
-    3. Add your logo and company name so the check carries your brand. [Branding your check](/docs/verifications/branding-your-check) shows what each part controls.
-    4. Continue through to **Integration**.
+  <Step title="Have a HumanCheck that takes a link">
+    Any HumanCheck set to **Sharing a link** or **Existing users** can go out by email. One that asks for a code, through **With code** or **One-time passwords**, cannot, because an emailed link has nothing to start it with.
 
-    <p className="vy-have"><strong>You now have:</strong> a live verification, branded as yours.</p>
+    If you do not have one yet, open **HumanChecks** and create one. [Creating a verification](/docs/verifications/creating-a-verification) walks the setup, and [Branding your check](/docs/verifications/branding-your-check) puts your logo on it.
+
+    <p className="vy-have"><strong>You now have:</strong> a HumanCheck your people can open from an email.</p>
   </Step>
-  <Step title="Switch the method to Existing users">
-    On the verification's **Integration** tab.
-    1. Click **Switch method** and choose **Existing users**.
-    2. Set where people land after they verify, under **Lands on**, with **Edit**. If you leave it unset, people see the default finish screen.
+  <Step title="Add the address your invites come from">
+    Go to **Connectors**, open **Email**, and stay on the **Senders** tab.
+    1. Click **Add a sender** and fill in the **From address**, a **Display name**, and a **Reply-To** if you want replies to land somewhere else.
+    2. We email that address a confirmation link. Nothing sends from it until the owner of the inbox clicks through.
+    3. To send from your own domain, publish the records listed under **Your own domain** with your DNS provider. Each one flips from **Pending** to **Live** once we see it.
 
-    <p className="vy-have"><strong>You now have:</strong> the import view, ready to take your list.</p>
+    <Warning>
+    Until your domain's records are live, Microsoft inboxes refuse mail from it, so Outlook, Hotmail and Live addresses are not reached. Finish DNS before a large batch.
+    </Warning>
 
-    <Frame caption="Switch method: pick Existing users. You can switch back any time.">
-      <img style={{ maxWidth: "440px", width: "100%", display: "block", margin: "0 auto" }} src="/images/dashboard/switch-method.jpg" alt="Switch method dialog with Existing users selected" />
-    </Frame>
+    <p className="vy-have"><strong>You now have:</strong> a confirmed From address, with your own domain on the way.</p>
   </Step>
-  <Step title="Add your people">
-    In the **Add people** panel on the same tab.
-    1. Paste your list, or click **Upload CSV**. Whole spreadsheet rows are fine, with or without a header. The panel reads your list and tells you how many people are ready to add.
-    2. Click **Add**, which carries the count of people you are adding. **Map columns** opens before anything comes in.
-    3. Check the four fields at the top: **Email address**, then **IP address**, **Impact figure** and **Date for the figure**, each marked optional. We match your columns to them automatically, and each match is a dropdown, so if we guessed wrong you point it at the right column yourself. Only email is required, and the import runs with the others unmapped.
-    4. Everything else in your file sits under **Extra data**, saved to each person's record with a type on each column: currency, date, number, text. Tick a column under **Select columns to leave out** to skip it this time. Import whatever you would want to compare later. An IP address you hold comes back beside the one we see when that person verifies.
-    5. Check the count at the foot of the dialog, importing so many critical fields and so many extra columns, then click **Confirm mapping**. Rows with no email are skipped and counted, and empty cells stay empty rather than being filled in for you.
+  <Step title="Write your message">
+    On the **Templates** tab. There are two kinds of message: **Initial invite** goes to people who have not verified with you yet, and **Re-verification** goes to people who have.
+    1. Open a template, or create one, and write the subject and body in your own words.
+    2. Keep the **HumanCheck link** chip in the body. Each send turns it into the personal link of whoever receives it, and a template without it will not save.
+    3. Click **Save template**. One template can serve several HumanChecks.
 
-    Each person you add gets a verification link locked to their address. Adding people never sends anything, so you can build the list over several sittings and send once, when you are ready.
-
-    <p className="vy-have"><strong>You now have:</strong> your people imported, each with their own locked link and your extra columns on their record, and nothing sent.</p>
-
-    <Frame caption="The Add people panel on the Integration tab. Paste whole rows or upload a CSV; nothing sends at this stage.">
-      <img style={{ maxWidth: "700px", width: "100%", display: "block", margin: "0 auto" }} src="/images/dashboard/existing-users-add-people.png" alt="The Add people panel with a paste box, Upload CSV and Add people buttons" />
-    </Frame>
+    <p className="vy-have"><strong>You now have:</strong> the words your people will read.</p>
   </Step>
-  <Step title="Link the address your invites leave from">
-    On the verification's **Activity** tab.
-    1. Click the address shown in the header, next to **Send unsent**. On a workspace with no address linked yet, the tab offers **Add a sender** instead. Both open the **Senders** panel.
-    2. Add your address with **Add sender**: the From address, a display name, and an optional reply-to. We email the address a confirmation link, and nothing sends from it until someone clicks through. When it reads **Confirmed. Ready to send**, you can send.
-    3. To send from your own domain, publish the TXT and CNAME records shown under **Your own domain** with your DNS provider, then click **Re-check**. Each record flips to **Live** once it is seen. You can send before the records are live, and having them in place keeps your invites out of spam, so plan this in before a large batch.
+  <Step title="Pair a sender and a template with your HumanCheck">
+    On the **Assignments** tab. Each HumanCheck gets one **Sender**, one **Invite template** and one **Re-verify template**. If you leave the re-verify template alone, people who verified before get the invite too.
 
-    <p className="vy-have"><strong>You now have:</strong> a confirmed From address your invites will leave from.</p>
+    The send step uses these pairings exactly as they stand, so this is where you change them.
 
-    <Frame caption="Adding a sending address in the Senders panel. We email it a confirmation link before anything can leave from it.">
-      <img style={{ maxWidth: "640px", width: "100%", display: "block", margin: "0 auto" }} src="/images/dashboard/senders-panel.png" alt="The Senders panel with the add a sending address form: From address, display name, and optional reply-to" />
-    </Frame>
+    <p className="vy-have"><strong>You now have:</strong> everything a send needs, set once for every future send.</p>
   </Step>
-  <Step title="Set up your message, send, and watch the results come in">
-    On the **Activity** tab, with your people listed.
-    1. Click **Message** in the header to set up what your invites say. Two templates live here: **Initial invite** for people who have not verified yet, and **Re-verification** for people you are inviting back.
-    2. Edit the subject and the body until they read as yours, then save. **Verification link** drops the link into the copy, and each send turns it into the personal locked link of whoever receives it. Saved changes apply to future sends, not to invites already out.
-    3. Select the people to invite, or use **Send unsent** to reach everyone you have not contacted yet. The button shows how many people that is.
-    4. Click **Send**, check the dialog, and confirm. It shows who is getting the invite, the address it leaves from, and the message, with one more chance to edit it.
+  <Step title="Import your people">
+    Go to **Activity** and click **Import**.
+    1. Drop a CSV, up to 2 MB, or paste rows straight in. Whole spreadsheet rows are fine.
+    2. Match your columns to ours. Only the email column is required. **Amount**, **Date** and **IP address** land on each person's record where you can compare them later, and an IP address you hold sits beside the one we see when that person verifies. Every other column comes along as extra data.
+    3. Name the import, or add these people to an earlier one. The name becomes a tag you can find them by later.
+    4. Click **Import**, with the number of people you are adding on the button.
 
-    We host the sending, so there is no mail system on your side to wire up. The **Email invites** view then tracks each invite through sent, opened, clicked and verified as people come through, so you can see who opened and stopped and who never opened at all, and [Reading Activity](/docs/activity/reading-activity) covers what to do with what arrives.
+    People are matched by email, so somebody already in your workspace is updated and tagged, never duplicated. A **Tasks** card in the corner shows the import while we look each person up, and **Open** takes you to the import's page when it is done. Importing never sends anything, so you can add to the list over several sittings.
 
-    <p className="vy-have"><strong>You now have:</strong> invites out, and results arriving on Activity as each person verifies. That's the whole setup.</p>
+    <p className="vy-have"><strong>You now have:</strong> your people in, under one tag, and nothing sent.</p>
+  </Step>
+  <Step title="Send">
+    On the import's page, click **Send to all**, which carries the number of people. To send to one person instead, open their profile and click **Send HumanCheck**.
+
+    The **Send HumanCheck** sheet shows who it reaches by email, the **From** address, the **Message** each group gets (first-timers get Initial invite and returning people get Re-verification), and a **Preview**, with **Edit template** if you want one more pass. It also tells you up front who will not be reached and why, for example addresses with no email or Microsoft addresses waiting on DNS. Click **Send to** and the number.
+
+    <p className="vy-have"><strong>You now have:</strong> invites going out, each one a link locked to its recipient.</p>
+  </Step>
+  <Step title="Watch the results come in">
+    The import's page sorts everyone into tabs as they come through: **Done**, **Opened, not completed**, **Never opened**, **Not reached** and **Not sent yet**. So you can see who started and stopped, and who never opened the link at all.
+
+    Each person also carries the state of their email, from **Queued** and **Sent** to **Delivered**, or **Bounced** when it fails, and **Verified** once they finish the check. [Reading Activity](/docs/activity/reading-activity) covers what to do with what arrives.
+
+    <p className="vy-have"><strong>You now have:</strong> results arriving as each person verifies. That's the whole setup.</p>
   </Step>
 </Steps>
 
 <Note>
-**Beta note.** Existing users is in beta. Hosted sending also has a daily cap, and the counter on the Activity header shows where you stand against it today.
+**Sending limits.** Each sender has a daily send budget. Anything past it waits for the next day's budget, and the send summary tells you how many are waiting. If bounce or spam rates from a sender cross our safety line, sending from it pauses, and the sender shows why. Email is the only channel today: phone numbers in your file import as extra data, and SMS sending is not available yet.
 </Note>
 
 ## What happens next
