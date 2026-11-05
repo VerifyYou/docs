@@ -97,7 +97,9 @@ underneath.
 on the page, in any tense. Documenting something that does not exist is the fastest way to lose
 a technical buyer, and it is the error mode AI-written docs fall into hardest.
 
-**Self-serve signup. Do not imply it exists.** Workspaces are set up by the VerifyYou team.
+**Self-serve signup exists (since November 2026).** Anyone can create a workspace at
+platform.verifyyou.com/sign-up, or book a demo and have us set it up. Do not state a plan, price,
+trial length or send cap for a self-serve workspace: none is shown in the product.
 
 **The word "sandbox".** Say test keys, or the simulator, whichever you actually mean.
 
