@@ -57,18 +57,18 @@ Multi-factor proves somebody holds a credential. It cannot tell you they did not
 1. **The first check sets the baseline.** Run one as early as you can, at signup or when somebody completes a profile, and every later check compares against that face.
 2. **Every later check asks whether this is the same person.** If it is, they are recognized and pass. If somebody else is holding the account, the run does not tie back to the person who opened it, and the history shows two people where you expected one.
 3. **Recognition carries across your checks.** Somebody verified at signup is recognized at payout, so the second check is a few seconds.
-4. **You choose the moments.** A payout, a withdrawal, a high value action, or a fixed interval. Each is its own verification with its own settings.
-5. **The history sits on the person.** Every confirmation they appear in, newest first, with the devices we know them on and what they have proven.
+4. **You choose the moments.** A payout, a withdrawal, a high value action, or a fixed interval. Each is its own HumanCheck with its own settings.
+5. **The history sits on the person.** Every HumanCheck they took and how it ended, with the email, phone or face we hold for them and whether their device is shared with anyone else.
 
 This tells you whether it is the same person, not who they are. To sweep the accounts you already have once, see [Userbase healthcheck](/docs/use-cases/userbase-fraud-audit).
 
 ## How you start
 
-1. Create the baseline verification and put it as early in the account's life as friction allows.
-2. Set **Identity** to *Linked by guest*, so a phone or email carries recognition when somebody changes device.
-3. Create a second verification for the recurring moment, and set its **Verification limit** to that cadence, for example *once per period*.
+1. Create the baseline HumanCheck and put it as early in the account's life as friction allows.
+2. Under **Identity**, set how they can be reached to *Email or phone*, so a phone or email carries recognition when somebody changes device.
+3. Create a second HumanCheck for the recurring moment, and set its **HumanCheck limit** to that cadence, for example *once per period*.
 4. Turn on **Skip check on known devices** if you would rather people on a device you already know pass without scanning.
-5. Read **History** on the person, which lists every confirmation they appear in.
+5. Open the person in **Activity**, where their HumanChecks list every run they appear in.
 
 ## Next steps
 

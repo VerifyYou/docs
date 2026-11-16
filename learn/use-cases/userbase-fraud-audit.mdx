@@ -23,11 +23,11 @@ Run it on the clock you already work to. If payouts go out on a Tuesday, an audi
 
 ## How you start
 
-1. Create a verification and pick the **Account Sweep** preset.
-2. Decide how results tie back to your accounts. **No code**: send to the addresses you already hold and set **Identity** to *Linked by guest*, so the email links that face to that account. **Code**: set it to *Provided by you* and [pass the identifier you already keep](/v3/dev/integrating/start-a-session).
+1. Click **New HumanCheck** and pick the **Account Sweep** preset.
+2. Decide how results tie back to your accounts. **No code**: send to the addresses you already hold and under **Identity**, set how they can be reached to *Email*, so the email links that face to that account. **Code**: choose *Your integration passes it in* and [pass the identifier you already keep](/v3/dev/integrating/start-a-session).
 3. Set **On collision** to *Allow + flag*.
-4. Send from the verification's **Activity** tab. Select a first batch and **Send unsent** rather than mailing the whole userbase. There is a 500 a day cap, and each row then shows sent, opened, clicked and verified, so you can see who is avoiding it.
-5. Filter **Activity** to *Needs action*, read **Flags**, then **Export** and reconcile.
+4. Bring the accounts in with **Import** on **Activity**: drop a CSV or paste the emails, and each file becomes a batch. Start with a first batch rather than the whole userbase, then click **Send to all** on it. The invite goes from the sender and template assigned to that HumanCheck under **Connectors**, then **Email**, and the batch splits into Done, Opened, not completed, Never opened and Not reached, so you can see who is avoiding it.
+5. Filter the batch to **Signals: Anything abnormal**, **Add to audit** whoever needs a closer look, then **Export** and reconcile.
 
 ## Next steps
 

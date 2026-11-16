@@ -33,6 +33,11 @@ in the repo unreferenced in case we flip back, and before that the original Vime
 his embed code so the .vy-video wrapper does the responsive 16:9 sizing. This is still NOT the
 video article 1 or article 2 is waiting on: those are David's ~4 minute product overview and
 Ammar's platform walkthrough, both still to be cut.
+
+2026-11-16: re-checked against the live production dashboard. The fail bullet no longer
+implies every duplicate is refused (Allow + flag lets it through), the no-scan return names
+Skip check on known devices, and the optional contact and LinkedIn steps are mentioned since
+prod shows them before the face check.
 */}
 
 <div className="vy-video">
@@ -63,8 +68,8 @@ What happens at each moment:
 ## Opening the check
 
 * They arrive from the link you place in your signup, your app, or an email. See [Integration](/docs/verifications/integration)
-* The check opens first, before your signup form, your checkout, or whatever you are protecting
-* All it needs is a camera, so there is no document to find and nothing to fill in
+* The check opens first, before the signup form, checkout or payout you are protecting
+* All it needs is a camera, so there is no document to find. If your HumanCheck asks them to connect LinkedIn, that comes before the face check, and so does an email or phone when you require one up front
 
 
 ## The scan
@@ -78,13 +83,13 @@ What happens at each moment:
 
 * Both outcomes are instant
 * A pass goes straight through to whatever they came for, with nothing else to do
-* A fail is a duplicate face, a replay, or a bot. They do not get through, and a new device or browser changes nothing, because we recognize the face
+* A fail is a face that is not live, such as a replay or an injected video, or a duplicate face when your HumanCheck is set to block duplicates. A new device or browser changes nothing, because we recognize the face
 
 
 ## When they come back
 
 * On the same check, whether a second attempt is refused is yours to set in [configuration](/docs/verifications/configuration), from unlimited through to once in a lifetime
-* On your other checks, we recognize them and you can wave them through with no scan at all
+* With **Skip check on known devices** on, someone returning on a device that already passed goes through with no scan at all, for a window you set
 * Someone who comes back and passes without scanning still counts as a verification, since skipping the camera saves them friction rather than saving you verifications
 
-**Next:** [Create a verification](/learn/create-a-verification)
+**Next:** [Create a HumanCheck](/learn/create-a-verification)
