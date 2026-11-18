@@ -46,31 +46,41 @@ RE-CHECKED ON SCREEN 2026-08-21, and the tab has changed since the 19 Aug scan:
 
 Panels, options and defaults from DASHBOARD_REFERENCE.md, in tab order. The age gate warning is
 claim-gated. Do not soften it.
+
+DRIFT FIX 2026-11-18, checked directly against the current product source. **Verification
+limit renamed HumanCheck limit** on the panel itself. **Identity reworded**: the panel now asks
+"How can they be reached?" with options Don't ask, Email, Phone, Email or phone, not Linked by
+guest / Anonymous / Provided by you. A code integration can still lock the panel to "Your
+integration passes it in" when a contact is passed in server-side. A separate **Connected
+account** card offers LinkedIn, asked after the terms and before the face check. On collision,
+Returning denied people, Age gate and Where people land were re-checked and are unchanged.
 */}
 
-Configuration allows you to adjust how the check behaves to match your use case. Every verification carries its own, so a strict check before a payout and a light one at signup run at the same time.
+Configuration allows you to adjust how the check behaves to match your use case. Every HumanCheck carries its own, so a strict check before a payout and a light one at signup run at the same time.
 
-Understanding what your check protects is step one to configuring your check to behave how you need it to. For example, a signup that allows one account per human refuses the same human the second time, which you set in **Verification limit** by choosing *Once per lifetime*. A weekly payout cadence may want to allow each person through once per week, which is **Verification limit** on *Once per period* with the period set to weekly.
+Understanding what your check protects is step one to configuring your check to behave how you need it to. For example, a signup that allows one account per human refuses the same human the second time, which you set in **HumanCheck limit** by choosing *Once per lifetime*. A weekly payout cadence may want to allow each person through once per week, which is **HumanCheck limit** on *Once per period* with the period set to weekly.
 
 Our HumanCheck wizard walks you through the whole configuration, and we are here to help you get started on a check for your use case. If you would like a hand, [book a demo](https://sales.verifyyou.com) and we will walk through it with you.
 
 ## Identity
 
-<Frame caption="The Identity panel, with the three access types.">
-  <img src="/images/dashboard/configuration-identity.jpg" alt="Configuration tab, Identity panel with three access types" />
+<Frame caption="The Identity panel. [STALE: screenshot predates this section's rewording; re-shoot]">
+  <img src="/images/dashboard/configuration-identity.jpg" alt="Configuration tab, Identity panel" />
 </Frame>
 
-Is the user tied to a credential like an email or phone number, or not?
+How can they be reached?
 
-* **Linked by guest**, the default. Asks for a phone or email, so we know the same person when they switch device
-* **Anonymous.** Asks for neither. Recognition stays with the device they used
-* **Provided by you.** Takes an identifier from your own system, which the person cannot change. Code path only
+* **Don't ask**, keeps the person anonymous. Recognition stays with the device they used
+* **Email**, **Phone**, or **Email or phone.** Carries recognition across devices, which is what most use cases want. Email is self-serve; our team switches phone on for you
+* With code, your integration can pass the email or phone in instead, so the person can't change it
 
-Your integration method decides which of the three you can pick, and the tab says so. A check running on a shared link cannot use *Provided by you*, because there is nothing to pass a claim in from. A check that seeds every person from a list you imported can only use *Provided by you*, because the claim is already supplied. Either way the panel offers to switch method.
+A **Connected account** card can also ask people to connect their **LinkedIn**, after the terms and before the face check, so you can see which account sits behind each person.
 
-## Verification limit
+Your integration method decides which identity options you can pick, and the panel says so.
 
-How many times should each person be allowed to pass on one verification? It counts successful passes, not attempts.
+## HumanCheck limit
+
+How many times should each person be allowed to pass on one HumanCheck? It counts successful passes, not attempts.
 
 * **Once per lifetime**, the default. A permanent decision, like opening an account
 * **Once per period.** Something recurring, like a weekly payout
@@ -78,14 +88,14 @@ How many times should each person be allowed to pass on one verification? It cou
 * **Unlimited.** A checkout or a login, where you only need a live human present
 
 <Note>
-  Uniqueness covers a whole verification, so once somebody passes, every later run through that check is the same person to us. When one check gates several separate things, your integration sends a **group** to keep them apart. See [start a session](/v3/dev/integrating/start-a-session).
+  Uniqueness covers a whole HumanCheck, so once somebody passes, every later run through that check is the same person to us. When one check gates several separate things, your integration sends a **group** to keep them apart. See [start a session](/v3/dev/integrating/start-a-session).
 </Note>
 
 ## Skip check on known devices
 
 Off by default. Turn it on and somebody returning inside a window you set passes without scanning.
 
-A silent pass still counts as a verification. Skipping changes what the person experiences, not what the check records.
+A silent pass still counts as a HumanCheck. Skipping changes what the person experiences, not what the check records.
 
 ## On collision
 
