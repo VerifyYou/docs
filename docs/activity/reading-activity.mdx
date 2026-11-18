@@ -29,25 +29,33 @@ you whether each person opened the invite or never did. States vocabulary
 (sent/opened/clicked/verified) from the August 24 entry; location from James, 9 Sep. The
 livetest workspace has no send history, so the view itself was not walked. The September
 product-update email's "Send the check" section links here.
+
+DRIFT FIX 2026-11-18. PR #75's 2026-11-16 walk: "Activity is now Sources and People with a
+Signals filter" and "Needs action" is gone. Checked directly against the current product
+source: each row is built from a name, a signal strip and audit membership, not a trust band or
+score, and no "needs action" concept exists anywhere in the current source. Rows read as a
+signal strip (pending/no data/normal/abnormal), not a trust score out of 100, and filtering is
+**Signals**, not Needs action. Terminology also updated: "verification" to HumanCheck, matching
+the renamed nav and Configuration panel (now "HumanCheck limit").
 */}
 
-**Activity** is the record of everyone who completed a verification, most recent first.
+**Activity** is the record of everyone who completed a HumanCheck, most recent first.
 
-[**Workspace Activity**](https://platform.verifyyou.com/dashboard/activity) covers every check you run. A row gives you the identifier they gave, or *No identifier given*, the time, a trust band, a trust score out of 100, the result, and a `TEST` badge if it came from test keys. The row menu opens that person's profile.
+[**Workspace Activity**](https://platform.verifyyou.com/dashboard/activity) covers every check you run. A row gives you the name or identifier they gave, a signal strip showing how their signals read, the result, and a `TEST` badge if it came from test keys. The row menu opens that person's profile.
 
-**A verification's own Activity tab** adds the working controls: **Needs action**, **Export**, row selection, rows per page, and sending the check by email. Go here when you are working a list. Go to workspace Activity when you are looking somebody up.
+**A HumanCheck's own Activity tab** adds the working controls: a **Signals** filter, **Export**, row selection, rows per page, and sending the check by email. Go here when you are working a list. Go to workspace Activity when you are looking somebody up.
 
-Email invites have their own funnel. On a verification running **Existing users**, the **Email invites** view tracks each invite through sent, opened, clicked and verified, so you can see who opened an invite and stopped, and who never opened it at all. Somebody who opens it and never finishes is telling you something different from somebody who never opened it. [Send verifications by email](/docs/guides/existing-users) covers the sending itself.
+Email invites have their own funnel. On a HumanCheck running **Existing users**, the **Email invites** view tracks each invite through sent, opened, clicked and verified, so you can see who opened an invite and stopped, and who never opened it at all. Somebody who opens it and never finishes is telling you something different from somebody who never opened it. [Send verifications by email](/docs/guides/existing-users) covers the sending itself.
 
-<Frame caption="A verification's own Activity tab. Filter and Export sit above the list.">
-  <img src="/images/dashboard/activity-filter-export.png" alt="A verification's Activity tab, with the Filter and Export controls highlighted above the list of people" />
+<Frame caption="A HumanCheck's own Activity tab. Filter and Export sit above the list.">
+  <img src="/images/dashboard/activity-filter-export.png" alt="A HumanCheck's Activity tab, with the Filter and Export controls highlighted above the list of people" />
 </Frame>
 
 ## Looking up individual users
 
 Search by email or phone.
 
-The support case: somebody says they cannot get in. The row tells you what actually happened, because a denial carries its reason. `limit reached` means your own verification limit fired and they have already passed once. A liveness failure means the camera never confirmed a live person, and trying again in better light might work. Two different answers to give them.
+The support case: somebody says they cannot get in. The row tells you what actually happened, because a denial carries its reason. `limit reached` means your own HumanCheck limit fired and they have already passed once. A liveness failure means the camera never confirmed a live person, and trying again in better light might work. Two different answers to give them.
 
 The investigation case: you have seen something odd on your own platform from one account and you want to know what we saw. Search the identifier, open the person, and hold what we have against what you have, the location, the devices, and the history of every run they appear in.
 

@@ -13,13 +13,20 @@ DUPLICATE SECTION added 2026-09-09, then verified the same day in the livetest w
 row menu on the Verifications page (aria label "Verification actions") holds View details,
 Rename, Duplicate, Copy link, Delete. The section names the menu by position, not by an
 on-screen label, because the button is an unlabeled kebab.
+
+DRIFT FIX 2026-11-18. The product renamed "Verifications" to HumanChecks: the nav item is
+HumanChecks at /dashboard/humanchecks, and the New button reads "New HumanCheck". The old
+/dashboard/verifications URL still works (it redirects to /dashboard/humanchecks), but the page
+and button people actually see say HumanCheck, so the prose and the link now match that. The
+four presets below were re-checked and are unchanged. The row-menu duplicate section was not
+re-walked; left as is.
 */}
 
-Creating a verification is simple, and you can create as many as you like for different use cases on your platform. Each one carries its own settings, so a strict check before a payout and a light one at signup run side by side.
+Creating a HumanCheck is simple, and you can create as many as you like for different use cases on your platform. Each one carries its own settings, so a strict check before a payout and a light one at signup run side by side.
 
-Start from [**New verification**](https://platform.verifyyou.com/dashboard/verifications?new=true) on the Verifications page. Five steps, in this order.
+Start from [**New HumanCheck**](https://platform.verifyyou.com/dashboard/humanchecks?new=true) on the HumanChecks page. Five steps, in this order.
 
-<Frame caption="The Verifications page. New verification, top right, starts the wizard.">
+<Frame caption="The HumanChecks page. New HumanCheck, top right, starts the wizard. [STALE: screenshot predates the HumanCheck rename and should be re-shot]">
   <img src="/images/dashboard/new-verification.png" alt="The Verifications page, with the New verification button highlighted top right" />
 </Frame>
 
@@ -47,6 +54,6 @@ The preset only sets the starting point. Everything it chose stays editable on t
 
 ## Reuse one you have already tuned
 
-A check you have spent time getting right does not have to be rebuilt to be reused. On the [Verifications page](https://platform.verifyyou.com/dashboard/verifications), open the menu at the end of the check's row and choose **Duplicate**. The setup carries over into a new check under its own label. Adjust what needs adjusting and take it live.
+A check you have spent time getting right does not have to be rebuilt to be reused. On the [HumanChecks page](https://platform.verifyyou.com/dashboard/humanchecks), open the menu at the end of the check's row and choose **Duplicate**. The setup carries over into a new check under its own label. Adjust what needs adjusting and take it live.
 
 **Next:** [Configuration](/docs/verifications/configuration)

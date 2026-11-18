@@ -55,9 +55,11 @@ each photo read as, the file name) and the internal other-person note. The other
 is on the page because leaving it off would make "we keep the result" incomplete.
 
 LEFT OUT ON PURPOSE:
-  - The number each HumanChecks row prints as "trust N". It is the check's raw RISK score
-    (higher is riskier), shown without the dashboard's usual risk-to-trust flip, so it reads the opposite
-    way from the trust score everywhere else. Flagged to James as a bug 2026-09-29. Document it once fixed.
+  - The number each HumanChecks row prints as "trust N". It was the check's raw RISK score
+    (higher is riskier), shown without the dashboard's usual risk-to-trust flip. Unverified
+    whether this still applies now that the person page no longer shows a trust score at all
+    (confirmed 2026-11-18, see docs/activity/guest-profiles.mdx); flagged to James as a bug
+    2026-09-29 and not re-checked since.
   - The first-run guided tour. connect-fe#285 says the four Usertour flows exist in Usertour's Dev
     environment. Add a line once they are published for production.
   - "Face hash". The product's processing copy says it; the voice skill bans "hash" on docs pages.
@@ -119,7 +121,7 @@ If none of your photos read as an ID, the result offers to add one. **Add photo*
 
 ### HumanChecks
 
-This is every check we compared against, newest first, up to the 50 most recent. Each row has the date and time, the verification it ran under, whether it passed, and the match percentage and verdict for your photo. A check done by someone else's face shows **a different face**.
+This is every check we compared against, newest first, up to the 50 most recent. Each row has the date and time, the HumanCheck it ran under, whether it passed, and the match percentage and verdict for your photo. A check done by someone else's face shows **a different face**.
 
 The list includes every check that proved this person's email or phone with you, whoever was in front of the camera that day. That is how a change of hands shows up. When you added two photos, the list scores the photo of the person, or the other photo if that one couldn't be read.
 
@@ -139,6 +141,6 @@ You only ever compare against your own company's checks on that person. If they 
 
 If a photo resembles someone else your company has verified, we note that on our side. It isn't shown in the dashboard.
 
-Running an assessment doesn't change the person's [trust score](/docs/activity/guest-profiles) or the result of any check.
+Running an assessment doesn't change the person's [signals](/docs/activity/guest-profiles) or the result of any check.
 
 **Next:** [Exporting users](/docs/activity/exporting-the-list)

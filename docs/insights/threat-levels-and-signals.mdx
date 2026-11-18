@@ -1,6 +1,6 @@
 ---
 title: "Threat levels and signals"
-description: "How the trust score and the threat bands relate."
+description: "How the threat bands work, and what the threat families mean."
 ---
 
 {/*
@@ -10,46 +10,43 @@ is a stock figure standing in for the actual fact. The page now opens on the two
 themselves, so a reader who stops after two sentences already has the answer.
 
 This page exists because of drift item 9 in DASHBOARD_REFERENCE.md: the
-person view scores Trust out of 100 where higher is better, Insights speaks in threat bands
-where higher is worse, and a reader meets both. Fixing the product would beat explaining it.
-Until then, explaining it beats leaving somebody to work it out.
+person view used to score Trust out of 100 where higher is better, Insights speaks in threat
+bands where higher is worse, and a reader met both.
 
-⚠️ TAXONOMY, confirm with Zeek. Two lists are in circulation, and drift item 10 records both.
-  live product, from the Flags empty state, and what this page uses:
-    network / geography / accounts / automation / liveness
-  older material:
-    network / velocity / automation / liveness / identity
-Do not blend them. A third list exists and is a different thing again: the signal groups on a
-person, documented on docs/activity/guest-profiles.
+⚠️ TAXONOMY, was marked "confirm with Zeek" and is now resolved. Two lists were in circulation;
+the live one, checked directly against the current product source on 2026-11-18, is: network /
+velocity / automation / liveness / identity. The "geography / accounts" version this page used
+to carry does not appear anywhere in the current source and is gone.
+
+DRIFT FIX 2026-11-18. Re-checked against the current product source after PR #75's 2026-11-16
+dashboard walk found the person page carries no trust score any more (no score field anywhere;
+signals are grouped Identity, Connection, Device, Email, Behavior and Passive, each read as
+pending, no data, normal or abnormal). The opposite-ends framing this page was built
+on no longer holds, so the trust score section is replaced with what is confirmed: Insights still
+buckets sessions into the same four threat bands, built from a score kept internally
+(ThreatInsights.averageScore) but not shown to you as a number. Per-person detail is signals, not
+a score: see [Comprehensive trust score](/docs/activity/guest-profiles).
 */}
 
-A person carries a trust score out of 100, where a high number is good. Insights sorts the same sessions into threat bands, where a high band is bad. They measure the same thing from opposite ends.
-
-## The trust score
-
-Everyone starts at 100. Anything suspicious we detect during the check subtracts from it, and the size of the deduction follows how suspicious the thing is. A clean run keeps its 100. A run arriving through a datacenter IP on a face that is already on two other accounts does not.
-
-So the score is a summary of what we found, not a judgement of the person, and it is worth reading as a prompt: the lower it goes, the more there is to look at. Your configuration decides whether they passed or failed. The score does not.
+Insights sorts your sessions into threat bands, from **Low** to **High**. A person's own signals read as pending, no data, normal, or abnormal rather than as a score. See [Comprehensive trust score](/docs/activity/guest-profiles) for how signals read on one person.
 
 ## The threat bands
 
-The same sessions, grouped for the population view: **Low**, **Moderate**, **Elevated**, **High**. Higher means more of concern, which runs the opposite way to the score.
-
-A person with a high trust score sits in a low threat band. Both describe the same run.
+Insights groups sessions for the population view into four bands: **Low**, **Moderate**, **Elevated**, **High**. Higher means more of concern. Each band is built from the same scoring that runs on every check, rolled up across whichever period you pick.
 
 ## The threat families
 
-**Top threat signals** on Insights groups what fired into five families.
+**Top threat families** on Insights groups what fired into five families: **Network**, **Velocity**, **Automation**, **Liveness** and **Identity**.
 
 **Network** is where the connection came from: a VPN, a datacenter, a Tor exit, an IP already known for abuse.
 
-**Geography** is where they appear to be, and whether that fits what you or we expected.
-
-**Accounts** is one face turning up on more than one account. This is the family people act on most.
+**Velocity** is how fast or how often something is happening, such as a run of checks in quick succession.
 
 **Automation** is whether the session behaves like a real browser or like a script, read from how the connection presents itself.
 
 **Liveness** is the capture itself: failed attempts, low confidence, a screen held up to the camera.
+
+**Identity** is about the credential behind the person.
 
 Which family dominates tells you what you are dealing with, and it is a different question from how much of it there is.
 

@@ -76,11 +76,20 @@ written when nobody here had seen the record list. James's Senders-panel screens
 records in the product (TXT and CNAME rows, Live/Pending, Re-check), so the sentence now points
 there. Same change adds the link to the new Existing users setup guide, written that day from
 his walkthrough.
+
+DRIFT FIX 2026-11-18, against PR #75's 2026-11-16 dashboard walk, checked directly against the
+current product source (button label "New HumanCheck"; Switch method labels unchanged). The
+product renamed "verification" to HumanCheck everywhere on screen; body prose updated to match
+(slug and the "Send verifications by email" link text kept, since that page's own title stays
+unchanged on purpose). Added the Copy prompt / AI agent callout ("Building with an AI agent?",
+copies a prompt for Cursor, Claude Code or Copilot), seen on prod and missing from this page.
+Switch method's four options were re-checked and are unchanged: Sharing a link, Existing users,
+One-time passwords, With code.
 */}
 
 How the check reaches people is your choice, and you can change it whenever you like. Three of the four ways need no developer time at all, so you can prove value early without waiting on your roadmap.
 
-Each verification's **Integration** tab shows the method it is using now, and **Switch method** swaps it.
+Each HumanCheck's **Integration** tab shows the method it is using now, and **Switch method** swaps it.
 
 <Frame caption="Switch method, with all four options.">
   <img style={{ maxWidth: "440px", width: "100%", display: "block", margin: "0 auto" }} src="/images/dashboard/switch-method.jpg" alt="Switch method dialog listing four integration methods" />
@@ -90,7 +99,7 @@ Each verification's **Integration** tab shows the method it is using now, and **
 
 No code gets you started with zero developer effort, so you can prove value early without interrupting your roadmap.
 
-**Sharing a link.** Every verification has its own link in the dashboard. Copy it and put it wherever people already go: the button on your signup page, an invite email, the top of a survey. Somebody who opens it takes the check on our hosted page, and lands wherever you set under Where people land. Nothing to build, and no change to your own code.
+**Sharing a link.** Every HumanCheck has its own link in the dashboard. Copy it and put it wherever people already go: the button on your signup page, an invite email, the top of a survey. Somebody who opens it takes the check on our hosted page, and lands wherever you set under Where people land. Nothing to build, and no change to your own code.
 
 **Email to people you already have.** Import your list on **Activity** and send each person a HumanCheck link locked to their address. Any HumanCheck that takes a link can go out this way, including one set to **Existing users**. Importing sends nothing. You send from the import's page, and we host the sending, so there is no mail system to wire up. The address your invites come from, the message they carry, and which HumanCheck uses which are all set once under **Connectors**, **Email**.
 
@@ -105,6 +114,8 @@ This is the simplest no code method behind [Userbase healthcheck](/docs/use-case
 The check runs inside your own product with our SDK, and your server confirms the result before you act on it. Attach your own `external_id` and every result comes back tied to the user record you already keep, which is what makes an export reconcile against your own tables.
 
 Sessions are minted on your server with a secret key, `sk_test_` or `sk_live_`. Test and live are separate partitions and cannot be mixed: a session from one reads as nonexistent under the other, so you can rehearse the whole path before a real person takes it.
+
+Building with an AI coding agent? **Copy prompt** on this tab copies a ready-made prompt with your key filled in, to paste into Cursor, Claude Code or Copilot.
 
 Three ways to place it, all through the SDK:
 
@@ -141,6 +152,6 @@ Everything below lives at [docs.verifyyou.com](/v3/dev/integrating/start-a-sessi
 
 ## Try it first
 
-**Run a test** on this tab runs the real check on test data, with a test identity you can regenerate. Take it yourself before a real person does.
+**Run a test** on this tab runs the real check on test data, with a test identity you can regenerate. Take it yourself before a real person does. It is available on every integration method, not only code.
 
 **Next:** [Reading Activity](/docs/activity/reading-activity)
