@@ -1,6 +1,6 @@
 ---
-title: "Create a verification"
-description: "Go from an empty workspace to a HumanCheck running in your product: match the check to your use case, set its configuration, and integrate it."
+title: "Create a HumanCheck"
+description: "Go from sign-up to an anonymous HumanCheck running in your product: pick a preset, decide what identity to attach, set the configuration, and integrate it."
 ---
 
 {/*
@@ -23,27 +23,34 @@ This page names decisions and links out.
 Redirects: /learn/create-a-verification and /learn/configuring-a-verification both land here.
 
 Video: filmable. The wizard runs end to end and the Configuration tab is live.
+
+v10, 2026-11-16: re-checked against the live production dashboard. The product now calls each
+check a HumanCheck (HumanChecks page, New HumanCheck), so the title and wording follow; the slug
+stays so links survive. Added self-serve sign-up, the fourth preset, the LinkedIn connected
+account, the AI agent prompt on the Integration tab and the Run a test sandbox, all seen on
+prod that day.
 */}
 
-In this module we take you from an empty workspace to a check running inside your product. Our team creates your workspace and sets up the first one with you, and the wizard walks the rest in logical order:
+In this module we take you from a new workspace to an anonymous HumanCheck running inside your product. [Sign up](https://platform.verifyyou.com/sign-up) to create your workspace, or our team sets it up with you. Then **New HumanCheck** on the HumanChecks page opens a five step setup: Get started, Pick your check, Branding, Tune your check, and Integrate.
 
 ## Match your use case
 
-* Every verification carries its own configuration, so one workspace can run a strict check before a payout and a light one at signup, at the same time
-* You decide how many times one person may pass, what happens when the same human comes back, whether an age gate applies, and where people land afterwards. A low-stakes signup and a panel paying for clean data want different answers to all four
-* Start from a preset that suits the job. **Signup Gate** runs before an account is created, **Account Sweep** goes back over people who already have accounts, and **Build Your Own** starts from the defaults. [Configuration](/docs/verifications/configuration) has every setting in full
+* Every HumanCheck carries its own configuration, so one workspace can run a strict check before a payout and a light one at signup, at the same time
+* Start from a preset that suits the job. **Signup Gate** runs before an account is created, **Account Sweep** goes back over people who already have accounts, **AI Data Labeling Fraud Audit** audits an existing contributor base by email, and **Build Your Own** starts from the defaults
+* On the **Configuration** tab you decide how many times one person may pass, what happens when the same human comes back, whether denied devices get another try, whether an age gate applies, and where people land afterwards. Saving there applies to your live check right away. See [Configuration](/docs/verifications/configuration)
 
-## With or without credentials
+## What identity to attach
 
-* This is the biggest decision. A verified human is recognized by their face plus the device they are on, and switching device breaks that link, so a phone or email re-links the same face on a new one. See [Guests and members](/docs/how-it-works/guests-and-members)
-* **Face only** is faster and collects nothing, and recognition stops at that device. It fits one-time verifications where nobody returns
-* **Face plus a phone or email** carries recognition wherever they go, which is what most use cases want
+* This is the biggest decision. Every HumanCheck includes a face scan, and a verified human is recognized by their face plus the device they are on. Switching device breaks that link, so a phone or email re-links the same face on a new one. See [Guests and members](/docs/how-it-works/guests-and-members)
+* **Don't ask** keeps the person anonymous and collects nothing, and recognition stops at that device. It fits one-time checks where nobody returns
+* **Email**, **Phone** or **Email or phone** carries recognition across devices, which is what most use cases want. Email is self-serve, and our team switches phone on for you. With code, your integration can pass the email or phone in instead
+* **LinkedIn** under connected account asks people to connect their LinkedIn after the terms and before the face check, so you can see which account sits behind each person
 
 ## Integration
 
-* **No code** gives you a link to copy and drop into a signup, an email or a survey, and it needs no engineering time at all. See [Integration](/docs/verifications/integration)
-* **Code** puts the check inside your own product with our SDK, and your server confirms the result. Attach your own `external_id` and it comes back tied to the user record you already keep. The [quickstart](/v3/dev/integrating/start-a-session) walks that path
-* Either way, test keys run the simulator, and the test people it creates stay separate from your live records, so you can scan the QR and take it yourself before a real person does. See [test and live keys](/v3/dev/spec/server-api/authentication)
+* **No-code** gives you one public link to copy into a signup, an email or a survey, live until you pause it. See [Integration](/docs/verifications/integration)
+* **Code** puts the check inside your own product with our SDK, and your server confirms the result. The Integration tab walks it in four steps with your keys filled in, and **Copy prompt** hands the same setup to Cursor, Claude Code or Copilot. The [quickstart](/v3/dev/integrating/start-a-session) walks that path
+* Either way, **Run a test** runs the real check in a sandbox on the Integration tab, and test data stays separate from your live records, so you can take it yourself before a real person does. See [test and live keys](/v3/dev/spec/server-api/authentication)
 
 Not sure which answers fit your platform? [Book a demo](https://sales.verifyyou.com) and we will set the configuration with you, live.
 

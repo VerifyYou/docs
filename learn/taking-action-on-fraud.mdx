@@ -1,6 +1,6 @@
 ---
 title: "Automated Fraud Prevention"
-description: "What happens to the people your checks catch: collision settings that block duplicates on their own, plus the review and re-verify tools for the rest."
+description: "What happens to the people your checks catch: collision settings that block duplicates on their own, audits for review, and export to act in your own product."
 ---
 
 {/*
@@ -37,6 +37,12 @@ rule 15 in learn-article-voice.
 Next points into the use-case track, which nothing introduces otherwise.
 
 Video: filmable, though the account needs a flagged session to show.
+
+v2, 2026-11-16: re-checked against the live production dashboard. There is no Flags tab in
+the nav and no Needs action filter any more; review now runs through the Signals filter on
+Activity, the person page, and Audits. The After a denial choice is back on the On collision
+panel (No way back, Sign in as owner). Export lives on an import's menu. Resend HumanCheck sits
+on the person page.
 */}
 
 In this module we show you what to do about the people your checks catch, and most of it happens without you watching.
@@ -45,22 +51,23 @@ Three ways to act:
 
 ## Decide it once in configuration
 
-* When the same human verifies twice we call that a collision, and your collision setting decides what happens before anyone on your team sees it. **Block** rejects a duplicate and tells them an account already exists, and a new device with a new email does not get round it
-* **Allow + flag** lets them through and raises a flag instead, which suits partner sites and shared user pools where a duplicate is a moderation question
-* You also decide what happens when a device you already denied comes back: watch it and let the fresh check judge them, or stop it before the check runs. [Configuration](/docs/verifications/configuration) has all of it
+* When the same human verifies twice we call that a collision, and your **On collision** setting decides what happens before anyone on your team sees it. **Block** rejects a duplicate and tells them an account already exists, and a new device with a new email does not get round it
+* **Allow + flag** lets them through and raises a flag in your dashboard instead, which suits partner sites and shared user pools where a duplicate is a moderation question
+* After a denial, **No way back** makes it final, while **Sign in as owner** lets the person prove they own the original account with a code sent to the email already on file
+* When a device you already denied comes back, **Observe** lets the fresh check judge them and records a prior denial flag, and **Block at the door** stops it before the face check runs. See [Configuration](/docs/verifications/configuration)
 
 ## Review what got flagged
 
-* The **Flags** tab shows everyone our system flagged, with the reason attached, scoped to your own traffic and nobody else's. See [Flags](/docs/insights/flags)
-* We check for network, geography, accounts, automation and liveness, so a clean tab means every run came through clean
-* Filter **Activity** to **Needs action** when you would rather start from whoever the check already thinks deserves attention
+* Filter **Activity** to **Signals: Anything abnormal** to start from the people the check already thinks deserve attention, sorted most abnormal first
+* Open a person to see each signal behind the flag, the HumanChecks they took, and the other accounts their face or device is tied to. **Resend HumanCheck** sends them a fresh one
+* **Add to audit** sets people aside from any list, so your team can review, export or send to them together from **Audits**
 
 ## Act in your own product
 
-* **Export** hands you the list, so you can suspend accounts, hold payouts or reconcile against your own records. See [Exporting users](/docs/activity/exporting-the-list)
+* **Export** hands you the list from an import or an audit, so you can suspend accounts, hold payouts or reconcile against your own records. See [Exporting users](/docs/activity/exporting-the-list)
 * Results carry the `external_id` you attached, so you can line a flagged person up against the user you already have. See [Handling results](/v3/dev/integrating/handling-results)
 * One person wrongly refused is worth handling directly, and your VerifyYou contact can help. If the same kind of refusal keeps arriving, change the setting rather than handling each person, since a pattern usually means the check is tuned wrong
 
-Fraudsters change tactics, so revisit your limit and your collision action as your traffic changes. [Book a demo](https://sales.verifyyou.com) and we will tune the check with you.
+Fraudsters change tactics, so revisit your **HumanCheck limit** and your collision action as your traffic changes. [Book a demo](https://sales.verifyyou.com) and we will tune the check with you.
 
-**Next:** [Signup gate](/learn/use-cases/signup-gate)
+**Next:** [Passive Signals](/learn/passive-signals)

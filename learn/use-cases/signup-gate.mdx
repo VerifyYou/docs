@@ -23,11 +23,11 @@ A gate only covers new signups. For the accounts you already have, see [Userbase
 
 ## How you start
 
-1. Create a verification and pick the **Signup Gate** preset.
-2. Set **Identity** to *Linked by guest*, which is the phone or email in point five.
-3. Set **Verification limit** to *Once per lifetime*, so one person gets one account, and **On collision** to *Block*.
+1. Click **New HumanCheck** and pick the **Signup Gate** preset.
+2. Under **Identity**, set how they can be reached to *Email or phone*, which is the phone or email in point five.
+3. Set **HumanCheck limit** to *Once per lifetime*, so one person gets one account, and **On collision** to *Block*.
 4. Paste the no-code link into your signup, or use the SDK and [confirm the result on your server](/v3/dev/integrating/handling-results).
-5. Run it on [test keys](/v3/dev/spec/server-api/authentication) first. The simulator behaves like the real check, and the test people it creates stay separate from your live records.
+5. Click **Run a test** on the Integration tab first. It runs the real check in a sandbox, and test data stays separate from your live records. For code, start on [test keys](/v3/dev/spec/server-api/authentication).
 
 ## Next steps
 
