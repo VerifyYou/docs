@@ -438,6 +438,10 @@
                 "href": "https://trust.verifyyou.com/openapi.json"
             },
             {
+                "label": "Book a demo",
+                "href": "https://sales.verifyyou.com"
+            },
+            {
                 "label": "Dashboard",
                 "href": "https://platform.verifyyou.com/dashboard"
             },
@@ -448,8 +452,8 @@
         ],
         "primary": {
             "type": "button",
-            "label": "Book a demo",
-            "href": "https://sales.verifyyou.com"
+            "label": "Sign up",
+            "href": "https://platform.verifyyou.com/sign-up"
         }
     },
     "contextual": {
@@ -476,6 +480,10 @@
                     {
                         "label": "Pricing",
                         "href": "https://verifyyou.com/pricing"
+                    },
+                    {
+                        "label": "Sign up",
+                        "href": "https://platform.verifyyou.com/sign-up"
                     },
                     {
                         "label": "Book a demo",
