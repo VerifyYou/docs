@@ -3,6 +3,20 @@ title: "Dev changelog"
 description: "What's new in the VerifyYou SDK, API, and docs."
 ---
 
+<Update label="November 26, 2026" description="Denied returns">
+
+## Send a denied person back without a tap
+
+A verification can now return a denied check to `redirect_url` as well, when [`auto_return`](/v3/dev/spec/server-api/initialize) is on. The return URL carries the token as usual, so your server confirms it and routes the person, for example a repeat survey respondent to your duplicate page.
+
+- It is off by default: a denied person sees why, as before. Ask us to turn it on for a verification.
+- A denied check that offers the person a way back into their existing account always shows its result, since that screen is how they recover it.
+- Invite links ignore it, as they ignore `auto_return`.
+
+Nothing to upgrade on your side.
+
+</Update>
+
 <Update label="October 29, 2026" description="Mobile SDKs">
 
 ## Native SDKs for Android and iOS
